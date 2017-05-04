@@ -1,0 +1,58 @@
+$fc:#fff;
+//宽高
+@mixin wh($width, $height) {
+  width: $width;
+  height: $height;
+}
+
+//定位上下左右居中
+@mixin center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+//定位左右居中
+@mixin rl {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@mixin minWidth($width) {
+  min-width: $width;
+}
+
+@mixin maxWidth($width) {
+  max-width: $width;
+}
+
+@mixin minHeight($height) {
+  min-height: $height;
+}
+
+@mixin maxHeight($height) {
+  max-height: $height;
+}
+
+@mixin publicButton {
+  display: inline-block;
+  padding: 10px;
+  background: #f91;
+  color: $fc;
+  border: 1px solid #ef8d0b;
+  box-shadow: inset 0px 1px 0px #FF934C;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-right: 25px;
+  &:hover {
+    background-color: #ff4e00;
+    border-color: #ab4500;
+  }
+}
+
+a {
+  color: red;
+}
