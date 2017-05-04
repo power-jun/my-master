@@ -1,19 +1,22 @@
 <template>
   <el-row class="info-content">
-    <el-col :span="4" class="content-left">
+    <el-col :span="6">
       <div class="grid-content bg-purple">
         <div class="header-info">
           <el-row>
-            <p class="person-photo"><img src="../../assets/images/photo.jpeg" alt=""></p>
-            <p class="name">XJ Chen</p>
+            <el-col :span="6">
+              <p class="person-photo"><img src="/static/img/photo.jpeg" alt=""></p>
+            </el-col>
+            <el-col :span="18">
+              <p class="name">XJ Chen</p>
+              <p class="email">506402424@qq.com</p>
+            </el-col>
           </el-row>
         </div>
         <div class="slide-nav">
-          <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
-            <el-menu-item index="/home"><i class="el-icon-menu"></i>首页</el-menu-item>
+          <el-menu router class="el-menu-vertical-demo" default-active="/movie">
             <el-submenu v-for="nav in navs" :index="nav.title">
-              <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}
-</template>
+              <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}</template>
               <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router">
                 {{subnav.title}}
               </el-menu-item>
@@ -21,135 +24,45 @@
           </el-menu>
           </div>
         </div>
-    </el-col>
-    <el-col :span="20" class="content-right">
-      <div class="grid-content bg-purple-light">
-        <transition name="router-fade" mode="out-in">
-    	  	<router-view></router-view>
-      	</transition>
-      </div>
-    </el-col>
+      </el-col>
+
+      <el-col :span="18">
+        <div class="grid-content bg-purple-light">
+          <router-view></router-view>
+        </div>
+      </el-col>
   </el-row>
 </template>
 
 <script>
+
   export default {
     data() {
       return {
         navs: [{
-            title: 'Tourism',
+            title: '生活',
             subnavs: [{
-              title: 'tourism',
+              title: '旅游',
               router: '/tourism'
             }]
           },
           {
-            title: 'Work',
+            title: '工作',
             subnavs: [{
-              title: 'project',
-              router: '/project?page=12'
+              title: '项目',
+              router: '/project'
             }]
           },
           {
-            title: 'Collect',
+            title: '收藏',
             subnavs: [{
-              title: 'movie',
-              router: '/movie/2'
+              title: '电影',
+              router: '/movie'
             }]
           }
         ]
       }
-    },
-
-    created: function() {
-      this.$router.push('/home');
-    },
-
-    methods: {
-      handleOpen: function(key, keyPath) {
-        console.log(key, keyPath)
-      }
-    },
-    //监控路由的变化
-    watch: {
-      $route(to, form) {
-        console.log('watch route')
-      }
     }
   }
+
 </script>
-
-<style lang="scss">
-  @import '../../assets/css/mixin';
-
-  // 路由动画
-  .router-fade-enter-active,
-  .router-fade-leave-active {
-    transition: opacity .3s;
-  }
-
-  .router-fade-enter,
-  .router-fade-leave-active {
-    opacity: 0;
-  }
-
-  .info-content {
-    @include minWidth(1520px);
-  }
-
-  .content-left {
-    position: fixed;
-    height: 100%;
-    background: $fc;
-    padding-right: 0!important;
-    @include minWidth(250px);
-  }
-
-  .content-right {
-    position: absolute;
-    right: 0;
-    top: 20px;
-    padding-left: 25px;
-  }
-
-  .header-info {
-    @include wh(100%, 200px);
-    background: #000;
-    opacity: .7;
-    position: relative;
-    .el-row {
-      margin-right: 0!important;
-      @include center;
-    }
-    .name {
-      color: $fc;
-      text-align: center;
-      margin-top: 20px;
-    }
-    @at-root {
-      .person-photo {
-        @include wh(128px, 128px);
-        border: 5px solid $fc;
-        border-radius: 50%;
-        position: relative;
-        overflow: hidden;
-        background: #88acdb;
-        cursor: pointer;
-      }
-      .person-photo img {
-        @include wh(100%, auto);
-        @include center;
-      }
-      .person-photo:hover {
-        background: #fff;
-        border: 5px solid #88acdb;
-        -webkit-box-shadow: 0 0 1.5em #88acdb;
-        box-shadow: 0 0 1.5em #88acdb;
-        -webkit-animation: rockAnimation 0.5s linear infinite alternate;
-        -ms-animation: rockAnimation 0.5s linear infinite alternate;
-        -moz-animation: rockAnimation 0.5s linear infinite alternate;
-        animation: rockAnimation 0.5s linear infinite alternate;
-      }
-    }
-  }
-</style>

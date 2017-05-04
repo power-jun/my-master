@@ -14,8 +14,7 @@
   }
 </script>
 
-<style lang="scss">
-  .bg-purple-dark {
-    color: green;
-  }
+<style lang="sass">
+  .bg-purple-dark 
+      color: green;
 </style>

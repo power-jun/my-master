@@ -10,25 +10,11 @@
       return {
         msg: 'Movie'
       }
-    },
-
-    beforeRouteEnter: function(to, from, next) {
-      console.log('movie router before' + '路由参数=' + to.params.id)
-      if(true) {
-        next();
-      }
-    },
-
-    beforeRouteLeave: function(to, form,next) {
-      console.log('movie router after')
-      next();
     }
   }
 </script>
 
-<style lang="scss">
-@import '../../assets/css/mixin';
-  .bg-purple-dark {
-    color: #000;
-  }
+<style lang="sass">
+  .bg-purple-dark 
+      color: #000;
 </style>
