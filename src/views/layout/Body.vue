@@ -10,10 +10,9 @@
         </div>
         <div class="slide-nav">
           <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
-            <el-menu-item index="/home"><i class="el-icon-menu"></i>首页</el-menu-item>
+            <el-menu-item index="/home"><i class="el-icon-menu"></i>News</el-menu-item>
             <el-submenu v-for="nav in navs" :index="nav.title">
-              <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}
-</template>
+              <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}</template>
               <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router">
                 {{subnav.title}}
               </el-menu-item>
@@ -62,7 +61,7 @@
     },
 
     created: function() {
-      this.$router.push('/home');
+      //this.$router.push('/home');
     },
 
     methods: {
@@ -110,6 +109,7 @@
     right: 0;
     top: 20px;
     padding-left: 25px;
+    @include minHeight(800px);
   }
 
   .header-info {

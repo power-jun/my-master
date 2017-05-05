@@ -1,5 +1,8 @@
 <template>
   <div class="news-content">
+   <div class="editor-news">
+     <router-link tag="a" :to="'/publish'">Publish News<i class="el-icon-edit"></i></router-link>
+   </div>
     <el-row v-for="(item, index) in news" :key="item.id">
       <el-row class="article-header">
         <el-col :span="20">
@@ -102,6 +105,24 @@
     i {
       color: $fc;
       margin-left: 5px;
+    }
+  }
+
+  .editor-news {
+    padding: 10px 0;
+    margin-right: 25px;
+    text-align: center;
+    margin-bottom: 20px;
+    background: #f60;
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+    a {
+      color: #fff;
+    }
+    i {
+      color: #20a0ff;
+      margin-left: 10px;
     }
   }
 </style>

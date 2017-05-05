@@ -11,6 +11,7 @@ import HomeNews from 'homeNews/homeNews'
 const Movie = r => require.ensure([], () => r(require('movie/Movie')));
 const Project = r => require.ensure([], () => r(require('project/Project')));
 const Tourism = r => require.ensure([], () => r(require('tourism/Tourism')));
+const PublishNews = r=> require.ensure([], () => r(require('homeNews/publishNews')));
 
 const routers = new VueRouter({
   mode: 'history',
@@ -22,9 +23,18 @@ const routers = new VueRouter({
       component: Body,
       children: [
         {
+          path: '',
+          redirect: '/home'
+        },
+        {
           name: 'News',
           path: '/home',
           component: HomeNews
+        },
+        {
+          name: 'publish',
+          path: '/publish',
+          component: PublishNews
         },
         {
           name: 'Movie',

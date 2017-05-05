@@ -13,7 +13,7 @@ Vue.use(VueRouter);
 Vue.use(ElementUI);
 
 /* eslint-disable no-new */
-new Vue({
+window.bus = new Vue({
   el: '#app',
   router,
   template: '<App/>',

@@ -20,6 +20,10 @@ $fc:#fff;
   transform: translateX(-50%);
 }
 
+@mixin marginCenter {
+  margin: 0 auto;
+}
+
 @mixin minWidth($width) {
   min-width: $width;
 }
