@@ -86,16 +86,25 @@ body {
   height: 100%;
   width: 100%;
   background-color: #F5F5F5;
+  overflow: hidden;
 }
 
-.clear:after {
+.clearfix:after {
   content: '';
   display: block;
   clear: both;
 }
 
-.clear {
+.clearfix {
   zoom: 1;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
 }
 
 .back_img {

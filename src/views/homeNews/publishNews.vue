@@ -2,6 +2,9 @@
   <div class="editor-form">
     <el-row v-show="!loadingFlag">
       <h3>Publish News</h3>
+     <!-- <div id="example">
+        <p>Computed reversed message: "{{ reversedMessage }}"</p>
+      </div>-->
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="News Title:">
           <el-input v-model="form.name"></el-input>
@@ -48,6 +51,13 @@
       Loading
     },
 
+    computed: {
+      // reversedMessage: function() {
+      //   `this` points to the vm instance
+      //   return this.form.name.split('').reverse().join('')
+      // }
+    },
+
     beforeMount: function() {
 
     },
@@ -58,10 +68,13 @@
       setTimeout(function() {
         that.loadingFlag = false;
       }, 2000)
+
+      console.log(this.$store.state.news);
     },
 
     created: function() {
-
+      let args = [1,2,4,4,5];
+      console.log(...args)
     },
 
     methods: {

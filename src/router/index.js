@@ -1,7 +1,6 @@
 import VueRouter from 'vue-router'
 
 import Body from 'layout/Body'
-import Header from 'layout/Header'
 import HomeNews from 'homeNews/homeNews'
 
 // import Movie from 'movie/Movie'

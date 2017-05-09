@@ -1,19 +1,20 @@
 <template>
-  <el-row class="info-content">
-    <el-col :span="4" class="content-left">
-      <div class="grid-content bg-purple">
-        <div class="header-info">
-          <el-row>
-            <p class="person-photo"><img src="../../assets/images/photo.jpeg" alt=""></p>
-            <p class="name">XJ Chen</p>
-          </el-row>
-        </div>
-        <div class="slide-nav">
-          <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
-            <el-menu-item index="/home"><i class="el-icon-menu"></i>News</el-menu-item>
-            <el-submenu v-for="nav in navs" :index="nav.title">
-              <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}</template>
-              <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router">
+  <div class="info-content">
+    <el-row>
+      <el-col :span="4" class="content-left" >
+        <div class="grid-content bg-purple">
+          <div class="header-info">
+            <el-row>
+              <p class="person-photo"><img src="../../assets/images/photo.jpeg" alt=""></p>
+              <p class="name">XJ Chen</p>
+            </el-row>
+          </div>
+          <div class="slide-nav">
+            <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
+              <el-menu-item index="/home"><i class="el-icon-menu"></i>News</el-menu-item>
+              <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title">
+                <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}</template>
+              <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="nav.title">
                 {{subnav.title}}
               </el-menu-item>
             </el-submenu>
@@ -22,16 +23,22 @@
         </div>
     </el-col>
     <el-col :span="20" class="content-right">
-      <div class="grid-content bg-purple-light">
+      <Header :parent-data="{bodyHeight}" user-name="xjchen" v-on:childMsg = "getChildMsg">
+        <h3 slot="title" class="fl">{{name}}</h3>
+      </Header>
+      <div class="grid-content bg-purple-light" :style="{maxHeight: bodyHeight + 'px'}">
         <transition name="router-fade" mode="out-in">
     	  	<router-view></router-view>
       	</transition>
       </div>
     </el-col>
-  </el-row>
+    </el-row>
+  </div>
 </template>
 
 <script>
+  import Header from './Header';
+
   export default {
     data() {
       return {
@@ -56,17 +63,34 @@
               router: '/movie/2'
             }]
           }
-        ]
+        ],
+
+        bodyHeight: '',
+        name: ''
       }
     },
 
+    components: {
+      Header
+    },
+
     created: function() {
+      this.bodyHeight = window.screen.height - 50;
       //this.$router.push('/home');
     },
 
+    mounted() {
+
+    },
+
     methods: {
-      handleOpen: function(key, keyPath) {
+      handleOpen(key, keyPath) {
         console.log(key, keyPath)
+      },
+
+      getChildMsg(childData) {
+        console.log(childData)
+        this.name = this.$store.state.userInfo.name + '  Info';
       }
     },
     //监控路由的变化
@@ -80,7 +104,6 @@
 
 <style lang="scss">
   @import '../../assets/css/mixin';
-
   // 路由动画
   .router-fade-enter-active,
   .router-fade-leave-active {
@@ -107,15 +130,17 @@
   .content-right {
     position: absolute;
     right: 0;
-    top: 20px;
-    padding-left: 25px;
     @include minHeight(800px);
+    .grid-content {
+      overflow-y: auto;
+      margin-left: 25px;
+      margin-top: 20px;
+    }
   }
 
   .header-info {
     @include wh(100%, 200px);
-    background: #000;
-    opacity: .7;
+    background: #333;
     position: relative;
     .el-row {
       margin-right: 0!important;
