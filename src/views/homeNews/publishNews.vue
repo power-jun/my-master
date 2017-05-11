@@ -70,6 +70,20 @@
       }, 2000)
 
       console.log(this.$store.state.news);
+
+      var obj = new Proxy({},{
+        get: function(target, key, receiver) {
+          console.log(`getting${key}`);
+          return Reflect.get(target, key, value, receiver);
+        },
+        set: function(target, key, value, receiver) {
+          console.log(`setting${key}`)
+          return Reflect.set(target, key, value, receiver);
+        }
+      })
+
+      obj.a = 1;
+      debugger
     },
 
     created: function() {

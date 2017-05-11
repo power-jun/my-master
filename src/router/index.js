@@ -33,7 +33,11 @@ const routers = new VueRouter({
         {
           name: 'publish',
           path: '/publish',
-          component: PublishNews
+          component: PublishNews,
+          beforeEnter: (to, from, next) => {
+            console.log(to);
+            next();
+          }
         },
         {
           name: 'Movie',
