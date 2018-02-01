@@ -5,7 +5,7 @@
         <div class="grid-content bg-purple">
           <div class="header-info">
             <el-row>
-              <p class="person-photo"><img src="../../assets/images/photo.jpeg" alt=""></p>
+              <p class="person-photo"><img src="../../assets/images/shop-logo.png" alt=""></p>
               <p class="name">XJ Chen</p>
             </el-row>
           </div>
@@ -90,7 +90,6 @@
 
       getChildMsg(childData) {
         console.log(childData)
-        this.name = this.$store.state.userInfo.name + '  Info';
       }
     },
     //监控路由的变化
