@@ -3,8 +3,7 @@
     <div class="head-top clearfix">
       <slot name="title"></slot>
       <p class="fr" :name="userInfo.age">
-        <span class="person-photo"><img src="../../assets/images/photo.jpeg" alt=""></span>
-        {{userInfo.name}}
+        <span class="person-photo"><img src="../../assets/images/photo.jpeg" alt=""></span> {{userInfo.name}}
         <i class="el-icon-setting"></i>
       </p>
     </div>
@@ -23,24 +22,24 @@
         childMessage: 'header messge',
       }
     },
-
+  
     props: ['parentData', 'userName'],
-
+  
     mounted() {
       console.log(this.parentData.bodyHeight);
       console.log(this.userName);
-
+  
       //this.$store.commit('mutationName');
       // this.mutationName();
-
+  
       //this.$store.dispatch('getUserInfo');
       this.promises();
     },
-
+  
     computed: {
       ...mapState(['userInfo'])
     },
-
+  
     methods: {
       ...mapActions(['getUserInfo']),
       // ...mapMutations(['mutationName'])

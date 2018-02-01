@@ -2,9 +2,9 @@
   <div class="editor-form">
     <el-row v-show="!loadingFlag">
       <h3>Publish News</h3>
-     <!-- <div id="example">
-        <p>Computed reversed message: "{{ reversedMessage }}"</p>
-      </div>-->
+      <!-- <div id="example">
+            <p>Computed reversed message: "{{ reversedMessage }}"</p>
+          </div>-->
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="News Title:">
           <el-input v-model="form.name"></el-input>
@@ -71,7 +71,7 @@
 
       console.log(this.$store.state.news);
 
-      var obj = new Proxy({},{
+      var obj = new Proxy({}, {
         get: function(target, key, receiver) {
           console.log(`getting${key}`);
           return Reflect.get(target, key, value, receiver);
@@ -83,11 +83,71 @@
       })
 
       obj.a = 1;
+
+      function run(generator, res) {
+
+        const ret = generator.next(res);
+        if (ret.done) return;
+        ret.value.then(function(res) {
+          run(generator, res);
+        });
+      }
+
+      let count = 1;
+
+      function tick(time) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            console.log('tick %s after %s ms', count++, time);
+            resolve();
+          }, time);
+        });
+      }
+
+      function* main() {
+        console.log('start run...');
+        yield tick(500);
+        yield tick(1000);
+        yield tick(2000);
+      }
+      run(main());
+
+      let a = new Set([1,2,3,4]);
+      let b = new Set([4,3,2,5,6])
+      let union = new Set([...a, ...b])
       debugger
+     console.log(union)
+
+    class logger {
+      printName(name = 'there') {
+        this._print(`Hello ${name}`);
+        this.name = `${name}`;
+      }
+
+      _print(msg) {
+        console.log(msg);
+      }
+    }
+
+    //new logger().printName();
+
+    class childObj extends logger {
+      constructor (x,y){
+        super();
+        super.printName();
+      }
+
+      cosnon() {
+        console.log(this.name)
+      }
+    }
+
+    new childObj().cosnon();
+
     },
 
     created: function() {
-      let args = [1,2,4,4,5];
+      let args = [1, 2, 4, 4, 5];
       console.log(...args)
     },
 
