@@ -20,50 +20,49 @@ const routers = new VueRouter({
   routes: [{
     path: '/login',
     name: 'login',
-    component: Login,
-    children: [{
-      path: '/registed',
-      name: 'registed',
-      component: Registed
-    }]
+    component: Login
+  }, {
+    path: '/registed',
+    name: 'registed',
+    component: Registed
   }, {
     path: '/',
     name: 'News',
     component: Body,
     children: [{
-        path: '',
-        redirect: '/home'
-      },
-      {
-        name: 'News',
-        path: '/home',
-        component: HomeNews
-      },
-      {
-        name: 'publish',
-        path: '/publish',
-        component: PublishNews,
-        beforeEnter: (to, from, next) => {
-          console.log(to);
-          next();
-        }
-      },
-      {
-        name: 'Movie',
-        path: '/movie/:id',
-        component: Movie,
-        // redirect: '/home' //重定向
-      },
-      {
-        name: 'Project',
-        path: '/project',
-        component: Project
-      },
-      {
-        name: 'Tourism',
-        path: '/tourism',
-        component: Tourism
+      path: '',
+      redirect: '/registed'
+    },
+    {
+      name: 'News',
+      path: '/home',
+      component: HomeNews
+    },
+    {
+      name: 'publish',
+      path: '/publish',
+      component: PublishNews,
+      beforeEnter: (to, from, next) => {
+        console.log(to);
+        next();
       }
+    },
+    {
+      name: 'Movie',
+      path: '/movie/:id',
+      component: Movie,
+      // redirect: '/home' //重定向
+    },
+    {
+      name: 'Project',
+      path: '/project',
+      component: Project
+    },
+    {
+      name: 'Tourism',
+      path: '/tourism',
+      component: Tourism
+    }
     ]
   }]
 });
