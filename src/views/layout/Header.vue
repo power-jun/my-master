@@ -3,8 +3,7 @@
     <div class="head-top clearfix">
       <slot name="title"></slot>
       <p class="fr" :name="userInfo.age">
-        <span class="person-photo"><img src="../../assets/images/shop-logo.png" alt=""></span> {{userInfo.name}}
-        <i class="el-icon-setting"></i>
+        <span class="quit-btn"><img src="../../assets/images/quit.png" alt="">退出</span>
       </p>
     </div>
   </el-row>
@@ -55,6 +54,18 @@ export default {
     display: inline-block;
     @include wh(30px, 30px);
     top: 8px;
+  }
+}
+
+.quit-btn {
+  color: #fff;
+  cursor: pointer;
+  img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -4px;
   }
 }
 </style>

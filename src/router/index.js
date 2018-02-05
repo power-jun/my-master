@@ -9,6 +9,7 @@ import HomeNews from 'homeNews/homeNews'
 // import Tourism from 'tourism/Tourism'
 
 const Registed = r => require.ensure([], () => r(require('registed/Registed')));
+const ApplyShop = r => require.ensure([], () => r(require('applyShop/ApplyShop')));
 const Movie = r => require.ensure([], () => r(require('movie/Movie')));
 const Project = r => require.ensure([], () => r(require('project/Project')));
 const Tourism = r => require.ensure([], () => r(require('tourism/Tourism')));
@@ -26,12 +27,16 @@ const routers = new VueRouter({
     name: 'registed',
     component: Registed
   }, {
+    path: '/applyShop',
+    name: 'ApplyShop',
+    component: ApplyShop
+  },{
     path: '/',
     name: 'News',
     component: Body,
     children: [{
       path: '',
-      redirect: '/registed'
+      redirect: '/login'
     },
     {
       name: 'News',

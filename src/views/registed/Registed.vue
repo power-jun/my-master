@@ -4,7 +4,7 @@
       <el-row class="registed-center">
         <span>注册</span>
       </el-row>
-      <el-form-item label="账号" prop="account" 
+      <!-- <el-form-item label="账号" prop="account" 
       :rules="[
         {required: true, message: '账号不能为空'},
         {type: 'number', message: '账号格式不正确，只能由4~10位的【字母、数字】组成，不区分大小写，且不能以数字开头'},
@@ -14,7 +14,7 @@
       </el-form-item>
       <el-form-item label="姓名">
         <el-input v-model="registedForm.name" placeholder="请填写真实姓名"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="手机号">
         <el-input v-model="registedForm.phone" placeholder="用于找回密码或登录，请认真填写"></el-input>
       </el-form-item>
@@ -81,6 +81,7 @@ export default {
   height: 500px;
   margin-left: -300px;
   margin-top: -250px;
+  box-shadow: 0 1px 5px #422c2c;
 }
 
 .registed-center {

@@ -10,7 +10,7 @@
       <el-form-item>
         <el-input v-model="loginForm.password"  placeholder="密码"></el-input>
       </el-form-item>
-       <el-form-item :inline="true" class="login-code-line">
+       <el-form-item :inline="true" class="code-line">
          <el-col :span="18"><el-input v-model="loginForm.code" placeholder="请输入验证码"></el-input></el-col>
          <el-col :span="6" class="code-img"><img src="../../assets/images/code.png" alt=""/></el-col>
       </el-form-item>
@@ -18,8 +18,8 @@
         <el-button type="primary" @click="onSubmit">登录</el-button>
       </el-form-item>
       <el-row class="login-center">
-        <router-link tag="a" :to="'/registed'">去注册</router-link>
-        <!-- <router-link tag="a" :to="'/forgetPassword'">忘记密码</router-link> -->
+        <router-link tag="a" :to="'/registered'">去注册</router-link>
+        <router-link tag="a" :to="'/forgetPassword'">忘记密码</router-link>
       </el-row>
     </el-form>
   </div>
@@ -63,7 +63,6 @@ export default {
   top: 50%;
   margin-left: -150px;
   margin-top: -175px;
-  box-shadow: 0 1px 5px #422c2c;
 }
 
 .login-center {
@@ -87,7 +86,7 @@ export default {
   color: #666;
 }
 
-.login-code-line {
+.code-line {
   .el-col-18 {
     width: 69%;
     margin-right: 10px;
