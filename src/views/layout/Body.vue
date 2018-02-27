@@ -43,10 +43,10 @@
     data() {
       return {
         navs: [{
-            title: 'Tourism',
+            title: '开店申请',
             subnavs: [{
-              title: 'tourism',
-              router: '/tourism'
+              title: '商家入驻申请',
+              router: '/applyShop'
             }]
           },
           {

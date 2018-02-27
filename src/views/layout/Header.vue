@@ -3,7 +3,8 @@
     <div class="head-top clearfix">
       <slot name="title"></slot>
       <p class="fr" :name="userInfo.age">
-        <span class="quit-btn"><img src="../../assets/images/quit.png" alt="">退出</span>
+        <router-link tag="a" :to="'/login'" class="modify-password quit-btn"><img src="../../assets/images/quit.png" alt="">退出<i class="el-icon-edit"></i></router-link>
+        <router-link tag="a" :to="'/changePassword'" class="modify-password">修改密码<i class="el-icon-edit"></i></router-link>
       </p>
     </div>
   </el-row>
@@ -67,5 +68,11 @@ export default {
     margin-right: 5px;
     margin-top: -4px;
   }
+}
+
+.modify-password {
+  color: #fff;
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

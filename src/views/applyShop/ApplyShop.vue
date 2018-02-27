@@ -4,15 +4,32 @@
       <!-- <div id="example">
             <p>Computed reversed message: "{{ reversedMessage }}"</p>
           </div>-->
-      <el-form ref="form" :model="form" label-width="100px">
+      <el-form ref="form" :model="form" label-width="160px">
         <h3>商家入驻申请</h3>
-        <el-form-item label="News Title:">
+        <p class="form-line-title">入驻联系人信息</p>
+        <el-form-item label="联系人姓名:" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="News Cont:">
-          <el-input type="textarea" v-model="form.desc"></el-input>
+        <el-form-item label="联系人手机:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="Upload img:">
+         <el-form-item label="电子邮箱:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <p class="form-line-title">入驻联系人信息</p>
+        <el-form-item label="公司名称:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="营业执照注册号:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="法定代表人姓名:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="法定代表身份证号码:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="营业执照副本电子版:">
           <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -20,8 +37,92 @@
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
+        <el-form-item label="法人身份证电子版:">
+          <el-row>
+            <el-col :span="6">
+              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+                <i class="el-icon-plus"></i>
+              </el-upload>
+              <p class="pic-tips">正面</p>
+              <el-dialog v-model="dialogVisible" size="tiny">
+                <img width="100%" :src="dialogImageUrl" alt="">
+              </el-dialog>
+            </el-col>
+            <el-col :span="6">
+              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+                <i class="el-icon-plus"></i>
+              </el-upload>
+              <p class="pic-tips">反面</p>
+              <el-dialog v-model="dialogVisible" size="tiny">
+                <img width="100%" :src="dialogImageUrl" alt="">
+              </el-dialog>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <p class="form-line-title">银行账户信息</p>
+        <el-form-item label="银行开户名:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="公司银行账号:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="开户行支行名称:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="开户行支行地址:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <p class="form-line-title">经营信息</p>
+        <el-form-item label="公司类型:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="最近一年销售额:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="预计评价客单价:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="常用快递公司:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <p class="form-line-title">店铺信息</p>
+        <el-form-item label="店铺头像:" :rules="[{ required: true, message: ''}]">
+          <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+              <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog v-model="dialogVisible" size="tiny">
+              <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="店铺类型">
+          <el-radio-group v-model="form.resource">
+            <el-radio label="旗舰店"></el-radio>
+            <el-radio label="专营店"></el-radio>
+            <el-radio label="专卖店"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="店铺名称:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="店铺描述:">
+          <el-input type="textarea" v-model="form.desc" placeholder="至少输入50字，最多200字"></el-input>
+        </el-form-item>
+        <el-form-item label="所在城市">
+          <el-select placeholder="全部">
+            <el-option label="北京" value="shanghai"></el-option>
+            <el-option label="深圳" value="beijing"></el-option>
+          </el-select>
+          <el-select placeholder="全部">
+            <el-option label="区域1" value="shanghai"></el-option>
+            <el-option label="区域2" value="beijing"></el-option>
+          </el-select>
+          <el-select placeholder="全部">
+            <el-option label="区域1" value="shanghai"></el-option>
+            <el-option label="区域2" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item>
-          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit" class="submit-btn">立即发布</el-button>
+          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit" class="submit-btn">提交申请</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -51,12 +152,7 @@ export default {
     Loading
   },
 
-  computed: {
-    // reversedMessage: function() {
-    //   `this` points to the vm instance
-    //   return this.form.name.split('').reverse().join('')
-    // }
-  },
+  computed: {},
 
   beforeMount: function() {},
 
@@ -66,88 +162,6 @@ export default {
     setTimeout(function() {
       that.loadingFlag = false;
     }, 2000);
-
-    console.log(this.$store.state.news);
-
-    var obj = new Proxy(
-      {},
-      {
-        get: function(target, key, receiver) {
-          console.log(`getting${key}`);
-          return Reflect.get(target, key, value, receiver);
-        },
-        set: function(target, key, value, receiver) {
-          console.log(`setting${key}`);
-          return Reflect.set(target, key, value, receiver);
-        }
-      }
-    );
-
-    obj.a = 1;
-
-    function run(generator, res) {
-      const ret = generator.next(res);
-      if (ret.done) return;
-      ret.value.then(function(res) {
-        run(generator, res);
-      });
-    }
-
-    let count = 1;
-
-    function tick(time) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          console.log("tick %s after %s ms", count++, time);
-          resolve();
-        }, time);
-      });
-    }
-
-    function* main() {
-      console.log("start run...");
-      yield tick(500);
-      yield tick(1000);
-      yield tick(2000);
-    }
-    run(main());
-
-    let a = new Set([1, 2, 3, 4]);
-    let b = new Set([4, 3, 2, 5, 6]);
-    let union = new Set([...a, ...b]);
-    debugger;
-    console.log(union);
-
-    class logger {
-      printName(name = "there") {
-        this._print(`Hello ${name}`);
-        this.name = `${name}`;
-      }
-
-      _print(msg) {
-        console.log(msg);
-      }
-    }
-
-    //new logger().printName();
-
-    class childObj extends logger {
-      constructor(x, y) {
-        super();
-        super.printName();
-      }
-
-      cosnon() {
-        console.log(this.name);
-      }
-    }
-
-    new childObj().cosnon();
-  },
-
-  created: function() {
-    let args = [1, 2, 4, 4, 5];
-    console.log(...args);
   },
 
   methods: {
@@ -203,17 +217,16 @@ export default {
 <style lang="scss">
 @import "../../assets/css/mixin";
 .editor-form {
-  position: fixed;
   width: 100%;
   height: 100%;
   background: #fff;
   // background: url("../../assets/images/login_bg_color.jpg");
-  @include minHeight(500px);
+  margin-bottom: 150px;
   h3 {
     text-align: center;
     margin-bottom: 20px;
     padding: 20px 0 0;
-    color: #fff;
+    color: #333;
   }
   .el-form {
     width: 50%;
@@ -222,7 +235,7 @@ export default {
     // box-shadow: 0 1px 5px #422c2c;
     textarea {
       width: 100%;
-      height: 300px;
+      height: 150px;
       resize: none;
     }
   }
@@ -257,5 +270,21 @@ export default {
   width: 108px;
   height: 108px;
   display: block;
+}
+
+.form-line-title {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.el-form-item__label:before {
+  content: "*";
+  color: #f56c6c;
+  margin-right: 4px;
+}
+
+.pic-tips {
+  text-align: center;
+  color: #7e7e7e;
 }
 </style>

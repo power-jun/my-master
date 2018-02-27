@@ -16,20 +16,20 @@
         <el-input v-model="registedForm.name" placeholder="请填写真实姓名"></el-input>
       </el-form-item> -->
       <el-form-item label="手机号">
-        <el-input v-model="registedForm.phone" placeholder="用于找回密码或登录，请认真填写"></el-input>
+        <el-input v-model="registedForm.phone" placeholder="请输入手机号"></el-input>
       </el-form-item>
       <el-form-item label="短信验证码" :inline="true" class="code-line">
          <el-col :span="18"><el-input v-model="registedForm.code" placeholder="请输入短信中收到的验证码"></el-input></el-col>
         <el-col :span="6" class="get-code-btn"><el-button type="primary" @click="getCode">获取验证码</el-button></el-col>
       </el-form-item>
      <el-form-item label="密码">
-        <el-input v-model="registedForm.password" placeholder="请输入密码（6~20位【字母、数字】组合，区分大小写）"></el-input>
+        <el-input v-model="registedForm.password" placeholder="请输入密码"></el-input>
       </el-form-item>
      <el-form-item label="请确认">
         <el-input v-model="registedForm.confirmPassword" placeholder="确认密码"></el-input>
       </el-form-item>
       <el-form-item class="primary-btn">
-        <el-button type="primary" @click="onSubmit('registedForm')">提交</el-button>
+        <el-button type="primary" @click="onSubmit('registedForm')">立即注册</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -78,7 +78,7 @@ export default {
 
 .registed-form {
   width: 500px;
-  height: 500px;
+  height: 300px;
   margin-left: -300px;
   margin-top: -250px;
   box-shadow: 0 1px 5px #422c2c;
@@ -94,6 +94,7 @@ export default {
 
 .primary-btn {
   margin-top: 10px;
+  margin-left: 100px;
  .el-button--primary{
   padding: 10px 60px;
  }

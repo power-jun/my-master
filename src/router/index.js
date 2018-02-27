@@ -4,6 +4,7 @@ import Login from 'login/Login'
 import Body from 'layout/Body'
 import HomeNews from 'homeNews/homeNews'
 
+
 // import Movie from 'movie/Movie'
 // import Project from 'project/Project'
 // import Tourism from 'tourism/Tourism'
@@ -14,6 +15,7 @@ const Movie = r => require.ensure([], () => r(require('movie/Movie')));
 const Project = r => require.ensure([], () => r(require('project/Project')));
 const Tourism = r => require.ensure([], () => r(require('tourism/Tourism')));
 const PublishNews = r => require.ensure([], () => r(require('homeNews/publishNews')));
+const ChangePassword = r => require.ensure([], () => r(require('changePassword/ChangePassword')));
 
 const routers = new VueRouter({
   mode: 'history',
@@ -27,9 +29,9 @@ const routers = new VueRouter({
     name: 'registed',
     component: Registed
   }, {
-    path: '/applyShop',
-    name: 'ApplyShop',
-    component: ApplyShop
+    path: '/changePassword',
+    name: 'changePassword',
+    component: ChangePassword
   },{
     path: '/',
     name: 'News',
@@ -37,6 +39,11 @@ const routers = new VueRouter({
     children: [{
       path: '',
       redirect: '/login'
+    },
+    {
+      path: '/applyShop',
+      name: 'ApplyShop',
+      component: ApplyShop
     },
     {
       name: 'News',
