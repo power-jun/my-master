@@ -1,69 +1,25 @@
-<template>
+ <template>
   <div class="editor-form">
     <el-row v-show="!loadingFlag" class="apply-shop-form">
-      <!-- <div id="example">
-            <p>Computed reversed message: "{{ reversedMessage }}"</p>
-          </div>-->
       <el-form ref="form" :model="form" label-width="160px">
-        <h3>商家入驻申请</h3>
-        <p class="form-line-title">入驻联系人信息</p>
-        <el-form-item label="联系人姓名:" :rules="[{ required: true, message: ''}]">
+        <h3>商品录入</h3>
+        <el-form-item label="商品名称:" class="required" placeholder="不超过20个字" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="联系人手机:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-         <el-form-item label="电子邮箱:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <p class="form-line-title">入驻联系人信息</p>
-        <el-form-item label="公司名称:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="营业执照注册号:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="法定代表人姓名:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="法定代表身份证号码:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="营业执照副本电子版:">
+        <!-- <VueUEditor></VueUEditor> -->
+        <el-form-item label="商品图片:">
           <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
             <i class="el-icon-plus"></i>
           </el-upload>
+          <p class="pic-tips">建议上传比例为 1:1 的图片，图片大小不超过 200KB,图片最多不能超过五张</p>
           <el-dialog v-model="dialogVisible" size="tiny">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
-        <el-form-item label="法人身份证电子版:">
-          <el-row>
-            <el-col :span="6">
-              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <p class="pic-tips">正面</p>
-              <el-dialog v-model="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
-            </el-col>
-            <el-col :span="6">
-              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <p class="pic-tips">反面</p>
-              <el-dialog v-model="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <p class="form-line-title">银行账户信息</p>
-        <el-form-item label="银行开户名:" :rules="[{ required: true, message: ''}]">
+        <el-form-item label="产地:" class="required" placeholder="不超过 40个字" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="公司银行账号:" :rules="[{ required: true, message: ''}]">
+        <el-form-item label="规格:" class="required" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="开户行支行名称:" :rules="[{ required: true, message: ''}]">
@@ -72,20 +28,6 @@
         <el-form-item label="开户行支行地址:" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <p class="form-line-title">经营信息</p>
-        <el-form-item label="公司类型:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="最近一年销售额:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="预计评价客单价:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="常用快递公司:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <p class="form-line-title">店铺信息</p>
         <el-form-item label="店铺头像:" :rules="[{ required: true, message: ''}]">
           <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
               <i class="el-icon-plus"></i>
@@ -132,6 +74,7 @@
 
 <script>
 import Loading from "components/loading";
+// import VueUEditor from 'vue-ueditor';
 
 export default {
   data() {
@@ -150,6 +93,7 @@ export default {
 
   components: {
     Loading
+    // VueUEditor
   },
 
   computed: {},
@@ -157,7 +101,6 @@ export default {
   beforeMount: function() {},
 
   mounted: function() {
-    // bus.$emit('loadingDestory', false);
     this.loadingFlag = false;
   },
 
@@ -217,7 +160,6 @@ export default {
   width: 100%;
   height: 100%;
   background: #fff;
-  // background: url("../../assets/images/login_bg_color.jpg");
   margin-bottom: 150px;
   h3 {
     text-align: center;
@@ -229,7 +171,6 @@ export default {
     width: 50%;
     @include marginCenter;
     padding: 20px;
-    // box-shadow: 0 1px 5px #422c2c;
     textarea {
       width: 100%;
       height: 150px;
@@ -269,12 +210,7 @@ export default {
   display: block;
 }
 
-.form-line-title {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.el-form-item__label:before {
+.required .el-form-item__label:before {
   content: "*";
   color: #f56c6c;
   margin-right: 4px;

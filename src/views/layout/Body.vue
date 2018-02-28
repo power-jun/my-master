@@ -50,10 +50,16 @@
             }]
           },
           {
-            title: 'Work',
+            title: '商品管理',
             subnavs: [{
-              title: 'project',
-              router: '/project?page=12'
+              title: '商品管理',
+              router: '/commodityManage'
+            },{
+              title: '商品新增',
+              router: '/addedGoods'
+            },{
+              title: '商品编辑',
+              router: '/modifyGoods'
             }]
           },
           {
@@ -133,6 +139,7 @@
     .grid-content {
       overflow-y: auto;
       margin-left: 25px;
+      margin-right: 25px;
       margin-top: 20px;
     }
   }

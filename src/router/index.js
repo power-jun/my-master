@@ -16,6 +16,9 @@ const Project = r => require.ensure([], () => r(require('project/Project')));
 const Tourism = r => require.ensure([], () => r(require('tourism/Tourism')));
 const PublishNews = r => require.ensure([], () => r(require('homeNews/publishNews')));
 const ChangePassword = r => require.ensure([], () => r(require('changePassword/ChangePassword')));
+const CommodityManage = r => require.ensure([], () => r(require('commodityManage/CommodityManage')));
+const AddedGoods = r => require.ensure([], () => r(require('addedGoods/AddedGoods')));
+const ModifyGoods = r => require.ensure([], () => r(require('modifyGoods/ModifyGoods')));
 
 const routers = new VueRouter({
   mode: 'history',
@@ -44,6 +47,21 @@ const routers = new VueRouter({
       path: '/applyShop',
       name: 'ApplyShop',
       component: ApplyShop
+    },
+    {
+      path: '/commodityManage',
+      name: 'CommodityManage',
+      component: CommodityManage
+    },
+    {
+      path: '/AddedGoods',
+      name: 'AddedGoods',
+      component: AddedGoods
+    },
+    {
+      path: '/modifyGoods',
+      name: 'ModifyGoods',
+      component: ModifyGoods
     },
     {
       name: 'News',
