@@ -1,12 +1,19 @@
  <template>
   <div class="editor-form">
     <el-row v-show="!loadingFlag" class="apply-shop-form">
-      <el-form ref="form" :model="form" label-width="160px">
+      <el-form ref="form" :model="form" label-width="16%">
         <h3>商品录入</h3>
         <el-form-item label="商品名称:" class="required" placeholder="不超过20个字" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.goodsName"></el-input>
         </el-form-item>
-        <!-- <VueUEditor></VueUEditor> -->
+        <el-form-item label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: ''}]">
+          <quill-editor :options="editorOption"
+                          ref="QuillEditor"
+                          @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                          @change="onEditorChange($event)"
+                          @ready="onEditorReady($event)" style="width: 800px;height: 400px">
+            </quill-editor>
+        </el-form-item>
         <el-form-item label="商品图片:">
           <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
             <i class="el-icon-plus"></i>
@@ -17,54 +24,60 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="产地:" class="required" placeholder="不超过 40个字" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.origin"></el-input>
         </el-form-item>
         <el-form-item label="规格:" class="required" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.specification"></el-input>
+        </el-form-item>
+        <el-form-item label="库存量:" class="required" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="开户行支行名称:" :rules="[{ required: true, message: ''}]">
+        <el-form-item label="单账号限购数量:" class="required" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input> 
+        </el-form-item>
+        <el-form-item label="成本:" class="required" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="开户行支行地址:" :rules="[{ required: true, message: ''}]">
+        <el-form-item label="原价:" class="required" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="店铺头像:" :rules="[{ required: true, message: ''}]">
-          <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
-              <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog v-model="dialogVisible" size="tiny">
-              <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
+        <el-form-item label="最大优惠金额:" class="required" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="店铺类型">
+         <el-form-item label="是否限时购买">
           <el-radio-group v-model="form.resource">
-            <el-radio label="旗舰店"></el-radio>
-            <el-radio label="专营店"></el-radio>
-            <el-radio label="专卖店"></el-radio>
+            <el-radio label="是"></el-radio>
+            <el-radio label="否"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="店铺名称:" :rules="[{ required: true, message: ''}]">
+        <el-form-item label="限时购买时间">
+          <el-col :span="10">
+            <el-date-picker type="date" placeholder="选择开始日期" v-model="form.dateStart"></el-date-picker>
+          </el-col>
+          <el-col :span="10">
+            <el-date-picker type="date" placeholder="选择结束日期" v-model="form.dateEnd"></el-date-picker>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="分类">
+          <el-select>
+            <el-option label="服装" value="shanghai"></el-option>
+            <el-option label="饮料" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="尺码:" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="店铺描述:">
-          <el-input type="textarea" v-model="form.desc" placeholder="至少输入50字，最多200字"></el-input>
+         <el-form-item label="颜色:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="所在城市">
-          <el-select placeholder="全部">
-            <el-option label="北京" value="shanghai"></el-option>
-            <el-option label="深圳" value="beijing"></el-option>
-          </el-select>
-          <el-select placeholder="全部">
-            <el-option label="区域1" value="shanghai"></el-option>
-            <el-option label="区域2" value="beijing"></el-option>
-          </el-select>
-          <el-select placeholder="全部">
-            <el-option label="区域1" value="shanghai"></el-option>
-            <el-option label="区域2" value="beijing"></el-option>
-          </el-select>
+         <el-form-item label="品牌:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+         <el-form-item label="材质:" :rules="[{ required: true, message: ''}]">
+          <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit" class="submit-btn">提交申请</el-button>
+          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit" class="submit-btn">确认新建</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -74,7 +87,13 @@
 
 <script>
 import Loading from "components/loading";
-// import VueUEditor from 'vue-ueditor';
+import Vue from "vue";
+
+import { quillEditor } from "vue-quill-editor";
+// require styles
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
 
 export default {
   data() {
@@ -82,8 +101,12 @@ export default {
       form: {
         name: "",
         imageUrl: "",
-        desc: ""
+        desc: "",
+        dateStart: "",
+        dateEnd: ""
       },
+      content: "",
+      editorOption: {},
       dialogImageUrl: "",
       dialogVisible: false,
       fullscreenLoading: false,
@@ -92,11 +115,15 @@ export default {
   },
 
   components: {
-    Loading
-    // VueUEditor
+    Loading,
+    quillEditor
   },
 
-  computed: {},
+  computed: {
+    editor() {
+      return this.$refs.QuillEditor.quill;
+    }
+  },
 
   beforeMount: function() {},
 
@@ -149,7 +176,18 @@ export default {
     handlePictureCardPreview: function(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-    }
+    },
+
+    getUEContent() {
+      return this.editor.getContent();
+    },
+    onEditorChange({ editor, html, text }) {
+      this.content = html;
+      console.log(html);
+    },
+    onEditorFocus() {},
+    onEditorReady() {},
+    onEditorBlur() {}
   }
 };
 </script>
@@ -217,7 +255,12 @@ export default {
 }
 
 .pic-tips {
-  text-align: center;
+  text-align: left;
   color: #7e7e7e;
+}
+
+.goods-describe .el-form-item__content {
+  width: 80%;
+  height: 500px;
 }
 </style>

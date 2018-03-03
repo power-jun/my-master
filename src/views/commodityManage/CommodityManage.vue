@@ -13,12 +13,12 @@
       </el-select>
     </el-form-item>
     <el-form-item>
-    <el-col :span="10" style="margin-right: 30px;">
-      <el-date-picker type="date" placeholder="选择开始日期" v-model="formSearch.dateStart"></el-date-picker>
-    </el-col>
-    <el-col :span="10">
-      <el-date-picker type="date" placeholder="选择结束日期" v-model="formSearch.dateEnd"></el-date-picker>
-    </el-col>
+      <el-col :span="10" style="margin-right: 30px;">
+        <el-date-picker type="date" placeholder="选择开始日期" v-model="formSearch.dateStart"></el-date-picker>
+      </el-col>
+      <el-col :span="10">
+        <el-date-picker type="date" placeholder="选择结束日期" v-model="formSearch.dateEnd"></el-date-picker>
+      </el-col>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">查询</el-button>

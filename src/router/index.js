@@ -2,23 +2,21 @@ import VueRouter from 'vue-router'
 
 import Login from 'login/Login'
 import Body from 'layout/Body'
-import HomeNews from 'homeNews/homeNews'
-
-
-// import Movie from 'movie/Movie'
-// import Project from 'project/Project'
-// import Tourism from 'tourism/Tourism'
 
 const Registed = r => require.ensure([], () => r(require('registed/Registed')));
 const ApplyShop = r => require.ensure([], () => r(require('applyShop/ApplyShop')));
-const Movie = r => require.ensure([], () => r(require('movie/Movie')));
-const Project = r => require.ensure([], () => r(require('project/Project')));
-const Tourism = r => require.ensure([], () => r(require('tourism/Tourism')));
-const PublishNews = r => require.ensure([], () => r(require('homeNews/publishNews')));
 const ChangePassword = r => require.ensure([], () => r(require('changePassword/ChangePassword')));
 const CommodityManage = r => require.ensure([], () => r(require('commodityManage/CommodityManage')));
 const AddedGoods = r => require.ensure([], () => r(require('addedGoods/AddedGoods')));
 const ModifyGoods = r => require.ensure([], () => r(require('modifyGoods/ModifyGoods')));
+const OrderList = r => require.ensure([], () => r(require('orderList/OrderList')));
+const OrderDetails = r => require.ensure([], () => r(require('orderDetails/OrderDetails')));
+const DevaluationProducts = r => require.ensure([], () => r(require('devaluationProducts/DevaluationProducts')));
+const FinancialOverview = r => require.ensure([], () => r(require('financialOverview/FinancialOverview')));
+const CashManagement = r => require.ensure([], () => r(require('cashManagement/CashManagement')));
+const SalesStatistics = r => require.ensure([], () => r(require('salesStatistics/SalesStatistics')));
+const OrderStatistics = r => require.ensure([], () => r(require('orderStatistics/OrderStatistics')));
+const ProfitStatistics = r => require.ensure([], () => r(require('profitStatistics/ProfitStatistics')));
 
 const routers = new VueRouter({
   mode: 'history',
@@ -35,7 +33,7 @@ const routers = new VueRouter({
     path: '/changePassword',
     name: 'changePassword',
     component: ChangePassword
-  },{
+  }, {
     path: '/',
     name: 'News',
     component: Body,
@@ -54,7 +52,7 @@ const routers = new VueRouter({
       component: CommodityManage
     },
     {
-      path: '/AddedGoods',
+      path: '/addedGoods',
       name: 'AddedGoods',
       component: AddedGoods
     },
@@ -64,34 +62,44 @@ const routers = new VueRouter({
       component: ModifyGoods
     },
     {
-      name: 'News',
-      path: '/home',
-      component: HomeNews
+      path: '/orderList',
+      name: 'OrderList',
+      component: OrderList
     },
     {
-      name: 'publish',
-      path: '/publish',
-      component: PublishNews,
-      beforeEnter: (to, from, next) => {
-        console.log(to);
-        next();
-      }
+      path: '/orderDetails',
+      name: 'OrderDetails',
+      component: OrderDetails
     },
     {
-      name: 'Movie',
-      path: '/movie/:id',
-      component: Movie,
-      // redirect: '/home' //重定向
+      path: '/devaluationProducts',
+      name: 'DevaluationProducts',
+      component: DevaluationProducts
     },
     {
-      name: 'Project',
-      path: '/project',
-      component: Project
+      path: '/financialOverview',
+      name: 'FinancialOverview',
+      component: FinancialOverview
     },
     {
-      name: 'Tourism',
-      path: '/tourism',
-      component: Tourism
+      path: '/cashManagement',
+      name: 'CashManagement',
+      component: CashManagement
+    },
+    {
+      path: '/salesStatistics',
+      name: 'SalesStatistics',
+      component: SalesStatistics
+    },
+    {
+      path: '/orderStatistics',
+      name: 'OrderStatistics',
+      component: OrderStatistics
+    },
+    {
+      path: '/profitStatistics',
+      name: 'ProfitStatistics',
+      component: ProfitStatistics
     }
     ]
   }]
