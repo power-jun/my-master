@@ -6,16 +6,15 @@
           <div class="header-info">
             <el-row>
               <p class="person-photo"><img src="../../assets/images/shop-logo.png" alt=""></p>
-              <p class="name">XJ Chen</p>
+              <p class="name">XX茶叶</p>
             </el-row>
           </div>
           <div class="slide-nav">
             <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
-              <el-menu-item index="/home"><i class="el-icon-menu"></i>News</el-menu-item>
               <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title">
-                <template slot="title"><i class="el-icon-menu"></i>{{nav.title}}</template>
+                <template slot="title">{{nav.title}}</template>
               <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="nav.title">
-                {{subnav.title}}
+                <i class="icon-menu"></i>{{subnav.title}}
               </el-menu-item>
             </el-submenu>
           </el-menu>
@@ -59,16 +58,49 @@
               router: '/addedGoods'
             },{
               title: '商品编辑',
-              router: '/modifyGoods'
+              router: '/addedGoods'
             }]
           },
           {
-            title: 'Collect',
+            title: '订单管理',
             subnavs: [{
-              title: 'movie',
-              router: '/movie/2'
+              title: '订单列表',
+              router: '/OrderList'
+            },{
+              title: '订单详情',
+              router: '/OrderDetails'
             }]
-          }
+          },
+          {
+            title: '营销管理',
+            subnavs: [{
+              title: '首推产品设置',
+              router: '/devaluationProducts'
+            }]
+          },
+          {
+            title: '财务管理',
+            subnavs: [{
+              title: '财务概览',
+              router: '/financialOverview'
+            },{
+              title: '提现管理',
+              router: '/cashManagement'
+            }]
+          },
+          {
+            title: '销售统计',
+            subnavs: [{
+              title: '销售额统计',
+              router: '/salesStatistics'
+            },{
+              title: '订单统计',
+              router: '/orderStatistics'
+            },{
+              title: '利润统计',
+              router: '/profitStatistics'
+            }]
+          },
         ],
 
         bodyHeight: '',
@@ -142,6 +174,17 @@
       margin-right: 25px;
       margin-top: 20px;
     }
+  }
+
+  .icon-menu {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #666;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-top: -2px;
+    margin-right: 5px;
   }
 
   .header-info {

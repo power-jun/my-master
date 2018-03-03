@@ -196,7 +196,7 @@ export default {
     },
 
     errorFun: function(file, fileList) {
-      debugger;
+      
     },
 
     handleRemove(file, fileList) {
