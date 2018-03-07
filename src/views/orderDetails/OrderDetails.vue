@@ -2,9 +2,13 @@
  <div>
    <div v-show="!loadingFlag">
     <el-row class="order-detail">
-      <el-col :span="6">订单编号： 20170608562364452</el-col>
-      <el-col :span="6">用户ID: 65423</el-col>
-      <el-col :span="6">用户昵称：飞扬</el-col>
+      <el-col :span="20">订单编号： 20170608562364452</el-col>
+    </el-row>
+    <el-row class="order-detail">
+      <el-col :span="20">用户ID: 65423</el-col>
+    </el-row>
+    <el-row class="order-detail">
+      <el-col :span="20">用户昵称：飞扬</el-col>
     </el-row>
     <el-table :data="tableData3" border style="text-align: center">
       <el-table-column
@@ -40,14 +44,24 @@
     <div class="order-address">
       <el-row class="order-detail">
         <el-col :span="6">应付款：200元</el-col>
-        <el-col :span="6">通用红包: -20元</el-col>
-        <el-col :span="6">付款方式：微信支付</el-col>
-        <el-col :span="6">实付款: ￥88.00</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="6">收货人信息：李先生</el-col>
-        <el-col :span="6">收货人手机：13800138000</el-col>
-        <el-col :span="12">收货人地址：XXX省XXX市XXX区XXXX街道XXX小区XXXX楼</el-col>
+        <el-col :span="20">通用红包: -20元</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">付款方式：微信支付</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">实付款: ￥88.00</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">收货人信息：李先生</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">收货人手机：13800138000</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">收货人地址：XXX省XXX市XXX区XXXX街道XXX小区XXXX楼</el-col>
       </el-row>
       <el-form :inline="true" :model="form" class="form-inline">
         <el-form-item label="商家订单备注：">

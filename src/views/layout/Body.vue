@@ -1,7 +1,7 @@
 <template>
   <div class="info-content">
     <el-row>
-      <el-col :span="4" class="content-left" >
+      <el-col :span="4" class="content-left" :style="{height: bodyHeight + 'px'}">
         <div class="grid-content bg-purple">
           <div class="header-info">
             <el-row>
@@ -11,6 +11,7 @@
           </div>
           <div class="slide-nav">
             <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
+              <el-menu-item index="/BusinessInformation"><i class="el-icon-menu"></i>商家信息</el-menu-item>
               <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title">
                 <template slot="title">{{nav.title}}</template>
               <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="nav.title">
@@ -153,20 +154,17 @@
   }
 
   .info-content {
-    @include minWidth(1520px);
+    @include minWidth(1290px);
   }
 
   .content-left {
-    position: fixed;
     height: 100%;
     background: $fc;
     padding-right: 0!important;
-    @include minWidth(250px);
+    // @include minWidth(250px);
   }
 
   .content-right {
-    position: absolute;
-    right: 0;
     @include minHeight(800px);
     .grid-content {
       overflow-y: auto;

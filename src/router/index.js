@@ -4,6 +4,7 @@ import Login from 'login/Login'
 import Body from 'layout/Body'
 
 const Registed = r => require.ensure([], () => r(require('registed/Registed')));
+const ForgetPassword = r => require.ensure([], () => r(require('forgetPassword/ForgetPassword')));
 const ApplyShop = r => require.ensure([], () => r(require('applyShop/ApplyShop')));
 const ChangePassword = r => require.ensure([], () => r(require('changePassword/ChangePassword')));
 const CommodityManage = r => require.ensure([], () => r(require('commodityManage/CommodityManage')));
@@ -17,6 +18,7 @@ const CashManagement = r => require.ensure([], () => r(require('cashManagement/C
 const SalesStatistics = r => require.ensure([], () => r(require('salesStatistics/SalesStatistics')));
 const OrderStatistics = r => require.ensure([], () => r(require('orderStatistics/OrderStatistics')));
 const ProfitStatistics = r => require.ensure([], () => r(require('profitStatistics/ProfitStatistics')));
+const BusinessInformation = r => require.ensure([], () => r(require('businessInformation/BusinessInformation')));
 
 const routers = new VueRouter({
   mode: 'history',
@@ -34,6 +36,11 @@ const routers = new VueRouter({
     name: 'changePassword',
     component: ChangePassword
   }, {
+    path: '/forgetPassword',
+    name: 'forgetPassword',
+    component: ForgetPassword
+  },
+  {
     path: '',
     redirect: '/login'
   }, {
@@ -41,66 +48,71 @@ const routers = new VueRouter({
     name: 'business',
     component: Body,
     children: [
-    {
-      path: '/applyShop',
-      name: 'ApplyShop',
-      component: ApplyShop
-    },
-    {
-      path: '/commodityManage',
-      name: 'CommodityManage',
-      component: CommodityManage
-    },
-    {
-      path: '/addedGoods',
-      name: 'AddedGoods',
-      component: AddedGoods
-    },
-    {
-      path: '/modifyGoods',
-      name: 'ModifyGoods',
-      component: ModifyGoods
-    },
-    {
-      path: '/orderList',
-      name: 'OrderList',
-      component: OrderList
-    },
-    {
-      path: '/orderDetails',
-      name: 'OrderDetails',
-      component: OrderDetails
-    },
-    {
-      path: '/devaluationProducts',
-      name: 'DevaluationProducts',
-      component: DevaluationProducts
-    },
-    {
-      path: '/financialOverview',
-      name: 'FinancialOverview',
-      component: FinancialOverview
-    },
-    {
-      path: '/cashManagement',
-      name: 'CashManagement',
-      component: CashManagement
-    },
-    {
-      path: '/salesStatistics',
-      name: 'SalesStatistics',
-      component: SalesStatistics
-    },
-    {
-      path: '/orderStatistics',
-      name: 'OrderStatistics',
-      component: OrderStatistics
-    },
-    {
-      path: '/profitStatistics',
-      name: 'ProfitStatistics',
-      component: ProfitStatistics
-    }
+      {
+        path: '/businessInformation',
+        name: 'BusinessInformation',
+        component: BusinessInformation
+      },
+      {
+        path: '/applyShop',
+        name: 'ApplyShop',
+        component: ApplyShop
+      },
+      {
+        path: '/commodityManage',
+        name: 'CommodityManage',
+        component: CommodityManage
+      },
+      {
+        path: '/addedGoods',
+        name: 'AddedGoods',
+        component: AddedGoods
+      },
+      {
+        path: '/modifyGoods',
+        name: 'ModifyGoods',
+        component: ModifyGoods
+      },
+      {
+        path: '/orderList',
+        name: 'OrderList',
+        component: OrderList
+      },
+      {
+        path: '/orderDetails',
+        name: 'OrderDetails',
+        component: OrderDetails
+      },
+      {
+        path: '/devaluationProducts',
+        name: 'DevaluationProducts',
+        component: DevaluationProducts
+      },
+      {
+        path: '/financialOverview',
+        name: 'FinancialOverview',
+        component: FinancialOverview
+      },
+      {
+        path: '/cashManagement',
+        name: 'CashManagement',
+        component: CashManagement
+      },
+      {
+        path: '/salesStatistics',
+        name: 'SalesStatistics',
+        component: SalesStatistics
+      },
+      {
+        path: '/orderStatistics',
+        name: 'OrderStatistics',
+        component: OrderStatistics
+      },
+      {
+        path: '/profitStatistics',
+        name: 'ProfitStatistics',
+        component: ProfitStatistics
+      }
     ]
   }]
 });

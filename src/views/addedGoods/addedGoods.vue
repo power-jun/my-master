@@ -6,19 +6,11 @@
         <el-form-item label="商品名称:" class="required" placeholder="不超过20个字" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.goodsName"></el-input>
         </el-form-item>
-        <el-form-item label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: ''}]">
-          <quill-editor :options="editorOption"
-                          ref="QuillEditor"
-                          @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                          @change="onEditorChange($event)"
-                          @ready="onEditorReady($event)" style="width: 800px;height: 400px">
-            </quill-editor>
-        </el-form-item>
         <el-form-item label="商品图片:">
           <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
             <i class="el-icon-plus"></i>
           </el-upload>
-          <p class="pic-tips">建议上传比例为 1:1 的图片，图片大小不超过 200KB,图片最多不能超过五张</p>
+          <p class="pic-tips-left">建议上传比例为 1:1 的图片，图片大小不超过 200KB,图片最多不能超过五张</p>
           <el-dialog v-model="dialogVisible" size="tiny">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
@@ -46,8 +38,8 @@
         </el-form-item>
          <el-form-item label="是否限时购买">
           <el-radio-group v-model="form.resource">
-            <el-radio label="是"></el-radio>
-            <el-radio label="否"></el-radio>
+            <el-radio v-model="radio" label="是"></el-radio>
+            <el-radio v-model="radio" label="否"></el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="限时购买时间">
@@ -57,6 +49,11 @@
           <el-col :span="10">
             <el-date-picker type="date" placeholder="选择结束日期" v-model="form.dateEnd"></el-date-picker>
           </el-col>
+        </el-form-item>
+        <el-form-item label="邮费">
+          <el-radio v-model="radio" label="包邮"></el-radio>
+          <el-radio v-model="radio" label="满减">满<el-input v-model="form.name" class="full-reduction"></el-input>元免邮</el-radio>
+          <el-radio v-model="radio" label="邮费">快递费 <el-input v-model="form.name" class="full-reduction"></el-input></el-radio>
         </el-form-item>
         <el-form-item label="分类">
           <el-select>
@@ -75,6 +72,14 @@
         </el-form-item>
          <el-form-item label="材质:" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: ''}]">
+          <quill-editor :options="editorOption"
+                          ref="QuillEditor"
+                          @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                          @change="onEditorChange($event)"
+                          @ready="onEditorReady($event)" style="width: 800px;height: 400px">
+            </quill-editor>
         </el-form-item>
         <el-form-item>
           <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit" class="submit-btn">确认新建</el-button>
@@ -103,7 +108,8 @@ export default {
         imageUrl: "",
         desc: "",
         dateStart: "",
-        dateEnd: ""
+        dateEnd: "",
+        resource: "是"
       },
       content: "",
       editorOption: {},
@@ -254,7 +260,7 @@ export default {
   margin-right: 4px;
 }
 
-.pic-tips {
+.pic-tips-left {
   text-align: left;
   color: #7e7e7e;
 }
@@ -262,5 +268,13 @@ export default {
 .goods-describe .el-form-item__content {
   width: 80%;
   height: 500px;
+}
+
+.full-reduction.el-input {
+  width: 60px;
+  margin: 0 10px;
+  .el-input__inner {
+    height: 30px;
+  }
 }
 </style>

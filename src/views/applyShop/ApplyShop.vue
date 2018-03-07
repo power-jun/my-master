@@ -16,7 +16,7 @@
          <el-form-item label="电子邮箱:" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <p class="form-line-title">入驻联系人信息</p>
+        <p class="form-line-title">公司信息</p>
         <el-form-item label="公司名称:" :rules="[{ required: true, message: ''}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -39,7 +39,7 @@
         </el-form-item>
         <el-form-item label="法人身份证电子版:">
           <el-row>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
                 <i class="el-icon-plus"></i>
               </el-upload>
@@ -48,7 +48,7 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
                 <i class="el-icon-plus"></i>
               </el-upload>
@@ -139,7 +139,8 @@ export default {
       form: {
         name: "",
         imageUrl: "",
-        desc: ""
+        desc: "",
+        resource: "旗舰店"
       },
       dialogImageUrl: "",
       dialogVisible: false,

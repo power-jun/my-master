@@ -17,9 +17,9 @@
       <el-form-item class="login-center login-btn">
         <el-button type="primary" @click="onSubmit">登录</el-button>
       </el-form-item>
-      <el-row class="login-center">
+      <el-row class="login-center" style="margin-left: 90px;">
         <router-link tag="a" :to="'/registed'">去注册</router-link>
-        <!-- <router-link tag="a" :to="'/forgetPassword'">忘记密码</router-link> -->
+        <router-link tag="a" :to="'/forgetPassword'">忘记密码</router-link>
       </el-row>
     </el-form>
   </div>
@@ -85,6 +85,7 @@ export default {
 
 .login-center a {
   color: #666;
+  text-decoration: underline;
 }
 
 .login-code-line {
