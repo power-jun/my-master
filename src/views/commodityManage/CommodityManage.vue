@@ -66,19 +66,32 @@
         label="产地" align="center">
       </el-table-column>
       <el-table-column
+        prop="imgPath"
+        label="图片路径"
+        width="180">
+        <template slot-scope="scope">
+          <img :src="scope.row.imgPath" alt="" style="width: 50px;height: 50px">
+        </template>
+      </el-table-column>
+      <el-table-column
         label="操作"
         width="100">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-          <el-button type="text" size="small">编辑</el-button>
+          <el-button @click="editor(scope.row)" type="text" size="small">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div class="pagination-cont">
-      <el-pagination
+      <!-- <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page.sync="currentPage3"
+        :page-size="100"
+        layout="prev, pager, next, jumper"
+        :total="1000">
+      </el-pagination> -->
+      <el-pagination
         :page-size="100"
         layout="prev, pager, next, jumper"
         :total="1000">
@@ -110,127 +123,10 @@ export default {
           commodityClassify: "饮料",
           commodityStatus: "已上架",
           createDate: "2016-06-23 00:00:00",
-          address: "海外"
+          address: "海外",
+          imgPath: "http://192.168.0.42/resource/pkt/images/common/Q-think-h92.png"
         },
-        {
-          id: "44",
-          commodityNumb: "S20170623562389",
-          commodityName: "雪碧",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-        {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "韩版流行女装",
-          specification: "1件",
-          commodityClassify: "服装",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-        {
-          id: "44",
-          commodityNumb: "S20170623562389",
-          commodityName: "雪碧",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-         {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "韩版流行女装",
-          specification: "1件",
-          commodityClassify: "服装",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-         {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "韩版流行女装",
-          specification: "1件",
-          commodityClassify: "服装",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-        {
-          id: "44",
-          commodityNumb: "S20170623562389",
-          commodityName: "雪碧",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-        {
-          id: "55",
-          commodityNumb: "S20170623562389",
-          commodityName: "可口可乐",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "海外"
-        },
-        {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "可口可乐",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "海外"
-        },
-         {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "韩版流行女装",
-          specification: "1件",
-          commodityClassify: "服装",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        }, {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "韩版流行女装",
-          specification: "1件",
-          commodityClassify: "服装",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "广东"
-        },
-        {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "可口可乐",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "海外"
-        },
-        {
-          id: "66",
-          commodityNumb: "S20170623562389",
-          commodityName: "可口可乐",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "海外"
-        }
+        
       ]
     };
   },
@@ -248,7 +144,11 @@ export default {
       console.log(row);
     },
 
-    onSubmit: function() {
+    editor(row) {
+      console.log(row);
+    },
+
+    onSubmit() {
       
     }
   }

@@ -39,7 +39,7 @@ export default {
 
   methods: {
     onSubmit() {
-      this.$router.push('/applyShop');
+      this.$router.push('/businessInformation');
     }
   }
 };
