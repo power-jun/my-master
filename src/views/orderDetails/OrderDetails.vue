@@ -2,22 +2,22 @@
  <div>
    <div v-show="!loadingFlag">
     <el-row class="order-detail">
-      <el-col :span="20">订单编号： 20170608562364452</el-col>
+      <el-col :span="20">订单编号： {{userInfo.orderNo}}</el-col>
     </el-row>
     <el-row class="order-detail">
-      <el-col :span="20">用户ID: 65423</el-col>
+      <el-col :span="20">用户ID: {{userInfo.memberId}}</el-col>
     </el-row>
     <el-row class="order-detail">
-      <el-col :span="20">用户昵称：飞扬</el-col>
+      <el-col :span="20">用户昵称：{{userInfo.memberName}}</el-col>
     </el-row>
-    <el-table :data="tableData3" border style="text-align: center">
+    <el-table :data="userInfo.orderDetailList" border style="text-align: center">
       <el-table-column
-        prop="goodsNumb"
+        prop="productNo"
         label="商品编号"
         align="center">
       </el-table-column>
       <el-table-column
-        prop="goodsName"
+        prop="productName"
         label="商品名称" align="center">
       </el-table-column>
       <el-table-column
@@ -29,43 +29,43 @@
         label="重量规格" align="center">
       </el-table-column>
       <el-table-column
-        prop="unitPrice"
+        prop="originalPrice"
         label="单价" align="center">
       </el-table-column>
       <el-table-column
-        prop="cost"
+        prop="primeCost"
         label="成本" align="center">
       </el-table-column>
       <el-table-column
-        prop="number"
+        prop="quantity"
         label="数量" align="center">
       </el-table-column>
     </el-table>
     <div class="order-address">
       <el-row class="order-detail">
-        <el-col :span="6">应付款：200元</el-col>
+        <el-col :span="6">应付款：{{userInfo.amountPayable}}元</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">通用红包: -20元</el-col>
+        <el-col :span="20">通用红包: -{{userInfo.couponReducePrice}}元</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">付款方式：微信支付</el-col>
+        <el-col :span="20">付款方式：{{userInfo.payType}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">实付款: ￥88.00</el-col>
+        <el-col :span="20">实付款: ￥{{userInfo.amountPaid}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">收货人信息：李先生</el-col>
+        <el-col :span="20">收货人信息：{{userInfo.consignee}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">收货人手机：13800138000</el-col>
+        <el-col :span="20">收货人手机：{{userInfo.mobile}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">收货人地址：XXX省XXX市XXX区XXXX街道XXX小区XXXX楼</el-col>
+        <el-col :span="20">收货人地址：{{userInfo.address}}</el-col>
       </el-row>
-      <el-form :inline="true" :model="form" class="form-inline">
+      <el-form :inline="true" class="form-inline">
         <el-form-item label="商家订单备注：">
-          <el-input type="textarea" v-model="form.desc" placeholder="最多输入100字"></el-input>
+          <el-input type="textarea" v-model="remarkSystem" placeholder="最多输入100字"></el-input>
         </el-form-item>
         <el-form-item class="save-btn">
           <el-button type="primary" @click="submitForm('ruleForm')">保存备注</el-button>
@@ -84,93 +84,39 @@ export default {
   data() {
     return {
       loadingFlag: true,
-      form: {
-        desc: ""
-      },
-
-      tableData3: [
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        },
-        {
-          goodsNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          address: "广东",
-          specifications: "350ML",
-          unitPrice: "￥50.00",
-          cost: "￥30.00",
-          number: "4"
-        }
-      ]
+      remarkSystem: "",
+      userInfo: {
+        orderNo: "20170608562364452",
+        memberId: "",
+        memberName: "飞扬",
+        amountPayable: "",
+        couponReducePrice: "",
+        amountPaid: "",
+        consignee: "",
+        mobile: "",
+        address: "",
+        payType: "",
+        orderDetailList: [
+          {
+            productNo: "S20170623562389",
+            productName: "XXX韩版女装",
+            address: "广东",
+            specifications: "350ML",
+            originalPrice: "￥50.00",
+            primeCost: "￥30.00",
+            quantity: "4"
+          },
+          {
+            productNo: "S20170623562389",
+            productName: "XXX韩版女装",
+            address: "广东",
+            specifications: "350ML",
+            originalPrice: "￥50.00",
+            primeCost: "￥30.00",
+            quantity: "4"
+          }
+        ]
+      }
     };
   },
 
@@ -178,16 +124,39 @@ export default {
     Loading
   },
 
-  mounted: function() {
+  beforeMount() {
+    this.$axios.get('/vendor/orderDetail', { params: {orderNo : this.$route.query.orderNo }}).then(data => {
+      if(data.data.code === 1) {
+        this.userInfo = data.data.data;
+      }
+    })
+  },
+
+  mounted() {
     this.loadingFlag = false;
   },
 
   methods: {
-    handleClick(row) {
-      console.log(row);
-    },
-
-    onSubmit: function() {}
+    submitForm() {
+      this.$axios
+        .post("/vendor/saveRemarkSystem", {
+          orderNo: this.userInfo.orderNo,
+          remarkSystem: this.remarkSystem
+        })
+        .then(data => {
+          if (data.data.code === 1) {
+            this.$message({
+              message: data.data.msg,
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
+          }
+        });
+    }
   }
 };
 </script>
@@ -204,7 +173,7 @@ export default {
   background: #fff;
 }
 
-.form-inline  {
+.form-inline {
   .el-form-item__label {
     color: #333;
   }

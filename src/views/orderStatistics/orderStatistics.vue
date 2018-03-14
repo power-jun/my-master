@@ -145,7 +145,7 @@ export default {
 }
 
 .pagination-cont {
-  background: #ddd;
+  background: #fafafa;
   width: 100%;
   height: 42px;
   padding: 5px 0;

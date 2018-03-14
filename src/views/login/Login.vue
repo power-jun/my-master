@@ -1,21 +1,21 @@
 <template>
   <div class="login-box">
-    <el-form ref="form" :model="loginForm" class="form-box">
+    <el-form ref="loginForm" status-icon :model="loginForm" class="form-box">
       <el-row class="login-center">
         <span>登录</span>
       </el-row>
-      <el-form-item>
-        <el-input v-model="loginForm.name"  placeholder="账号/手机"></el-input>
+      <el-form-item prop="mobile" :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' },{ pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入格式正确的手机号', trigger: 'blur' }]">
+        <el-input v-model="loginForm.mobile"  placeholder="请输入手机号"></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-input v-model="loginForm.password"  placeholder="密码"></el-input>
+      <el-form-item prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}, { pattern:/^[A-Za-z0-9]{6,20}$/, message: '6-20位字母数字组合', trigger: 'blur'}]">
+        <el-input v-model="loginForm.password"  placeholder="密码" type="password"></el-input>
       </el-form-item>
-       <el-form-item :inline="true" class="login-code-line">
+       <el-form-item prop="code" :inline="true" class="login-code-line" :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]">
          <el-col :span="18"><el-input v-model="loginForm.code" placeholder="请输入验证码"></el-input></el-col>
-         <el-col :span="6" class="code-img"><img src="../../assets/images/code.png" alt=""/></el-col>
+         <el-col :span="6" class="code-img"><img :src="codeImgSrc" @click="getCodeImg()" alt=""/></el-col>
       </el-form-item>
       <el-form-item class="login-center login-btn">
-        <el-button type="primary" @click="onSubmit">登录</el-button>
+        <el-button type="primary" @click="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading">登录</el-button>
       </el-form-item>
       <el-row class="login-center" style="margin-left: 90px;">
         <router-link tag="a" :to="'/registed'">去注册</router-link>
@@ -30,16 +30,50 @@ export default {
   data() {
     return {
       loginForm: {
-        name: "",
-        password: "",
-        code:''
-      }
+        mobile: "13755186705",
+        password: "a123456",
+        code: ""
+      },
+      fullscreenLoading: false,
+      codeImgSrc: "/api/validateCode"
     };
   },
 
   methods: {
-    onSubmit() {
-      this.$router.push('/businessInformation');
+    submitForm(formName) {
+      let _this = this;
+      this.fullscreenLoading = true;
+
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$axios
+            .post("/vendor/login", {
+              mobile: this.loginForm.mobile,
+              password: this.loginForm.password,
+              code: this.loginForm.code
+            })
+            .then(data => {
+              if (data.data.code === 1) {
+                this.$router.push("/applyShop");
+              } else {
+                this.$message({
+                  message: data.data.msg,
+                  type: "warning"
+                });
+              }
+              
+              this.fullscreenLoading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          this.fullscreenLoading = false;
+          return false;
+        }
+      });
+    },
+
+    getCodeImg() {
+      this.codeImgSrc = 'api/validateCode?'+ Math.random();
     }
   }
 };
@@ -55,7 +89,7 @@ export default {
 
 .form-box {
   width: 300px;
-  height: 250px;
+  height: 270px;
   background: #fff;
   padding: 50px;
   position: absolute;
@@ -96,7 +130,9 @@ export default {
 }
 
 .code-img img {
-  height: 35px;
+  display: inline-block;
+  width: 80px;
+  height: 39px;
+  cursor: pointer;
 }
-
 </style>

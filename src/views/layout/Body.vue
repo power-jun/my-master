@@ -56,10 +56,7 @@
               router: '/commodityManage'
             },{
               title: '商品新增',
-              router: '/addedGoods'
-            },{
-              title: '商品编辑',
-              router: '/addedGoods'
+              router: '/editAddedGoods'
             }]
           },
           {

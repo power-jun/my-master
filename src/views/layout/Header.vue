@@ -3,8 +3,8 @@
     <div class="head-top clearfix">
       <slot name="title"></slot>
       <p class="fr" :name="userInfo.age">
-        <router-link tag="a" :to="'/login'" class="modify-password quit-btn"><img src="../../assets/images/quit.png" alt="">退出<i class="el-icon-edit"></i></router-link>
-        <router-link tag="a" :to="'/changePassword'" class="modify-password">修改密码<i class="el-icon-edit"></i></router-link>
+        <span class="modify-password quit-btn" @click="logOut"><img src="../../assets/images/quit.png" alt="">退出</span>
+        <router-link tag="a" :to="'/changePassword'" class="modify-password"><i class="el-icon-edit"></i>修改密码</router-link>
       </p>
     </div>
   </el-row>
@@ -29,7 +29,15 @@ export default {
     console.log(this.userName);
   },
 
-  methods: {}
+  methods: {
+    logOut() {
+      this.$axios.post('/vendor/logout').then(data => {
+        if(data.data.code === 1) {
+          this.$router.push('/login');
+        }
+      })
+    }
+  }
 };
 </script>
 
@@ -74,5 +82,10 @@ export default {
   color: #fff;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.el-icon-edit {
+  color: #fff;
+  margin-left: 10px;
 }
 </style>

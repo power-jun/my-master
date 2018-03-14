@@ -7,26 +7,19 @@
       </el-form-item>
       <el-form-item>
         <el-select v-model="formSearch.status" placeholder="商品状态">
-          <el-option label="全部" value="shanghai"></el-option>
-          <el-option label="已上架" value="shanghai"></el-option>
-          <el-option label="未上架" value="beijing"></el-option>
-          <el-option label="未审核" value="beijing"></el-option>
+          <el-option label="全部" value=""></el-option>
+          <el-option v-for="(item, index) in statusArry" :label="item.name" :value="item.code" :key="index"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-col :span="10" style="margin-right: 30px;">
-          <el-date-picker type="date" placeholder="选择开始日期" v-model="formSearch.dateStart"></el-date-picker>
-        </el-col>
-        <el-col :span="10">
-          <el-date-picker type="date" placeholder="选择结束日期" v-model="formSearch.dateEnd"></el-date-picker>
-        </el-col>
+      <el-form-item style="margin-right: 30px;">
+        <el-date-picker v-model="searchdate" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2"></el-date-picker>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+      <el-form-item class="search-btn">
+        <el-button type="primary" @click="onSubmit('formSearch')">查询</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button type="success">
-          <router-link tag="a" :to="'/addedGoods'">新增商品</router-link>
+          <router-link tag="a" :to="'/editAddedGoods'">新增商品</router-link>
         </el-button>
       </el-form-item>
     </el-form>
@@ -34,27 +27,22 @@
       <el-table-column
         prop="id"
         label="ID"
-        width="60">
+        width="150" align="center">
       </el-table-column>
       <el-table-column
-        prop="commodityNumb"
-        label="商品编号"
-        width="180" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="commodityName"
+        prop="name"
         label="商品名称" align="center">
       </el-table-column>
       <el-table-column
-        prop="specification"
+        prop="spec"
         label="重量/规格" align="center">
       </el-table-column>
       <el-table-column
-        prop="commodityClassify"
+        prop="type"
         label="商品分类" align="center">
       </el-table-column>
       <el-table-column
-        prop="commodityStatus"
+        prop="status"
         label="商品状态" align="center">
       </el-table-column>
       <el-table-column
@@ -62,39 +50,40 @@
         label="创建时间" align="center">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="place"
         label="产地" align="center">
       </el-table-column>
       <el-table-column
-        prop="imgPath"
-        label="图片路径"
+        prop="picUrl"
+        label="商品图片"
+        align="center"
         width="180">
         <template slot-scope="scope">
-          <img :src="scope.row.imgPath" alt="" style="width: 50px;height: 50px">
+          <img :src="scope.row.picUrl" alt="" @click="dilogBigImg(scope.$index)" style="width: 50px;height: 50px">
+          <el-dialog :visible.sync="dialogVisible[scope.$index].dialog">
+            <img width="100%" :src="scope.row.picUrl" alt="">
+          </el-dialog>
         </template>
       </el-table-column>
       <el-table-column
         label="操作"
-        width="100">
+        align="center"
+        width="220">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-          <el-button @click="editor(scope.row)" type="text" size="small">编辑</el-button>
+          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+          <el-button size="mini" type="primary" @click="handleDropOff(scope.$index, scope.row)">下架</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div class="pagination-cont">
-      <!-- <el-pagination
+      <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage3"
-        :page-size="100"
-        layout="prev, pager, next, jumper"
-        :total="1000">
-      </el-pagination> -->
-      <el-pagination
-        :page-size="100"
-        layout="prev, pager, next, jumper"
-        :total="1000">
+        :page-sizes="[10, 30, 50, 100]"
+        :page-size="30"
+        layout="total,sizes, prev, pager, next, jumper"
+        :total="total">
       </el-pagination>
     </div>
    </div>
@@ -110,24 +99,51 @@ export default {
     return {
       loadingFlag: true,
       formSearch: {
-        dateStart: "",
-        dateEnd: ""
+        name: '',
+        status: '',
+        pageNo: '1',
+        pageSize: '10',
+        startTime: '',
+        endTime: ''
+      },
+      dialogVisible: [],
+      searchdate: '',
+      total: '',
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
       },
 
-      tableData3: [
-        {
-          id: "1",
-          commodityNumb: "S20170623562389",
-          commodityName: "可口可乐",
-          specification: "350ML",
-          commodityClassify: "饮料",
-          commodityStatus: "已上架",
-          createDate: "2016-06-23 00:00:00",
-          address: "海外",
-          imgPath: "http://192.168.0.42/resource/pkt/images/common/Q-think-h92.png"
-        },
-        
-      ]
+      statusArry: [],
+
+      tableData3: []
     };
   },
 
@@ -135,21 +151,78 @@ export default {
     Loading
   },
 
+  beforeMount() {
+    this.$axios
+      .get("/getDictList", { params: { type: "product_type" } })
+      .then(data => {
+        if (data.data.code === 1) {
+          this.statusArry = data.data.data;
+        }
+      });
+  },
+
   mounted: function() {
     this.loadingFlag = false;
+    this.onSubmit();
   },
 
   methods: {
-    handleClick(row) {
-      console.log(row);
+    dilogBigImg(index) {
+      this.dialogVisible[index].dialog = true;
+    },
+
+    handleSizeChange(value) {
+      this.formSearch.pageSize = value;
+      this.onSubmit();
+    },
+
+    handleCurrentChange(value) {
+      this.formSearch.pageNo = value;
+      this.onSubmit();
+    },
+
+    handleEdit(index, row) {
+      this.$router.push({ path: "/editAddedGoods", query: { shopId: row.id } });
     },
 
     editor(row) {
       console.log(row);
     },
 
+    zeroFilling(n) {
+      if (n > 10) {
+        return n;
+      } else if (n < 10) {
+        return "0" + n;
+      }
+    },
+
     onSubmit() {
-      
+      let searchParam = {};
+      searchParam.name = this.formSearch.name;
+      searchParam.status = this.formSearch.status;
+      searchParam.pageSize = this.formSearch.pageSize;
+      searchParam.pageNo = this.formSearch.pageNo;
+      searchParam.shopId = '';
+
+      if (this.searchdate.length) {
+        let start = this.searchdate[0];
+        let end = this.searchdate[1];
+        searchParam.startTime = start.getFullYear() + '-' + this.zeroFilling(start.getMonth()+1) + '-' + this.zeroFilling(start.getDate());
+        searchParam.endTime = end.getFullYear() + '-' + this.zeroFilling(end.getMonth()+1) + '-' + this.zeroFilling(end.getDate());
+      }
+
+      this.$axios.get('/vendor/productList', { params: searchParam }).then(data => {
+        if(data.data.code === 1){
+          this.tableData3 = data.data.data;
+          console.log(this.tableData3.length)
+          for(let i=0;i<this.tableData3.length; i++) {
+            this.dialogVisible.push({dialog: false});
+          }
+
+          this.total = data.data.total;
+        }
+      });
     }
   }
 };
@@ -162,8 +235,13 @@ export default {
   }
 }
 
+.search-btn {
+  .el-button--primary {
+    margin-left: -20px;
+  }
+}
+
 .el-button--primary {
-  margin-left: -20px;
   span {
     color: #fff;
   }
@@ -178,7 +256,7 @@ export default {
 }
 
 .pagination-cont {
-  background: #ddd;
+  background: #fafafa;
   width: 100%;
   height: 42px;
   padding: 5px 0;
@@ -186,5 +264,15 @@ export default {
 
 .el-pagination {
   float: right;
+}
+
+.el-date-editor .el-range-separator {
+  width: 8%;
+}
+
+.el-dialog__wrapper {
+  .el-dialog {
+    width: 40%;
+  }
 }
 </style>

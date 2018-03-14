@@ -3,32 +3,21 @@
    <div v-show="!loadingFlag">
       <el-form :inline="true" :model="formSearch" class="demo-form-inline">
         <el-form-item>
-          <el-input v-model="formSearch.name" placeholder="订单编号"></el-input>
+          <el-input v-model="formSearch.orderNo" placeholder="订单编号"></el-input>
         </el-form-item>
         <el-form-item>
           <el-select v-model="formSearch.status" placeholder="订单状态">
-            <el-option label="全部" value="shanghai"></el-option>
-            <el-option label="未支付" value="shanghai"></el-option>
-            <el-option label="已支付" value="beijing"></el-option>
-            <el-option label="待发货" value="beijing"></el-option>
-            <el-option label="已发货" value="beijing"></el-option>
-            <el-option label="待确认" value="beijing"></el-option>
-            <el-option label="已退款" value="beijing"></el-option>
-            <el-option label="申请退款" value="beijing"></el-option>
-            <el-option label="退款中" value="beijing"></el-option>
-            <el-option label="已退款" value="beijing"></el-option>
+            <el-option label="全部" value=""></el-option>
+            <el-option v-for="(items, index) in orderTypeList" :label="items.name" :value="items.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-col :span="10" style="margin-right: 30px;">
-            <el-date-picker type="date" placeholder="选择开始日期" v-model="formSearch.dateStart"></el-date-picker>
-          </el-col>
-          <el-col :span="10">
-            <el-date-picker type="date" placeholder="选择结束日期" v-model="formSearch.dateEnd"></el-date-picker>
+            <el-date-picker v-model="payTime" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2"></el-date-picker>
           </el-col>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-form-item style="margin-left: -20px;">
+          <el-button  type="primary" @click="onSubmit('formSearch')">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" style="margin-left: 8px">导出</el-button>
@@ -36,38 +25,33 @@
       </el-form>
       <el-table :data="tableData3" height="600" border style="width: 100%;text-align: center">
         <el-table-column
-          prop="id"
-          label="ID"
-          width="60">
-        </el-table-column>
-        <el-table-column
-          prop="userName"
+          prop="memberName"
           label="用户昵称"
           width="180" align="center">
         </el-table-column>
         <el-table-column
-          prop="orderNumb"
+          prop="orderNo"
           label="订单编号"
           width="180" align="center">
         </el-table-column>
         <el-table-column
-          prop="goodsName"
+          prop="productName"
           label="商品名称" align="center">
         </el-table-column>
         <el-table-column
-          prop="orderDate"
+          prop="addTime"
           label="下单时间" align="center">
         </el-table-column>
         <el-table-column
-          prop="orderStatus"
+          prop="status"
           label="订单状态" align="center">
         </el-table-column>
         <el-table-column
-          prop="orderAmount"
+          prop="amountPayable"
           label="订单金额" align="center">
         </el-table-column>
         <el-table-column
-          prop="paymentMethod"
+          prop="payType"
           label="付款方式" align="center">
         </el-table-column>
         <el-table-column
@@ -76,11 +60,11 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="100">
+          width="260" align="center">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">详情</el-button>
-            <el-button type="text" size="small">发货</el-button>
-            <el-button type="text" size="small">退款审核</el-button>
+            <el-button size="mini" type="primary" @click="handleShip(scope.$index, scope.row)">发货</el-button>
+            <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+            <el-button size="mini" type="primary" @click="handleRefund(scope.$index, scope.row)">退款审核</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,13 +72,64 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page.sync="currentPage3"
-          :page-size="100"
-          layout="prev, pager, next, jumper"
-          :total="1000">
+          :page-sizes="[10, 30, 50, 100]"
+          :page-size="30"
+          layout="total,sizes, prev, pager, next, jumper"
+          :total="total">
         </el-pagination>
       </div>
     </div>
+    <el-dialog title="发货" class="" width="30%" :center="true" :visible.sync="dialogVisibleShop">
+      <el-form :model="shopForm"  label-width="100px">
+        <el-form-item label="订单编号:">
+          <el-input v-model="shopForm.orderNo" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="收货人姓名:">
+          <el-input v-model="shopForm.memberName" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="收货人地址:">
+          <el-input v-model="shopForm.address" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="快递公司:">
+          <el-select v-model="shopForm.express" placeholder="请选择快递公司">
+            <el-option v-for="(items, index) in expressArry" :label="items.name" :value="items.code" :key="index"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="快递单号:">
+          <el-input v-model="shopForm.trackingNumber" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleShop = false">取 消</el-button>
+        <el-button type="primary" @click="shopConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="退款退货申请" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
+      <el-form :model="shopForm"  label-width="100px">
+        <el-form-item label="订单编号:">
+          <el-input v-model="shopForm.orderNo" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="收货人姓名:">
+          <el-input v-model="shopForm.memberName" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="收货人地址:">
+          <el-input v-model="shopForm.address" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="快递公司:">
+          <el-select v-model="shopForm.express" placeholder="请选择快递公司">
+            <el-option v-for="(items, index) in expressArry" :label="items.name" :value="items.code" :key="index"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="快递单号:">
+          <el-input v-model="shopForm.trackingNumber" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="defundConfirm">确认退款</el-button>
+        <el-button @click="dialogVisibleRefund = false">驳回退款申请</el-button>
+      </div>
+    </el-dialog>
+    
     <Loading v-show="loadingFlag"></Loading>
   </div>
 </template>
@@ -106,176 +141,78 @@ export default {
   data() {
     return {
       loadingFlag: true,
+      dialogVisibleShop: false,
+      dialogVisibleRefund: false,
+      orderTypeList: [],
+      expressArry: [],
+      payTime: '',
+      total: '',
       formSearch: {
-        dateStart: "",
-        dateEnd: ""
+        shopId: '',
+        orderNo: '',
+        status: '',
+        pageSize: '',
+        pageNo: ''
+      },
+      shopForm: {
+        orderNo: "",
+        memberName: "",
+        address: "XXX省XXX市XXX区XXXX街道XXX小区XXXX楼",
+        trackingNumber: ""
+      },
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
       },
 
       tableData3: [
         {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
+          memberName: "KKKKK",
+          orderNo: "S20170623562389",
+          productName: "XXX韩版女装",
+          addTime: "2016-06-23 00:00:00",
+          status: "未支付",
+          amountPayable: "￥50.00",
+          payType: "微信",
           envelopeUsage: "通用红包"
         },
         {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
+          memberName: "KKKKK",
+          orderNo: "S20170623562389",
+          productName: "XXX韩版女装",
+          addTime: "2016-06-23 00:00:00",
+          status: "未支付",
+          amountPayable: "￥50.00",
+          payType: "微信",
           envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },{
-          id: "1",
-          userName: "KKKKK",
-          orderNumb: "S20170623562389",
-          goodsName: "XXX韩版女装",
-          orderDate: "2016-06-23 00:00:00",
-          orderStatus: "未支付",
-          orderAmount: "￥50.00",
-          paymentMethod:  "微信",
-          envelopeUsage: "通用红包"
-        },
+        }
       ]
     };
   },
@@ -284,17 +221,95 @@ export default {
     Loading
   },
 
+  beforeMount() {
+    this.$axios
+      .get("/getDictList", { params: { type: "order_status" } })
+      .then(data => {
+        if (data.data.code === 1) {
+          this.orderTypeList = data.data.data;
+          this.$axios
+            .get("/getDictList", { params: { type: "express_company" } })
+            .then(data => {
+              if (data.data.code === 1) {
+                this.expressArry = data.data.data;
+              }
+            });
+        }
+      });
+  },
+
   mounted: function() {
     this.loadingFlag = false;
   },
 
   methods: {
-    handleClick(row) {
-      console.log(row);
+    handleDetail(index, row) {
+      this.$router.push({
+        path: "/orderDetails",
+        query: { orderNo: row.orderNo }
+      });
+    },
+
+    handleShip(index, row) {
+      this.shopForm.orderNo = row.orderNo;
+      this.shopForm.memberName = row.memberName;
+      this.dialogVisibleShop = true;
+    },
+
+    shopConfirm() {
+      this.dialogVisibleShop = false;
+    },
+
+    handleRefund(index, row) {
+      this.dialogVisibleRefund = true;
+    },
+
+    defundConfirm() {
+      this.dialogVisibleRefund = false;
+    },
+
+    handleSizeChange(value) {
+      this.formSearch.pageSize = value;
+      this.onSubmit();
+    },
+
+    handleCurrentChange(value) {
+      this.formSearch.pageNo = value;
+      this.onSubmit();
     },
 
     onSubmit: function() {
-      
+      if (this.payTime.length) {
+        let start = this.payTime[0];
+        let end = this.payTime[1];
+        this.formSearch.startTime =
+          start.getFullYear() +
+          "-" +
+          this.zeroFilling(start.getMonth() + 1) +
+          "-" +
+          this.zeroFilling(start.getDate());
+        this.formSearch.endTime =
+          end.getFullYear() +
+          "-" +
+          this.zeroFilling(end.getMonth() + 1) +
+          "-" +
+          this.zeroFilling(end.getDate());
+      }
+      debugger
+
+      this.$axios
+        .get("/vendor/productList", { params: this.formSearch })
+        .then(data => {
+          if (data.data.code === 1) {
+            this.tableData3 = data.data.data;
+            console.log(this.tableData3.length);
+            for (let i = 0; i < this.tableData3.length; i++) {
+              this.dialogVisible.push({ dialog: false });
+            }
+
+            this.total = data.data.total;
+          }
+        });
     }
   }
 };
@@ -308,7 +323,6 @@ export default {
 }
 
 .el-button--primary {
-  margin-left: -20px;
   span {
     color: #fff;
   }
@@ -323,7 +337,7 @@ export default {
 }
 
 .pagination-cont {
-  background: #ddd;
+  background: #fafafa;
   width: 100%;
   height: 42px;
   padding: 5px 0;
@@ -331,5 +345,9 @@ export default {
 
 .el-pagination {
   float: right;
+}
+
+.el-date-editor .el-range-separator {
+  width: 8%;
 }
 </style>
