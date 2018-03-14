@@ -4,125 +4,122 @@
       <!-- <div id="example">
             <p>Computed reversed message: "{{ reversedMessage }}"</p>
           </div>-->
-      <el-form ref="form" :model="form" label-width="160px">
+      <el-form ref="form" :model="form" status-icon label-width="160px">
         <h3>商家入驻申请</h3>
         <p class="form-line-title">入驻联系人信息</p>
-        <el-form-item label="联系人姓名:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="linkman" label="联系人姓名:" :rules="[{ required: true, message: '请输入联系人姓名'}, {pattern: '[\u4E00-\u9FA5]{2,4}', message: '姓名格式不正确'}]">
+          <el-input v-model="form.linkman"></el-input>
         </el-form-item>
-        <el-form-item label="联系人手机:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="linkmanMobile" label="联系人手机号:" :rules="[{ required: true, message: '请输入手机号'}, { pattern: '/^[1][3,4,5,7,8][0-9]{9}$/', message: '手机号格式不正确'}]">
+          <el-input v-model="form.linkmanMobile"></el-input>
         </el-form-item>
-         <el-form-item label="电子邮箱:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+         <el-form-item prop="linkmanEmail" label="电子邮箱:" :rules="[{ required: true, message: '请输入电子邮箱', trigger: 'blur' },{ type: 'email', message: '请输入正确的电子邮箱'}]">
+          <el-input v-model="form.linkmanEmail"></el-input> 
         </el-form-item>
         <p class="form-line-title">公司信息</p>
-        <el-form-item label="公司名称:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="companyName" label="公司名称:" :rules="[{ required: true, message: '请输入公司名称'}, { pattern: '^[\u4e00-\u9fa5A-Za-z]{2,20}$', message: '请输入正确格式公司名称'}]">
+          <el-input v-model="form.companyName"></el-input>
         </el-form-item>
-        <el-form-item label="营业执照注册号:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="companyCreditNo" label="营业执照注册号:" :rules="[{ required: true, message: '请输入营业执照注册号'}, { pattern: '/^([0-9ABCDEFGHJKLMNPQRTUWXY]{2})([0-9]{6})([0-9ABCDEFGHJKLMNPQRTUWXY]{9})([0-9Y])$/', message: '请输入正确的营业执照注册号'}]">
+          <el-input v-model="form.companyCreditNo"></el-input>
         </el-form-item>
-        <el-form-item label="法定代表人姓名:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="legalPerson" label="法定代表人姓名:" :rules="[{ required: true, message: '请输入法定代表人姓名'}, {pattern: '[\u4E00-\u9FA5]{2,4}', message: '姓名格式不正确'}]">
+          <el-input v-model="form.legalPerson"></el-input>
         </el-form-item>
-        <el-form-item label="法定代表身份证号码:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="legalPersonCreditNo" label="法定代表身份证号码:" :rules="[{ required: true, message: '请输入身份证号码'}, { pattern: '/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g', message: '请输入格式正确的身份证号'}]">
+          <el-input v-model="form.legalPersonCreditNo"></el-input>
         </el-form-item>
-        <el-form-item label="营业执照副本电子版:">
-          <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+        <el-form-item label="营业执照副本电子版:" prop="picUrl" :rules="[{ required: true, message: '请上传营业执照'}]">
+          <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="picUrlBeforeUpload" :on-success="picUrlSuccessFun" :on-remove="picUrlhandleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog v-model="dialogVisible" size="tiny">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
         </el-form-item>
-        <el-form-item label="法人身份证电子版:">
-          <el-row>
-            <el-col :span="8">
-              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+        <el-form-item label="法人身份证电子版:" prop="legalCreditPic" :rules="[{ required: true, message: '请上传身份证正面'}]">
+          <el-row class="id-card">
+            <el-col :span="20">
+              <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="cardBeforeUpload" :on-success="cardSuccessFun" :on-remove="cardHandleRemove">
                 <i class="el-icon-plus"></i>
               </el-upload>
               <p class="pic-tips">正面</p>
-              <el-dialog v-model="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
             </el-col>
-            <el-col :span="8">
-              <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+          </el-row>
+        </el-form-item>
+        <el-form-item label="" prop="legalCreditPic2" :rules="[{ required: true, message: '请上传身份证反面'}]">
+          <el-row>
+             <el-col :span="20">
+              <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="card2BeforeUpload" :on-success="card2SuccessFun" :on-remove="card2HandleRemove">
                 <i class="el-icon-plus"></i>
               </el-upload>
               <p class="pic-tips">反面</p>
-              <el-dialog v-model="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
             </el-col>
           </el-row>
         </el-form-item>
         <p class="form-line-title">银行账户信息</p>
-        <el-form-item label="银行开户名:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="银行开户名:" prop="bankName" :rules="[{ required: true, message: '请输入银行开户名'}, { pattern: '[\u4E00-\u9FA5]{2,4}', message: '银行开户名格式不正确'}]">
+          <el-input v-model="form.bankName"></el-input>
         </el-form-item>
-        <el-form-item label="公司银行账号:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="bankAccount" label="公司银行账号:" :rules="[{ required: true, message: '请输入公司银行账号'}, { pattern: '/^\d{3,}$/', message: '银行账号必须为数字值'}]">
+          <el-input v-model="form.bankAccount"></el-input>
         </el-form-item>
-        <el-form-item label="开户行支行名称:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="bankBranchName" label="开户行支行名称:" :rules="[{ required: true, message: '请输入开户行支行名称'}]">
+          <el-input v-model="form.bankBranchName"></el-input>
         </el-form-item>
-        <el-form-item label="开户行支行地址:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="开户行支行地址:" prop="bankBranchAddress" :rules="[{ required: true, message: '开户行支行地址'}]">
+          <el-input v-model="form.bankBranchAddress"></el-input>
         </el-form-item>
         <p class="form-line-title">经营信息</p>
-        <el-form-item label="公司类型:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item label="公司类型:" prop="companyType" :rules="[{ required: true, message: '请选择公司类型'}]">
+          <el-select v-model="form.companyType" aria-placeholder="请选择公司类型">
+            <el-option v-for="(item, index) in companyTypeArry" :label="item.name" :value="item.code" :key="index"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="最近一年销售额:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="salesAmount" label="最近一年销售额:" :rules="[{ required: true, message: '请输入最近一年销售额'}]">
+          <el-input v-model="form.salesAmount"></el-input>
         </el-form-item>
-        <el-form-item label="预计评价客单价:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="avgPrice" label="预计评价客单价:" :rules="[{ required: true, message: '请输入预计评价客单价'}]">
+          <el-input v-model="form.avgPrice"></el-input>
         </el-form-item>
-        <el-form-item label="常用快递公司:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="express" label="常用快递公司:" :rules="[{ required: true, message: '请输入常用快递公司'}]">
+          <el-input v-model="form.express"></el-input>
         </el-form-item>
         <p class="form-line-title">店铺信息</p>
-        <el-form-item label="店铺头像:" :rules="[{ required: true, message: ''}]">
-          <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-error="errorFun" :before-upload="beforeUpload" :on-success="successFun" :on-remove="handleRemove" :on-preview="handlePictureCardPreview">
+        <el-form-item label="店铺头像:" prop="shopLogoUrl" :rules="[{ required: true, message: '请上传店铺头像'}]">
+          <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="logBeforeUpload" :on-success="logSuccessFun" :on-remove="logHandleRemove">
               <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog v-model="dialogVisible" size="tiny">
-              <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
         </el-form-item>
-        <el-form-item label="店铺类型">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="旗舰店"></el-radio>
-            <el-radio label="专营店"></el-radio>
-            <el-radio label="专卖店"></el-radio>
+        <el-form-item label="店铺类型" prop="shopType">
+          <el-radio-group v-model="form.shopType">
+            <el-radio v-for="(items, index) in shopTypeArry" :label="items.name" :value="items.code" :key="index"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="店铺名称:" :rules="[{ required: true, message: ''}]">
-          <el-input v-model="form.name"></el-input>
+        <el-form-item prop="shopName" label="店铺名称:" :rules="[{ required: true, message: '请输入店铺名称'}]">
+          <el-input v-model="form.shopName"></el-input>
         </el-form-item>
-        <el-form-item label="店铺描述:">
-          <el-input type="textarea" v-model="form.desc" placeholder="至少输入50字，最多200字"></el-input>
+        <el-form-item label="店铺描述:" prop="shopDesc"  :rules="[{ required: true, message: '请输入店铺描述'}]">
+          <el-input type="textarea" v-model="form.shopDesc" placeholder="至少输入50字，最多200字"></el-input>
         </el-form-item>
-        <el-form-item label="所在城市">
-          <el-select placeholder="全部">
-            <el-option label="北京" value="shanghai"></el-option>
-            <el-option label="深圳" value="beijing"></el-option>
+        <el-form-item label="所在城市" class="link-select" prop="regionId" :rules="[{ required: true, message: '请选择区域'}]">
+          <el-row>
+            <el-col :span="7">
+              <el-select placeholder="请选择" v-model="province" @change="provinceSelect">
+            <el-option v-for="(items, index) in provinceArry"  :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
-          <el-select placeholder="全部">
-            <el-option label="区域1" value="shanghai"></el-option>
-            <el-option label="区域2" value="beijing"></el-option>
+            </el-col>
+            <el-col :span="7">
+              <el-select placeholder="请选择" v-model="downtown" :disabled="downtownFlag" @change="citySelect">
+            <el-option v-for="(items, index) in downtownArry"  :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
-          <el-select placeholder="全部">
-            <el-option label="区域1" value="shanghai"></el-option>
-            <el-option label="区域2" value="beijing"></el-option>
+            </el-col>
+            <el-col :span="7">
+               <el-select placeholder="请选择" v-model="form.regionId" :disabled="areaFlag">
+            <el-option v-for="(items, index) in areaArry"  :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item>
-          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit" class="submit-btn">提交申请</el-button>
+          <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit('form')" class="submit-btn">提交申请</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -137,15 +134,42 @@ export default {
   data() {
     return {
       form: {
-        name: "",
-        imageUrl: "",
-        desc: "",
-        resource: "旗舰店"
+        linkman: '',
+        linkmanMobile: '',
+        linkmanEmail: '',
+        companyName: '',
+        companyCreditNo: '',
+        legalPerson: '',
+        legalPersonCreditNo: '',
+        legalCreditPic: '',
+        legalCreditPic2: '',
+        picUrl: '',
+        bankName: '',
+        bankAccount: '',
+        bankBranchName: '',
+        bankBranchAddress: '',
+        companyType: '',
+        salesAmount: '',
+        avgPrice: '',
+        express: '',
+        shopName: '',
+        shopLogoUrl: '',
+        shopCategoryId: '',
+        shopType: '',
+        shopDesc: '',
+        regionId: ''
       },
-      dialogImageUrl: "",
-      dialogVisible: false,
+      companyTypeArry: [],
+      shopTypeArry: [],
+      provinceArry: [],
+      downtownArry: [],
+      areaArry: [],
+      legalCred: '',
+      legalCred2: '',
       fullscreenLoading: false,
-      loadingFlag: true
+      loadingFlag: true,
+      downtownFlag: true,
+      areaFlag: true
     };
   },
 
@@ -153,30 +177,92 @@ export default {
     Loading
   },
 
-  computed: {},
+  beforeMount() {
+    this.$axios
+      .get("/getDictList", { params: { type: "company_type" } })
+      .then(data => {
+        if (data.data.code === 1) {
+          this.companyTypeArry = data.data.data;
+        }
 
-  beforeMount: function() {},
+        this.$axios
+          .get("/getDictList", { params: { type: "shop_type" } })
+          .then(data => {
+            if (data.data.code === 1) {
+              this.shopTypeArry = data.data.data;
+            }
+          });
+      });
+
+    this.$axios.get("/getRegionList", { params: { pid: "" } }).then(data => {
+      if (data.data.code === 1) {
+        this.provinceArry = data.data.data;
+      }
+    });
+  },
 
   mounted: function() {
-    // bus.$emit('loadingDestory', false);
     this.loadingFlag = false;
   },
 
   methods: {
-    async onSubmit() {
+    onSubmit(formName) {
       console.log(this.form);
-      this.fullscreenLoading = true;
+      this.fullscreenLoading = true;      
 
-      await new Promise(resolve => {
-        // async函数的await命令后面，可以是Promise 对象和原始类型的值（数值、字符串和布尔值，但这时等同于同步操作）。
-        setTimeout(resolve, 2000);
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$axios
+            .post("/vendor/apply", this.form)
+            .then(data => {
+              if (data.data.code === "1") {
+                this.$router.push("/businessInformation");
+              } else {
+                this.$message({
+                  message: data.data.msg,
+                  type: "warning"
+                });
+              }
+              
+              this.fullscreenLoading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          this.fullscreenLoading = false;
+          return false;
+        }
       });
-
-      this.fullscreenLoading = false;
-      console.log("loading complete");
     },
 
-    beforeUpload: function(file) {
+    getLinkCity(id, type) {
+      this.$axios.get("/getRegionList", { params: { pid: id } }).then(data => {
+        if (data.data.code === 1) {
+          if (type === "city") {
+            this.downtownArry = data.data.data;
+          } else if (type === "area") {
+            this.areaArry = data.data.data;
+          }
+        }
+      });
+    },
+
+    provinceSelect(val) {
+      this.getLinkCity(val, "city");
+
+      if (this.downtownFlag) {
+        this.downtownFlag = false;
+      } else {
+        this.downtownFlag = true;
+        this.areaFlag = true;
+      }
+    },
+
+    citySelect(val) {
+      this.getLinkCity(val, "area");
+      this.areaFlag = false;
+    },
+
+    picUrlBeforeUpload(file) {
       const imgSizeFlag = file.size / 1024 / 1024 < 2;
       let imgNumbFlag = true;
 
@@ -184,7 +270,7 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      if (this.form.imageUrl) {
+      if (this.form.picUrl) {
         this.$message.error("最多只能上传一张图");
         imgNumbFlag = false;
       }
@@ -192,21 +278,88 @@ export default {
       return imgSizeFlag && imgNumbFlag;
     },
 
-    successFun: function(response, file, fileList) {
-      this.form.imageUrl = file.url;
+    logBeforeUpload(file) {
+      const imgSizeFlag = file.size / 1024 / 1024 < 2;
+      let imgNumbFlag = true;
+
+      if (!imgSizeFlag) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+
+      if (this.form.picUrl) {
+        this.$message.error("最多只能上传一张图");
+        imgNumbFlag = false;
+      }
+
+      return imgSizeFlag && imgNumbFlag;
     },
 
-    errorFun: function(file, fileList) {
-      
+    cardBeforeUpload(file) {
+      const imgSizeFlag = file.size / 1024 / 1024 < 2;
+      let imgNumbFlag = true;
+      file.nam = "3333";
+
+      if (!imgSizeFlag) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+
+      if (this.form.picUrl) {
+        this.$message.error("最多只能上传一张图");
+        imgNumbFlag = false;
+      }
+
+      return imgSizeFlag && imgNumbFlag;
     },
 
-    handleRemove(file, fileList) {
-      this.form.imageUrl = "";
+    card2BeforeUpload(file) {
+      const imgSizeFlag = file.size / 1024 / 1024 < 2;
+      let imgNumbFlag = true;
+      file.nam = "3333";
+
+      if (!imgSizeFlag) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+
+      if (this.form.picUrl) {
+        this.$message.error("最多只能上传一张图");
+        imgNumbFlag = false;
+      }
+
+      return imgSizeFlag && imgNumbFlag;
     },
 
-    handlePictureCardPreview: function(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    cardSuccessFun: function(response, file, fileList) {
+      this.form.legalCreditPic = file.url;
+    },
+
+    card2SuccessFun: function(response, file, fileList) {
+      this.form.legalCreditPic2 = file.url;
+    },
+
+    logSuccessFun: function(response, file, fileList) {
+      this.form.shopLogoUrl = file.url;
+    },
+
+    picUrlSuccessFun: function(response, file, fileList) {
+      this.form.picUrl = file.url;
+    },
+
+    errorFun: function(file, fileList) {},
+
+    cardHandleRemove(file, fileList) {
+      this.form.legalCred = "";
+    },
+
+    card2HandleRemove(file, fileList) {
+      this.form.legalCred2 = "";
+    },
+
+    logHandleRemove(file, fileList) {
+      this.form.shopLogoUrl = "";
+    },
+
+    picUrlHandleRemove(file, fileList) {
+      this.form.picUrl = "";
     }
   }
 };
@@ -282,7 +435,17 @@ export default {
 }
 
 .pic-tips {
+  display: inline-block;
+  width: 148px;
   text-align: center;
   color: #7e7e7e;
+}
+
+.link-select .el-col-7 {
+  margin-right: 3.8%;
+}
+
+.id-card .el-col-8 {
+  margin-right: 4%;
 }
 </style>

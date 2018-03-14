@@ -41,9 +41,6 @@ const routers = new VueRouter({
     component: ForgetPassword
   },
   {
-    path: '',
-    redirect: '/login'
-  }, {
     path: '/',
     name: 'business',
     component: Body,
