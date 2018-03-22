@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import Vue from 'vue';
+
 export default {
   data() {
     return {
@@ -54,6 +56,7 @@ export default {
             })
             .then(data => {
               if (data.data.code === 1) {
+                sessionStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data))
                 this.$router.push("/applyShop");
               } else {
                 this.$message({
@@ -75,6 +78,16 @@ export default {
     getCodeImg() {
       this.codeImgSrc = 'api/validateCode?'+ Math.random();
     }
+  },
+  // beforeRouteLeave(to,from,next) {
+  //   this.codeImgSrc = 'api/validateCode?'+ Math.random();
+  //   next();
+  // },
+  watch: {
+   '$route' (to, from) {
+     debugger
+     console.log(this.getStatus(this.$route.path))
+   }
   }
 };
 </script>

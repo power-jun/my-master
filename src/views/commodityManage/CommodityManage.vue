@@ -59,9 +59,9 @@
         align="center"
         width="180">
         <template slot-scope="scope">
-          <img :src="scope.row.picUrl" alt="" @click="dilogBigImg(scope.$index)" style="width: 50px;height: 50px">
+          <img :src="'http://dev.pt800.com/' + scope.row.picUrl.split(',')[0]" alt="" @click="dilogBigImg(scope.$index)" style="width: 50px;height: 50px">
           <el-dialog :visible.sync="dialogVisible[scope.$index].dialog">
-            <img width="100%" :src="scope.row.picUrl" alt="">
+            <img width="100%" :src="'http://dev.pt800.com/' + scope.row.picUrl.split(',')[0]" alt="">
           </el-dialog>
         </template>
       </el-table-column>
@@ -182,7 +182,7 @@ export default {
     },
 
     handleEdit(index, row) {
-      this.$router.push({ path: "/editAddedGoods", query: { shopId: row.id } });
+      this.$router.push({ path: "/editAddedGoods", query: { id: row.id } });
     },
 
     editor(row) {
@@ -203,7 +203,6 @@ export default {
       searchParam.status = this.formSearch.status;
       searchParam.pageSize = this.formSearch.pageSize;
       searchParam.pageNo = this.formSearch.pageNo;
-      searchParam.shopId = '';
 
       if (this.searchdate.length) {
         let start = this.searchdate[0];
@@ -215,12 +214,16 @@ export default {
       this.$axios.get('/vendor/productList', { params: searchParam }).then(data => {
         if(data.data.code === 1){
           this.tableData3 = data.data.data;
-          console.log(this.tableData3.length)
           for(let i=0;i<this.tableData3.length; i++) {
             this.dialogVisible.push({dialog: false});
           }
 
           this.total = data.data.total;
+        } else {
+           this.$message({
+            message: data.data.msg,
+            type: "warning"
+          });
         }
       });
     }
