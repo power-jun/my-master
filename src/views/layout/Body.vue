@@ -14,7 +14,7 @@
               <el-menu-item index="/BusinessInformation"><i class="el-icon-menu"></i>商家信息</el-menu-item>
               <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title">
                 <template slot="title">{{nav.title}}</template>
-              <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="nav.title">
+              <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="subnav.title">
                 <i class="icon-menu"></i>{{subnav.title}}
               </el-menu-item>
             </el-submenu>
@@ -111,7 +111,7 @@
     },
 
     created: function() {
-      this.bodyHeight = window.screen.height - 50;
+      this.bodyHeight = window.screen.height - 200;
       //this.$router.push('/home');
     },
 
