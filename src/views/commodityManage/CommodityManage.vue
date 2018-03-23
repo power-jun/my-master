@@ -6,7 +6,7 @@
         <el-input v-model="formSearch.name" placeholder="商品名称"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="formSearch.status" placeholder="商品状态">
+        <el-select v-model="formSearch.status" placeholder="商品状态" clearable>
           <el-option label="全部" value=""></el-option>
           <el-option v-for="(item, index) in statusArry" :label="item.name" :value="item.code" :key="index"></el-option>
         </el-select>
@@ -16,6 +16,7 @@
       </el-form-item>
       <el-form-item class="search-btn">
         <el-button type="primary" @click="onSubmit('formSearch')">查询</el-button>
+        <el-button  @click="clearAll">清空</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button type="success">
@@ -23,7 +24,7 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="tableData3" border style="width: 100%;text-align: center">
+    <el-table :data="tableData3" v-loading="tabLoadingFlag" border style="width: 100%;text-align: center">
       <el-table-column
         prop="id"
         label="ID"
@@ -71,8 +72,8 @@
         width="220">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-          <el-button size="mini" type="primary" @click="handleDropOff(scope.$index, scope.row)">下架</el-button>
+          <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-if="(scope.row.status == 2)">下架</el-button>
+          <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-else>上架</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -98,6 +99,7 @@ export default {
   data() {
     return {
       loadingFlag: true,
+      tabLoadingFlag: true,
       formSearch: {
         name: '',
         status: '',
@@ -108,7 +110,7 @@ export default {
       },
       dialogVisible: [],
       searchdate: '',
-      total: '',
+      total: 0,
       pickerOptions2: {
         shortcuts: [
           {
@@ -185,8 +187,28 @@ export default {
       this.$router.push({ path: "/editAddedGoods", query: { id: row.id } });
     },
 
-    editor(row) {
-      console.log(row);
+    handleDropOff(index, row) {
+      let status = 0;
+      if(row.status == 0) {
+        status = 1;
+      } else if(row.status == 2) {
+        status = 2;
+      }
+
+      this.$axios.get('/vendor/productOnsale', { params: {productId : row.id, status: status}}).then(data => {
+        if(data.data.code === 1) {
+          this.$message({
+            message: data.data.msg,
+            type: "success"
+          });
+          this.onSubmit();
+        } else {
+           this.$message({
+            message: data.data.msg,
+            type: "warning"
+          });
+        }
+      });
     },
 
     zeroFilling(n) {
@@ -197,7 +219,16 @@ export default {
       }
     },
 
+    clearAll() {
+      this.formSearch.name = '';
+      this.formSearch.status = '';
+      this.formSearch.startTime = '';
+      this.formSearch.endTime = '';
+      this.searchdate = '';
+    },
+
     onSubmit() {
+      this.tabLoadingFlag = true;
       let searchParam = {};
       searchParam.name = this.formSearch.name;
       searchParam.status = this.formSearch.status;
@@ -217,9 +248,10 @@ export default {
           for(let i=0;i<this.tableData3.length; i++) {
             this.dialogVisible.push({dialog: false});
           }
-
+          this.tabLoadingFlag = false;
           this.total = data.data.total;
         } else {
+           this.tabLoadingFlag = false;
            this.$message({
             message: data.data.msg,
             type: "warning"
