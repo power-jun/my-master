@@ -63,7 +63,7 @@
           <el-select :disabled="typeAttrFlag" clearable v-model="specListSelectVOne" @change="specListSelectNOne" placeholder="请选择规格名">
             <el-option v-for="(items, index) in productTypeAttr" :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
-          <el-button type="primary" v-show="!specListTwoFlag" @click="specListTwoShow">添加规格项目</el-button>
+          <el-button type="primary" v-show="!specListBtnTwoFlag" @click="specListTwoShow">添加规格项目</el-button>
           <el-row class="specification-list">
             <el-select
               v-model="specificationOne"
@@ -110,6 +110,7 @@
           <el-table
             v-show="specificationTabFlag"
             :data="specificationsTabData"
+            :span-method="objectSpanMethod"
             border
             style="width: 100%;margin: 10px 0;">
             <el-table-column 
@@ -152,7 +153,7 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 
-let businessUserInfo = JSON.parse(sessionStorage.getItem("businessUserInfo"));
+// let businessUserInfo = JSON.parse(sessionStorage.getItem("businessUserInfo"));
 let selectArry = [];
 let specificationsCacheTabHead = [
   {
@@ -261,6 +262,7 @@ export default {
       limitTimerFlag: false,
       typeAttrFlag: true,
       specListTwoFlag: false,
+      specListBtnTwoFlag: true,
       specificationTabFlag: false
     };
   },
@@ -325,7 +327,7 @@ export default {
 
   mounted: function() {
     this.loadingFlag = false;
-    this.shopId = businessUserInfo.shopId;
+    // this.shopId = businessUserInfo.shopId;
   },
 
   methods: {
@@ -345,11 +347,27 @@ export default {
       }
     },
 
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (columnIndex === 0) {
+          if (rowIndex % (this.specificationTwo.length || 1) === 0) {
+            return {
+              rowspan: (this.specificationTwo.length || 1),
+              colspan: 1
+            };
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            };
+          }
+        }
+    },
+
     productChange(value) {
       this.specificationOneFlag = true;
       this.specificationTwoFlag = true;
       this.specificationTabFlag = false;
-      this.specListTwoFlag = false;
+      // this.specListTwoFlag = false;
       this.specificationOne = [];
       this.specificationTwo = [];
 
@@ -376,14 +394,14 @@ export default {
         this.specificationTabFlag = false;
       }
 
-      this.specificationChangePublic(value);
+      this.specificationChangePublic(value, 'one');
     },
 
     specificationChangeTwo(value) {
-      this.specificationChangePublic(value);
+      this.specificationChangePublic(value, 'two');
     },
 
-    specificationChangePublic(value) {
+    specificationChangePublic(value, type) {
       let resultSelectArry = [];
       for (var i in value) {
         if (selectArry.length) {
@@ -400,43 +418,54 @@ export default {
       this.specificationArry = resultSelectArry;
 
       // 添加表格Header
-      debugger
       if (this.specificationsTabHead.length <= 6) {
-        if (this.specListNameArryOne.length && this.specificationsTabHead.length < 6) {
-          this.specificationsTabHead.unshift(this.specListNameArryOne[0]);
-          nameArryOne = this.specListNameArryOne;
-          this.specListNameArryOne = [];
-          this.specificationTabFlag = true;
-        } else if(this.specificationsTabHead.length >= 4) {
-          this.specificationsTabData = [];
-          this.specificationTabFlag = false;
-          this.specListNameArryTwo = [];
-          this.specificationTwoFlag = false;
-          this.specificationsTabHead.splice(1,1);
-          return false;
-        }
+        if(type === 'one') {
+          if (this.specListNameArryOne.length  && this.specificationOne.length) {
+            if(this.specificationsTabHead.length < 6) {
+              // 判断表头第一列是不是已经包含第一级
+              if(this.specificationsTabHead[0].prop !== this.specListNameArryOne[0].prop) {
+                this.specificationsTabHead.unshift(this.specListNameArryOne[0]);
+                nameArryOne = this.specListNameArryOne;
+                this.specificationTabFlag = true;
+              }
+            }
 
-        if (this.specListNameArryTwo.length  && this.specificationsTabHead.length < 6) {
-          this.specificationsTabHead.splice(1, 0, this.specListNameArryTwo[0]);
-          nameArryTwo = this.specListNameArryTwo;
-          this.specListNameArryTwo = [];
-        } else if(this.specificationsTabHead.length >= 4) {
-          this.specificationsTabHead.splice(1,1);
+            this.specListBtnTwoFlag = false;
+          } else {
+            if(this.specificationsTabHead.length > 4 && this.specificationsTabHead.length <= 6) {
+              this.specificationsTabData = [];
+              this.specificationTabFlag = false;
+              this.specListNameArryTwo = [];
+              this.specificationTwoFlag = false;
+              this.specificationTwo = [];
+              this.specificationsTabHead.splice(0,1);
+            }
+
+            this.specListBtnTwoFlag = true;
+            this.specListTwoFlag = false;
+          }
+        } else if(type === 'two') {
+          if (this.specListNameArryTwo.length && this.specificationTwo.length) {
+            if(this.specificationsTabHead.length < 6) {
+              // 判断表头第一列是不是已经包含第二级
+                if(this.specificationsTabHead[1].prop !== this.specListNameArryOne[0].prop) {
+                  this.specificationsTabHead.splice(1, 0, this.specListNameArryTwo[0]);
+                  nameArryTwo = this.specListNameArryTwo;
+                }
+              }
+            } else if(this.specificationsTabHead.length > 4 && this.specificationsTabHead.length <= 6) {
+              this.specificationsTabHead.splice(1,1);
+            }
         }
       }
-      
+
       let resultArryOne = [];
       let resultArrTwo = [];
       let specificationsOneProp = this.specificationsTabHead[0].prop;
       let specificationsTwoProp = this.specificationsTabHead[1].prop;
       
       if (this.specificationTwo.length) {
-         if (this.specificationTwo.length === 1) {
-           for(let i = 0; i<this.specificationsTabData.length;i++) {
-              this.specificationsTabData[i][this.specificationsTabHead[0].prop] = this.specificationTwo[0];
-            }
-          } else {
-            for (let i = 0; i < this.specificationTwo.length; i++) {
+           for (let i = 0; i < this.specificationTwo.length; i++) {
               var resultTabData = {
                 originalPrice: '',
                 stock: '',
@@ -446,6 +475,7 @@ export default {
 
               resultTabData[specificationsTwoProp] = this.specificationTwo[i];
               resultArrTwo.push(resultTabData);
+              this.specificationsTabData.push(resultArrTwo[i]);
             }
 
             this.specificationsTabData = [];
@@ -453,26 +483,27 @@ export default {
             for (var i in resultArrTwo) {
               this.specificationsTabData.push(resultArrTwo[i]);
             }
-        }
       }
 
       // 组织第一个规格名数据
       let totalTabLine = this.specificationOne.length*this.specificationTwo.length; //table的总行数
+      let resultArrTwoCache = [];
 
-      if (this.specificationOne.length === 1) {
-        for(let i = 0; i<this.specificationsTabData.length;i++) {
-          this.specificationsTabData[i][this.specificationsTabHead[0].prop] = this.specificationOne[0];
-        }
-      } else {
+      if (this.specificationOne.length) {
         if(this.specificationTwo.length){
-           this.specificationsTabData = [];
-          for(let t=0;t<this.specificationOne.length;t++) {
+          this.specificationsTabData = [];
+          for(let t=0; t<this.specificationOne.length; t++) {
               for(let j=0;j<resultArrTwo.length;j++) {
                 resultArrTwo[j][specificationsOneProp] = this.specificationOne[t];
-                debugger
-                this.specificationsTabData.push(resultArrTwo[j]);
+                resultArrTwoCache.push(resultArrTwo[j]);
               }
             }
+
+            this.specificationsTabData = [];
+            for (var i in resultArrTwoCache) {
+              this.specificationsTabData.push(resultArrTwoCache[i]);
+            }
+
         } else {
           for (let i = 0; i < this.specificationOne.length; i++) {
             var resultTabData = {
@@ -494,27 +525,18 @@ export default {
         }
       }
 
-      // 组织第二个规格数据 
-      let inputValItem = {
-        originalPrice: "",
-        stock: "",
-        specCode: "",
-        primeCost: ""
-      };
-      
-      // this.inputValArry = [];
+    // 组织尺寸价格等基本输入框
+      this.inputValArry = [];
+      for (let i = 0; i < this.specificationsTabData.length; i++) {
+        let inputValItem = {
+          originalPrice: '',
+          stock: '',
+          specCode: '',
+          primeCost: ''
+        };
 
-      // if (this.specificationTwo.length) {
-      //   for (let m = 0; m < this.specificationsTabData.length; m++) {
-      //     this.specificationsTabData[m][this.specificationsTabHead[1].prop] = this.specificationTwo.join(",");
-      //   }
-      // }
-      
-      
-
-      // for (let i = 0; i < this.specificationsTabData.length; i++) {
-      //   this.inputValArry.push(inputValItem);
-      // }
+        this.inputValArry.push(inputValItem);
+      }
     },
 
     specListSelectNOne(value) {
@@ -528,12 +550,25 @@ export default {
         }
       }
 
-      this.specListNameArryOne = [{ name: obj.name, prop: value }];
+      for(let i in this.specificationsTabHead) {
+        if(this.specificationsTabHead[i][value]) {
+          this.specListSelectVOne = [];
+          return;
+        }
+      }
 
+      this.specListNameArryOne = [{ name: obj.name, prop: value }];
+      
       if (value) {
         this.specificationOneFlag = false;
       } else {
         this.specificationOneFlag = true;
+        this.specificationOne = [];
+        this.specificationTwo = [];
+        this.specListBtnTwoFlag = true;
+        this.specListTwoFlag = false;
+        this.specificationTabFlag = false;
+        this.specificationsTabData = [];
       }
     },
 
@@ -550,15 +585,24 @@ export default {
 
       this.specListNameArryTwo = [{ name: obj.name, prop: value }];
 
+      for(let i in this.specificationsTabHead) {
+        if(this.specificationsTabHead[i][value]) {
+          this.specListSelectVTwo = [];
+          return;
+        }
+      }
+
       if (value) {
         this.specificationTwoFlag = false;
       } else {
         this.specificationTwoFlag = true;
+        this.specificationTwo = [];
       }
     },
 
     specListTwoShow() {
       this.specListTwoFlag = true;
+      this.specListBtnTwoFlag = true;
     },
 
     zeroFilling(n) {
@@ -650,7 +694,7 @@ export default {
 
         if (nameArryTwo.length) {
           let specListTwo = [{}];
-          specListTwo[0].attrId = nameArryOne[0].prop;
+          specListTwo[0].attrId = nameArryTwo[0].prop;
           specListTwo[0].attrValue = this.specificationTwo.join(",");
           specListTwo[0].sort = 2;
           this.form.specList.push(specListTwo[0]);
@@ -659,13 +703,16 @@ export default {
 
       this.form.stockList = [];
       let inputValFlag = true;
+      let specificationsOneProp = this.specificationsTabHead[0].prop;
+      let specificationsTwoProp = this.specificationsTabHead[1].prop;
+
       if (this.specificationOne.length) {
-        for (let i = 0; i < this.specificationOne.length; i++) {
+        for (let i = 0; i < this.specificationsTabData.length; i++) {
           this.form.stockList.push({
             attrList: [
               {
-                attrId: this.specificationsTabHead[0].prop,
-                attrValue: this.specificationOne[i],
+                attrId: specificationsOneProp,
+                attrValue: this.specificationsTabData[i][specificationsOneProp],
                 sort: 1
               }
             ]
@@ -673,15 +720,13 @@ export default {
 
           if (this.specificationTwo.length) {
             this.form.stockList[i].attrList.push({
-              attrId: this.specificationsTabHead[1].prop,
-              attrValue: this.specificationTwo.join(","),
+              attrId: specificationsTwoProp,
+              attrValue: this.specificationsTabData[i][specificationsTwoProp],
               sort: 2
             });
           }
 
-          this.form.stockList[i].originalPrice = this.inputValArry[
-            i
-          ].originalPrice;
+          this.form.stockList[i].originalPrice = this.inputValArry[i].originalPrice;
           this.form.stockList[i].stock = this.inputValArry[i].stock;
           this.form.stockList[i].specCode = this.inputValArry[i].specCode;
           this.form.stockList[i].primeCost = this.inputValArry[i].primeCost;
@@ -696,8 +741,6 @@ export default {
           }
         }
       }
-
-      this.form.shopId = this.shopId;
 
       this.$refs[formName].validate(valid => {
         if (valid) {
