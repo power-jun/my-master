@@ -68,8 +68,8 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        align="center"
-        width="220">
+        align="left"
+        width="160">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-if="(scope.row.status == 1)">下架</el-button>
@@ -244,7 +244,7 @@ export default {
 
       this.$axios.get('/vendor/productList', { params: searchParam }).then(data => {
         if(data.data.code === 1){
-          this.tableData3 = data.data.data;
+          this.tableData3 = data.data.data || [];
           for(let i=0;i<this.tableData3.length; i++) {
             this.dialogVisible.push({dialog: false});
           }

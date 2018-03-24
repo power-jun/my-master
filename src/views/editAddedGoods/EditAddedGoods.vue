@@ -280,7 +280,7 @@ export default {
 
   beforeMount() {
     this.$axios.get("/vendor/productTypeList").then(data => {
-      if (data.data.code === 1) {
+      if (data.data.code == 1) {
         this.productTypeList = data.data.data;
       }
     });
@@ -288,9 +288,9 @@ export default {
     // 商品编辑
     if (this.$route.query && this.$route.query.id) {
       this.$axios
-        .post("/vendor/addPorduct", { id: this.$route.query.id })
+        .get("/vendor/productDetail", { params: { productId: this.$route.query.id }})
         .then(data => {
-          if (data.data.code === 1) {
+          if (data.data.code == 1) {
             this.form = data.data.data;
 
             let picUrlList = this.form.picUrl.split(",");
@@ -302,19 +302,119 @@ export default {
             }
 
             // 是否限时抢购
-            if (this.form.limitBuy === 1) {
+            if (this.form.limitBuy == 1) {
               this.limitProduct.limitdate[0] = this.form.limitBuyStartTime;
               this.limitProduct.limitdate[1] = this.form.limitBuyEndTime;
               this.limitProduct.limitPrice = this.form.limitPrice;
-            }
-            
-            // 是否包邮
-            if (this.form.isBaoyou === 1) { 
-              this.postagePrice.baoyouAmt = this.form.baoyouAmt;
-              this.postagePrice.postage = this.form.postage;
+              this.limitTimerFlag = true;
+            } else {
+              this.limitTimerFlag = false;
             }
 
-            
+            // 是否包邮
+            if (this.form.isBaoyou == 1) { 
+              this.postagePrice.baoyouAmt = this.form.baoyouAmt;
+              this.postagePrice.postage = this.form.postage;
+              this.postageFlag = true;
+            } else {
+              this.postageFlag = false;
+            }
+
+            if(this.form.type) {
+              this.$axios
+                .get("/vendor/productTypeAttr", { params: { type: this.form.type } })
+                .then(data => {
+                  if (data.data.code == 1) {
+                    this.productTypeAttr = data.data.data;
+
+                    let specList = this.form.specList;
+                    if(specList && specList.length) {
+                      this.typeAttrFlag = false;
+                      // 显示第一级 并且赋值
+                      if(specList.length == 1) {
+                        this.specificationOneFlag = false;
+                        this.specificationOne = specList[0].attrValue.split(',');
+                        this.specListSelectVOne = specList[0].attrId;
+                        nameArryOne = [{ prop: specList[0].attrId }];
+                      } else if(specList.length == 2) {
+                        // 显示第二级 并且赋值
+                        this.specificationTwoFlag = false;
+                        this.specListTwoFlag = true;
+                        this.specListTwoShow = false;
+                        this.specificationOneFlag = false;
+
+                        for(let i = 0; i < specList.length; i++){
+                           if(specList[i].sort == 1) {
+                              this.specificationOne = specList[i].attrValue.split(',');
+                              this.specListSelectVOne = specList[i].attrId;
+                              nameArryOne = [{ prop: specList[i].attrId }];
+                            } else if(specList[i].sort == 2) {
+                              this.specificationTwo = specList[i].attrValue.split(',');
+                              this.specListSelectVTwo = specList[i].attrId;
+                              nameArryTwo = [{ prop: specList[i].attrId }];
+                            }
+                        }
+                      }
+                    }
+
+                    let stockList = this.form.stockList;
+                    if(stockList && stockList.length) {
+                      this.specificationTabFlag = true;
+                      //组织表格header
+                      if(specList.length == 1) {
+                        this.specificationsTabHead.unshift({
+                          prop: stockList[0].attrList[0].attrId,
+                          name: stockList[0].attrList[0].attrValue
+                        });
+                      } else if(specList.length == 2) {
+                        let attrList = stockList[0].attrList;
+                        let oneUnshift = {};
+                        let twoUnshift = {};
+
+                        for(let i=0;i<attrList.length;i++) {
+                          if(attrList[i].sort == 1) {
+                            twoUnshift.prop = attrList[i].attrId;
+                            twoUnshift.name = attrList[i].attrValue;
+                          } else if(attrList[i].sort == 2) {
+                            oneUnshift.prop = attrList[i].attrId;
+                            oneUnshift.name = attrList[i].attrValue;
+                          }
+                        }
+
+                        this.specificationsTabHead.unshift(oneUnshift);
+                        this.specificationsTabHead.unshift(twoUnshift);
+                      }
+                      
+                      // 组织表格body
+                      this.specificationsTabData = [];
+                      
+                      this.inputValArry = [];
+
+                      for(let i=0; i<stockList.length; i++) {
+                        let bodyLineObj = {};
+                        bodyLineObj.originalPrice = stockList[i].originalPrice;
+                        bodyLineObj.sort = stockList[i].sort;
+                        bodyLineObj.specCode = stockList[i].specCode;
+                        bodyLineObj.stock = stockList[i].stock;
+                        bodyLineObj.primeCost = stockList[i].primeCost;
+
+                        let inputValItem = {
+                          originalPrice: stockList[i].originalPrice,
+                          stock: stockList[i].stock,
+                          specCode: stockList[i].specCode,
+                          primeCost: stockList[i].primeCost
+                        };
+
+                        bodyLineObj[stockList[i].attrList[0].attrId] = stockList[i].attrList[0].attrValue;
+                        bodyLineObj[stockList[i].attrList[1].attrId] = stockList[i].attrList[1].attrValue;
+                        this.specificationsTabData.push(bodyLineObj);
+                        this.inputValArry.push(inputValItem);
+                      }
+                    }
+                  }
+                });
+            }
+
           } else {
             this.$message({
               message: data.data.msg,
@@ -339,7 +439,7 @@ export default {
     },
 
     limitTimer(value) {
-      if (value === "1") {
+      if (value == "1") {
         this.limitTimerFlag = true;
       } else {
         this.limitTimerFlag = false;
@@ -347,8 +447,8 @@ export default {
     },
 
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-        if (columnIndex === 0) {
-          if (rowIndex % (this.specificationTwo.length || 1) === 0) {
+        if (columnIndex == 0) {
+          if (rowIndex % (this.specificationTwo.length || 1) == 0) {
             return {
               rowspan: (this.specificationTwo.length || 1),
               colspan: 1
@@ -370,11 +470,13 @@ export default {
       this.specificationOne = [];
       this.specificationTwo = [];
 
+      this.productTypeAttr = [];
+
       if (value) {
         this.$axios
           .get("/vendor/productTypeAttr", { params: { type: value } })
           .then(data => {
-            if (data.data.code === 1) {
+            if (data.data.code == 1) {
               this.productTypeAttr = data.data.data;
               this.specificationsTabHead.length > 4 && (this.specificationsTabHead = specificationsCacheTabHead);
               this.typeAttrFlag = false;
@@ -418,7 +520,7 @@ export default {
 
       // 添加表格Header
       if (this.specificationsTabHead.length <= 6) {
-        if(type === 'one') {
+        if(type == 'one') {
           if (this.specListNameArryOne.length  && this.specificationOne.length) {
             if(this.specificationsTabHead.length < 6) {
               // 判断表头第一列是不是已经包含第一级
@@ -443,7 +545,7 @@ export default {
             this.specListBtnTwoFlag = true;
             this.specListTwoFlag = false;
           }
-        } else if(type === 'two') {
+        } else if(type == 'two') {
           if (this.specListNameArryTwo.length && this.specificationTwo.length) {
             if(this.specificationsTabHead.length < 6) {
               // 判断表头第一列是不是已经包含第二级
@@ -524,6 +626,10 @@ export default {
       }
 
     // 组织尺寸价格等基本输入框
+      this.makeInput();
+    },
+
+    makeInput() {
       this.inputValArry = [];
       for (let i = 0; i < this.specificationsTabData.length; i++) {
         let inputValItem = {
@@ -543,14 +649,14 @@ export default {
       let breakFlag = true;
 
       for (var i in item) {
-        if (item[i].id === value) {
+        if (item[i].id == value) {
           obj.name = item[i].name;
           // this.productTypeAttr.splice(i, 1);
         }
       }
 
       for(let i=0; i<this.specificationsTabHead.length; i++) {
-        if(this.specificationsTabHead[i].prop === value) {
+        if(this.specificationsTabHead[i].prop == value) {
           this.$message({
             message: "已经存在该规格名",
             type: "warning"
@@ -586,13 +692,13 @@ export default {
       let breakFlag = true;
 
       for (var i in item) {
-        if (item[i].id === value) {
+        if (item[i].id == value) {
           obj.name = item[i].name;
         }
       }
 
       for(let i=0; i<this.specificationsTabHead.length; i++) {
-        if(this.specificationsTabHead[i].prop === value) {
+        if(this.specificationsTabHead[i].prop == value) {
           this.$message({
             message: "已经存在该规格名",
             type: "warning"
@@ -632,7 +738,12 @@ export default {
 
     onSubmit(formName) {
       this.fullscreenLoading = true;
-      if (this.form.limitBuy === 1) {
+
+      if(this.$route.query && this.$route.query.id) {
+        this.form.id = this.$route.query.id;
+      }
+
+      if (this.form.limitBuy == 1) {
         if (this.limitProduct.limitdate.length) {
           let start = this.limitProduct.limitdate[0];
           let end = this.limitProduct.limitdate[1];
@@ -669,7 +780,7 @@ export default {
         }
       }
       if (this.form.isBaoyou.length) {
-        if (this.form.isBaoyou === 1) {
+        if (this.form.isBaoyou == 1) {
           if (this.postagePrice.baoyouAmt) {
             this.form.baoyouAmt = this.postagePrice.baoyouAmt;
           } else {
@@ -771,7 +882,7 @@ export default {
           }
 
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
-            if (data.data.code === 1) {
+            if (data.data.code == 1) {
               this.$message({
                 message: "新建成功",
                 type: "success"
@@ -795,7 +906,7 @@ export default {
     },
 
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/png";
+      const isJPG = file.type == "image/png";
       const imgSizeFlag = file.size / 1024 / 1024 < 6;
       let imgNumbFlag = true;
 
@@ -838,7 +949,7 @@ export default {
     handleRemove(file, fileList) {
       let picUrlArry = this.form.picUrl.split(",");
       for (let i = 0; i < picUrlArry.length; i++) {
-        if (picUrlArry[i] === file.response.data.url) {
+        if (picUrlArry[i] == file.response.data.url) {
           delete picUrlArry[i];
         }
       }
