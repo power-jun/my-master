@@ -45,15 +45,21 @@
       <el-table-column
         prop="status"
         label="商品状态" align="center">
+        <template slot-scope="scope">
+           <span v-if="scope.row.status == 0">未审核</span>
+           <span v-else-if="scope.row.status == 1">已审核，上架</span>
+           <span v-else-if="scope.row.status == 2">已下架</span>
+           <span v-else-if="scope.row.status == 3">审核未通过</span>
+          </template>
       </el-table-column>
       <el-table-column
         prop="createDate"
         label="创建时间" align="center">
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="place"
         label="产地" align="center">
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="picUrl"
         label="商品图片"
@@ -101,15 +107,15 @@ export default {
       loadingFlag: true,
       tabLoadingFlag: true,
       formSearch: {
-        name: '',
-        status: '',
-        pageNo: '1',
-        pageSize: '10',
-        startTime: '',
-        endTime: ''
+        name: "",
+        status: "",
+        pageNo: "1",
+        pageSize: "10",
+        startTime: "",
+        endTime: ""
       },
       dialogVisible: [],
-      searchdate: '',
+      searchdate: "",
       total: 0,
       pickerOptions2: {
         shortcuts: [
@@ -153,6 +159,12 @@ export default {
     Loading
   },
 
+  computed: {
+    editor() {
+      return this.$refs.myTextEditor.quill;
+    }
+  },
+
   beforeMount() {
     this.$axios
       .get("/getDictList", { params: { type: "product_type" } })
@@ -188,27 +200,31 @@ export default {
     },
 
     handleDropOff(index, row) {
-      let status = 0;
-      if(row.status == 0) {
-        status = 1;
-      } else if(row.status == 2) {
+      let status = '';
+      if (row.status == 1) {
         status = 2;
+      } else if (row.status == 2) {
+        status = 1;
       }
 
-      this.$axios.get('/vendor/productOnsale', { params: {productId : row.id, status: status}}).then(data => {
-        if(data.data.code === 1) {
-          this.$message({
-            message: data.data.msg,
-            type: "success"
-          });
-          this.onSubmit();
-        } else {
-           this.$message({
-            message: data.data.msg,
-            type: "warning"
-          });
-        }
-      });
+      this.$axios
+        .get("/vendor/productOnsale", {
+          params: { productId: row.id, status: status }
+        })
+        .then(data => {
+          if (data.data.code === 1) {
+            this.$message({
+              message: data.data.msg,
+              type: "success"
+            });
+            this.onSubmit();
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
+          }
+        });
     },
 
     zeroFilling(n) {
@@ -220,11 +236,11 @@ export default {
     },
 
     clearAll() {
-      this.formSearch.name = '';
-      this.formSearch.status = '';
-      this.formSearch.startTime = '';
-      this.formSearch.endTime = '';
-      this.searchdate = '';
+      this.formSearch.name = "";
+      this.formSearch.status = "";
+      this.formSearch.startTime = "";
+      this.formSearch.endTime = "";
+      this.searchdate = "";
     },
 
     onSubmit() {
@@ -238,26 +254,38 @@ export default {
       if (this.searchdate.length) {
         let start = this.searchdate[0];
         let end = this.searchdate[1];
-        searchParam.startTime = start.getFullYear() + '-' + this.zeroFilling(start.getMonth()+1) + '-' + this.zeroFilling(start.getDate());
-        searchParam.endTime = end.getFullYear() + '-' + this.zeroFilling(end.getMonth()+1) + '-' + this.zeroFilling(end.getDate());
+        searchParam.startTime =
+          start.getFullYear() +
+          "-" +
+          this.zeroFilling(start.getMonth() + 1) +
+          "-" +
+          this.zeroFilling(start.getDate());
+        searchParam.endTime =
+          end.getFullYear() +
+          "-" +
+          this.zeroFilling(end.getMonth() + 1) +
+          "-" +
+          this.zeroFilling(end.getDate());
       }
 
-      this.$axios.get('/vendor/productList', { params: searchParam }).then(data => {
-        if(data.data.code === 1){
-          this.tableData3 = data.data.data || [];
-          for(let i=0;i<this.tableData3.length; i++) {
-            this.dialogVisible.push({dialog: false});
+      this.$axios
+        .get("/vendor/productList", { params: searchParam })
+        .then(data => {
+          if (data.data.code === 1) {
+            this.tableData3 = data.data.data || [];
+            for (let i = 0; i < this.tableData3.length; i++) {
+              this.dialogVisible.push({ dialog: false });
+            }
+            this.tabLoadingFlag = false;
+            this.total = data.data.total;
+          } else {
+            this.tabLoadingFlag = false;
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
           }
-          this.tabLoadingFlag = false;
-          this.total = data.data.total;
-        } else {
-           this.tabLoadingFlag = false;
-           this.$message({
-            message: data.data.msg,
-            type: "warning"
-          });
-        }
-      });
+        });
     }
   }
 };

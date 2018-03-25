@@ -126,13 +126,19 @@
              </el-table-column>
           </el-table>
         </el-form-item>
-        <el-form-item prop="productDesc" label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: '请输入商品描述'}]">
-          <quill-editor v-model="form.productDesc"
-                          ref="QuillEditor"
-                          @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                          @change="onEditorChange($event)"
-                          @ready="onEditorReady($event)" style="width: 700px;height: 400px">
-            </quill-editor>
+        <el-form-item prop="productDesc" style="width: 800px;height: 700px" label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: '请输入商品描述'}]">
+           <div v-loading="imageLoading" element-loading-text="请稍等，图片上传中">
+            <quill-editor v-model="form.productDesc"
+                            ref="QuillEditor"
+                            :options="editorOption"
+                            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                            @change="onEditorChange($event)"
+                            @ready="onEditorReady($event)" style="width: 800px;height: 600px">
+              </quill-editor>
+              <el-upload action="api/upload" id="uploadFormMulti" v-show="false" class="upload-el-quill" list-type="picture-card" :before-upload="beforeQuillUpload" :on-error="errorFun" :on-success="successQuillFun">
+                <i class="el-icon-plus"></i>
+              </el-upload>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit('form')" class="submit-btn">确认新建</el-button>
@@ -175,22 +181,22 @@ let specificationsCacheTabHead = [
 ];
 
 // 商品分组缓存第一级和第二级数据
-let nameArryOne = []; 
+let nameArryOne = [];
 let nameArryTwo = [];
 
 export default {
   data() {
     return {
       form: {
-        name: "上衣",
-        stock: "11",
-        productDesc: "",
+        name: "",
+        stock: "",
+        productDesc:'',
         picUrl: "",
-        limitNum: "23",
-        primeCost: "3",
-        originalPrice: "45",
-        maxDiscount: "55",
-        limitBuy: "0",
+        limitNum: "",
+        primeCost: "",
+        originalPrice: "",
+        maxDiscount: "",
+        limitBuy: "",
         type: "",
         specList: [], // 规格属性
         stockList: [], // 规格明细
@@ -220,6 +226,7 @@ export default {
       specificationTwo: [],
       specificationOneFlag: true,
       specificationTwoFlag: true,
+      imageLoading: false,
       specificationArry: [], // 缓存用户使用过的规格值
       specListNameArryOne: [], // 规格名
       specListNameArryTwo: [],
@@ -249,11 +256,31 @@ export default {
           name: "成本价"
         }
       ],
-      specListSelectVOne: '', // 属性规格
-      specListSelectVTwo: '',
+      specListSelectVOne: "", // 属性规格
+      specListSelectVTwo: "",
       shopId: "",
       content: "",
-      editorOption: {},
+      editorOption: {
+        placeholder: "输入商品介绍",
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline", "strike"],
+            ["blockquote", "code-block"],
+            [{ header: 1 }, { header: 2 }, { header: 3 }],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ script: "sub" }, { script: "super" }],
+            [{ indent: "-1" }, { indent: "+1" }],
+            [{ direction: "rtl" }],
+            [{ size: ["small", false, "large", "huge"] }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ font: [] }],
+            [{ color: [] }, { background: [] }],
+            [{ align: [] }],
+            ["clean"],
+            ["link", "image"]
+          ]
+        }
+      },
       dialogImageUrl: "",
       dialogVisible: false,
       fullscreenLoading: false,
@@ -288,7 +315,9 @@ export default {
     // 商品编辑
     if (this.$route.query && this.$route.query.id) {
       this.$axios
-        .get("/vendor/productDetail", { params: { productId: this.$route.query.id }})
+        .get("/vendor/productDetail", {
+          params: { productId: this.$route.query.id }
+        })
         .then(data => {
           if (data.data.code == 1) {
             this.form = data.data.data;
@@ -303,8 +332,12 @@ export default {
 
             // 是否限时抢购
             if (this.form.limitBuy == 1) {
-              this.limitProduct.limitdate[0] = this.form.limitBuyStartTime;
-              this.limitProduct.limitdate[1] = this.form.limitBuyEndTime;
+              this.limitProduct.limitdate[0] = new Date(
+                this.form.limitBuyStartTime
+              );
+              this.limitProduct.limitdate[1] = new Date(
+                this.form.limitBuyEndTime
+              );
               this.limitProduct.limitPrice = this.form.limitPrice;
               this.limitTimerFlag = true;
             } else {
@@ -312,7 +345,7 @@ export default {
             }
 
             // 是否包邮
-            if (this.form.isBaoyou == 1) { 
+            if (this.form.isBaoyou == 1) {
               this.postagePrice.baoyouAmt = this.form.baoyouAmt;
               this.postagePrice.postage = this.form.postage;
               this.postageFlag = true;
@@ -320,62 +353,70 @@ export default {
               this.postageFlag = false;
             }
 
-            if(this.form.type) {
+            if (this.form.type) {
               this.$axios
-                .get("/vendor/productTypeAttr", { params: { type: this.form.type } })
+                .get("/vendor/productTypeAttr", {
+                  params: { type: this.form.type }
+                })
                 .then(data => {
                   if (data.data.code == 1) {
                     this.productTypeAttr = data.data.data;
 
                     let specList = this.form.specList;
-                    if(specList && specList.length) {
+                    if (specList && specList.length) {
                       this.typeAttrFlag = false;
                       // 显示第一级 并且赋值
-                      if(specList.length == 1) {
+                      if (specList.length == 1) {
                         this.specificationOneFlag = false;
-                        this.specificationOne = specList[0].attrValue.split(',');
+                        this.specificationOne = specList[0].attrValue.split(
+                          ","
+                        );
                         this.specListSelectVOne = specList[0].attrId;
                         nameArryOne = [{ prop: specList[0].attrId }];
-                      } else if(specList.length == 2) {
+                      } else if (specList.length == 2) {
                         // 显示第二级 并且赋值
                         this.specificationTwoFlag = false;
                         this.specListTwoFlag = true;
                         this.specListTwoShow = false;
                         this.specificationOneFlag = false;
 
-                        for(let i = 0; i < specList.length; i++){
-                           if(specList[i].sort == 1) {
-                              this.specificationOne = specList[i].attrValue.split(',');
-                              this.specListSelectVOne = specList[i].attrId;
-                              nameArryOne = [{ prop: specList[i].attrId }];
-                            } else if(specList[i].sort == 2) {
-                              this.specificationTwo = specList[i].attrValue.split(',');
-                              this.specListSelectVTwo = specList[i].attrId;
-                              nameArryTwo = [{ prop: specList[i].attrId }];
-                            }
+                        for (let i = 0; i < specList.length; i++) {
+                          if (specList[i].sort == 1) {
+                            this.specificationOne = specList[i].attrValue.split(
+                              ","
+                            );
+                            this.specListSelectVOne = specList[i].attrId;
+                            nameArryOne = [{ prop: specList[i].attrId }];
+                          } else if (specList[i].sort == 2) {
+                            this.specificationTwo = specList[i].attrValue.split(
+                              ","
+                            );
+                            this.specListSelectVTwo = specList[i].attrId;
+                            nameArryTwo = [{ prop: specList[i].attrId }];
+                          }
                         }
                       }
                     }
 
                     let stockList = this.form.stockList;
-                    if(stockList && stockList.length) {
+                    if (stockList && stockList.length) {
                       this.specificationTabFlag = true;
                       //组织表格header
-                      if(specList.length == 1) {
+                      if (specList.length == 1) {
                         this.specificationsTabHead.unshift({
                           prop: stockList[0].attrList[0].attrId,
                           name: stockList[0].attrList[0].attrValue
                         });
-                      } else if(specList.length == 2) {
+                      } else if (specList.length == 2) {
                         let attrList = stockList[0].attrList;
                         let oneUnshift = {};
                         let twoUnshift = {};
 
-                        for(let i=0;i<attrList.length;i++) {
-                          if(attrList[i].sort == 1) {
+                        for (let i = 0; i < attrList.length; i++) {
+                          if (attrList[i].sort == 1) {
                             twoUnshift.prop = attrList[i].attrId;
                             twoUnshift.name = attrList[i].attrValue;
-                          } else if(attrList[i].sort == 2) {
+                          } else if (attrList[i].sort == 2) {
                             oneUnshift.prop = attrList[i].attrId;
                             oneUnshift.name = attrList[i].attrValue;
                           }
@@ -384,13 +425,13 @@ export default {
                         this.specificationsTabHead.unshift(oneUnshift);
                         this.specificationsTabHead.unshift(twoUnshift);
                       }
-                      
+
                       // 组织表格body
                       this.specificationsTabData = [];
-                      
+
                       this.inputValArry = [];
 
-                      for(let i=0; i<stockList.length; i++) {
+                      for (let i = 0; i < stockList.length; i++) {
                         let bodyLineObj = {};
                         bodyLineObj.originalPrice = stockList[i].originalPrice;
                         bodyLineObj.sort = stockList[i].sort;
@@ -405,8 +446,10 @@ export default {
                           primeCost: stockList[i].primeCost
                         };
 
-                        bodyLineObj[stockList[i].attrList[0].attrId] = stockList[i].attrList[0].attrValue;
-                        bodyLineObj[stockList[i].attrList[1].attrId] = stockList[i].attrList[1].attrValue;
+                        bodyLineObj[stockList[i].attrList[0].attrId] =
+                          stockList[i].attrList[0].attrValue;
+                        bodyLineObj[stockList[i].attrList[1].attrId] =
+                          stockList[i].attrList[1].attrValue;
                         this.specificationsTabData.push(bodyLineObj);
                         this.inputValArry.push(inputValItem);
                       }
@@ -414,7 +457,6 @@ export default {
                   }
                 });
             }
-
           } else {
             this.$message({
               message: data.data.msg,
@@ -427,9 +469,68 @@ export default {
 
   mounted: function() {
     this.loadingFlag = false;
+    this.$refs.QuillEditor.quill
+      .getModule("toolbar")
+      .addHandler("image", this.imgHandler);
   },
 
   methods: {
+    // 触发文本框中el-upload图片上传功能
+    async imgHandler() {
+      let $uploadFormMulti = document.getElementById("uploadFormMulti").getElementsByTagName('input')[0];
+      $uploadFormMulti.click();
+    },
+
+    beforeQuillUpload(file) {
+      const isJPG = file.type == "image/png";
+      const imgSizeFlag = file.size / 1024 / 1024 < 6;
+      let imgNumbFlag = true;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 PNG 格式!");
+        imgNumbFlag = false;
+      }
+
+      if (!imgSizeFlag) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+
+      return imgNumbFlag && imgSizeFlag;
+    },
+
+    successFun(response, file, fileList) {
+      let imgArr = [];
+      for (let i = 0; i < fileList.length; i++) {
+        imgArr.push(fileList[i].response.data.url);
+      }
+
+      this.form.picUrl = imgArr.join(",");
+    },
+
+    successQuillFun(response, file, fileList) {
+      this.imageLoading = true;
+      let quillImgUrl = response.data.url;
+
+      try {
+        if (quillImgUrl != null && quillImgUrl.length > 0) {
+          this.addImgRange = this.$refs.QuillEditor.quill.getSelection();
+          quillImgUrl = 'http://dev.pt800.com' + quillImgUrl;
+          // 插入到富文本框中
+          this.$refs.QuillEditor.quill.insertEmbed(
+            this.addImgRange != null ? this.addImgRange.index : 0,
+            "image",
+            quillImgUrl
+          );
+        } else {
+          this.$message.warning("图片增加失败");
+        }
+      } catch ({ message: msg }) {
+        this.$message.warning(msg);
+      }
+
+      this.imageLoading = false;
+    },
+
     postageSelect(value) {
       if (value == 1) {
         this.postageFlag = true;
@@ -447,19 +548,19 @@ export default {
     },
 
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-        if (columnIndex == 0) {
-          if (rowIndex % (this.specificationTwo.length || 1) == 0) {
-            return {
-              rowspan: (this.specificationTwo.length || 1),
-              colspan: 1
-            };
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            };
-          }
+      if (columnIndex == 0) {
+        if (rowIndex % (this.specificationTwo.length || 1) == 0) {
+          return {
+            rowspan: this.specificationTwo.length || 1,
+            colspan: 1
+          };
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          };
         }
+      }
     },
 
     productChange(value) {
@@ -478,7 +579,8 @@ export default {
           .then(data => {
             if (data.data.code == 1) {
               this.productTypeAttr = data.data.data;
-              this.specificationsTabHead.length > 4 && (this.specificationsTabHead = specificationsCacheTabHead);
+              this.specificationsTabHead.length > 4 &&
+                (this.specificationsTabHead = specificationsCacheTabHead);
               this.typeAttrFlag = false;
             }
           });
@@ -495,11 +597,11 @@ export default {
         this.specificationTabFlag = false;
       }
 
-      this.specificationChangePublic(value, 'one');
+      this.specificationChangePublic(value, "one");
     },
 
     specificationChangeTwo(value) {
-      this.specificationChangePublic(value, 'two');
+      this.specificationChangePublic(value, "two");
     },
 
     specificationChangePublic(value, type) {
@@ -520,11 +622,14 @@ export default {
 
       // 添加表格Header
       if (this.specificationsTabHead.length <= 6) {
-        if(type == 'one') {
-          if (this.specListNameArryOne.length  && this.specificationOne.length) {
-            if(this.specificationsTabHead.length < 6) {
+        if (type == "one") {
+          if (this.specListNameArryOne.length && this.specificationOne.length) {
+            if (this.specificationsTabHead.length < 6) {
               // 判断表头第一列是不是已经包含第一级
-              if(this.specificationsTabHead[0].prop !== this.specListNameArryOne[0].prop) {
+              if (
+                this.specificationsTabHead[0].prop !==
+                this.specListNameArryOne[0].prop
+              ) {
                 this.specificationsTabHead.unshift(this.specListNameArryOne[0]);
                 nameArryOne = this.specListNameArryOne;
                 this.specificationTabFlag = true;
@@ -533,30 +638,43 @@ export default {
 
             this.specListBtnTwoFlag = false;
           } else {
-            if(this.specificationsTabHead.length > 4 && this.specificationsTabHead.length <= 6) {
+            if (
+              this.specificationsTabHead.length > 4 &&
+              this.specificationsTabHead.length <= 6
+            ) {
               this.specificationsTabData = [];
               this.specificationTabFlag = false;
               this.specListNameArryTwo = [];
               this.specificationTwoFlag = false;
               this.specificationTwo = [];
-              this.specificationsTabHead.splice(0,1);
+              this.specificationsTabHead.splice(0, 1);
             }
 
             this.specListBtnTwoFlag = true;
             this.specListTwoFlag = false;
           }
-        } else if(type == 'two') {
+        } else if (type == "two") {
           if (this.specListNameArryTwo.length && this.specificationTwo.length) {
-            if(this.specificationsTabHead.length < 6) {
+            if (this.specificationsTabHead.length < 6) {
               // 判断表头第一列是不是已经包含第二级
-                if(this.specificationsTabHead[1].prop !== this.specListNameArryOne[0].prop) {
-                  this.specificationsTabHead.splice(1, 0, this.specListNameArryTwo[0]);
-                  nameArryTwo = this.specListNameArryTwo;
-                }
+              if (
+                this.specificationsTabHead[1].prop !==
+                this.specListNameArryOne[0].prop
+              ) {
+                this.specificationsTabHead.splice(
+                  1,
+                  0,
+                  this.specListNameArryTwo[0]
+                );
+                nameArryTwo = this.specListNameArryTwo;
               }
-            } else if(this.specificationsTabHead.length > 4 && this.specificationsTabHead.length <= 6) {
-              this.specificationsTabHead.splice(1,1);
             }
+          } else if (
+            this.specificationsTabHead.length > 4 &&
+            this.specificationsTabHead.length <= 6
+          ) {
+            this.specificationsTabHead.splice(1, 1);
+          }
         }
       }
 
@@ -564,53 +682,54 @@ export default {
       let resultArrTwo = [];
       let specificationsOneProp = this.specificationsTabHead[0].prop;
       let specificationsTwoProp = this.specificationsTabHead[1].prop;
-      
+
       if (this.specificationTwo.length) {
-           for (let i = 0; i < this.specificationTwo.length; i++) {
-              var resultTabData = {
-                originalPrice: '',
-                stock: '',
-                specCode: '',
-                primeCost: ''
-              };
+        for (let i = 0; i < this.specificationTwo.length; i++) {
+          var resultTabData = {
+            originalPrice: "",
+            stock: "",
+            specCode: "",
+            primeCost: ""
+          };
 
-              resultTabData[specificationsTwoProp] = this.specificationTwo[i];
-              resultArrTwo.push(resultTabData);
-              this.specificationsTabData.push(resultArrTwo[i]);
-            }
+          resultTabData[specificationsTwoProp] = this.specificationTwo[i];
+          resultArrTwo.push(resultTabData);
+          this.specificationsTabData.push(resultArrTwo[i]);
+        }
 
-            this.specificationsTabData = [];
+        this.specificationsTabData = [];
 
-            for (var i in resultArrTwo) {
-              this.specificationsTabData.push(resultArrTwo[i]);
-            }
+        for (var i in resultArrTwo) {
+          this.specificationsTabData.push(resultArrTwo[i]);
+        }
       }
 
       // 组织第一个规格名数据
-      let totalTabLine = this.specificationOne.length*this.specificationTwo.length; //table的总行数
+      let totalTabLine =
+        this.specificationOne.length * this.specificationTwo.length; //table的总行数
       let resultTotalArr = [];
 
       if (this.specificationOne.length) {
-        if(this.specificationTwo.length){
+        if (this.specificationTwo.length) {
           this.specificationsTabData = [];
-          for(let t=0; t<this.specificationOne.length; t++) {
-              for(let j=0;j<resultArrTwo.length;j++) {
-                resultArrTwo[j][specificationsOneProp] = this.specificationOne[t];
-                // 必须要转换下数据 要不然数据会出错
-                resultTotalArr.push(JSON.stringify(resultArrTwo[j]));
-              }
+          for (let t = 0; t < this.specificationOne.length; t++) {
+            for (let j = 0; j < resultArrTwo.length; j++) {
+              resultArrTwo[j][specificationsOneProp] = this.specificationOne[t];
+              // 必须要转换下数据 要不然数据会出错
+              resultTotalArr.push(JSON.stringify(resultArrTwo[j]));
             }
-          
-          for(var i=0;i<resultTotalArr.length;i++) {
-            this.specificationsTabData.push(JSON.parse(resultTotalArr[i]))
+          }
+
+          for (var i = 0; i < resultTotalArr.length; i++) {
+            this.specificationsTabData.push(JSON.parse(resultTotalArr[i]));
           }
         } else {
           for (let i = 0; i < this.specificationOne.length; i++) {
             var resultTabData = {
-              originalPrice: '',
-              stock: '',
-              specCode: '',
-              primeCost: ''
+              originalPrice: "",
+              stock: "",
+              specCode: "",
+              primeCost: ""
             };
 
             resultTabData[specificationsOneProp] = this.specificationOne[i];
@@ -621,11 +740,11 @@ export default {
 
           for (var i in resultArryOne) {
             this.specificationsTabData.push(resultArryOne[i]);
-          }  
+          }
         }
       }
 
-    // 组织尺寸价格等基本输入框
+      // 组织尺寸价格等基本输入框
       this.makeInput();
     },
 
@@ -633,10 +752,10 @@ export default {
       this.inputValArry = [];
       for (let i = 0; i < this.specificationsTabData.length; i++) {
         let inputValItem = {
-          originalPrice: '',
-          stock: '',
-          specCode: '',
-          primeCost: ''
+          originalPrice: "",
+          stock: "",
+          specCode: "",
+          primeCost: ""
         };
 
         this.inputValArry.push(inputValItem);
@@ -655,8 +774,8 @@ export default {
         }
       }
 
-      for(let i=0; i<this.specificationsTabHead.length; i++) {
-        if(this.specificationsTabHead[i].prop == value) {
+      for (let i = 0; i < this.specificationsTabHead.length; i++) {
+        if (this.specificationsTabHead[i].prop == value) {
           this.$message({
             message: "已经存在该规格名",
             type: "warning"
@@ -667,12 +786,12 @@ export default {
         }
       }
 
-      if(!breakFlag) {
+      if (!breakFlag) {
         return false;
       }
 
       this.specListNameArryOne = [{ name: obj.name, prop: value }];
-      
+
       if (value) {
         this.specificationOneFlag = false;
       } else {
@@ -697,8 +816,8 @@ export default {
         }
       }
 
-      for(let i=0; i<this.specificationsTabHead.length; i++) {
-        if(this.specificationsTabHead[i].prop == value) {
+      for (let i = 0; i < this.specificationsTabHead.length; i++) {
+        if (this.specificationsTabHead[i].prop == value) {
           this.$message({
             message: "已经存在该规格名",
             type: "warning"
@@ -709,7 +828,7 @@ export default {
         }
       }
 
-      if(!breakFlag) {
+      if (!breakFlag) {
         return false;
       }
 
@@ -739,14 +858,14 @@ export default {
     onSubmit(formName) {
       this.fullscreenLoading = true;
 
-      if(this.$route.query && this.$route.query.id) {
+      if (this.$route.query && this.$route.query.id) {
         this.form.id = this.$route.query.id;
       }
 
       if (this.form.limitBuy == 1) {
         if (this.limitProduct.limitdate.length) {
-          let start = this.limitProduct.limitdate[0];
-          let end = this.limitProduct.limitdate[1];
+          let start = new Date(this.limitProduct.limitdate[0]);
+          let end = new Date(this.limitProduct.limitdate[1]);
           this.form.limitBuyStartTime =
             start.getFullYear() +
             "-" +
@@ -854,7 +973,9 @@ export default {
             });
           }
 
-          this.form.stockList[i].originalPrice = this.inputValArry[i].originalPrice;
+          this.form.stockList[i].originalPrice = this.inputValArry[
+            i
+          ].originalPrice;
           this.form.stockList[i].stock = this.inputValArry[i].stock;
           this.form.stockList[i].specCode = this.inputValArry[i].specCode;
           this.form.stockList[i].primeCost = this.inputValArry[i].primeCost;
@@ -919,7 +1040,7 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      return imgNumbFlag;
+      return imgNumbFlag && imgSizeFlag;
     },
 
     handleExceed(files, fileList) {
@@ -1073,5 +1194,9 @@ export default {
   span {
     color: #fff;
   }
+}
+
+.ql-snow .ql-editor img {
+  width: 400px;
 }
 </style>

@@ -227,11 +227,14 @@ export default {
     onSubmit(formName) {
       console.log(this.form);
       this.fullscreenLoading = true;
-      debugger;
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios.post("/vendor/apply", this.form).then(data => {
-            if (data.data.code === "1") {
+            if (data.data.code == 1) {
+              this.$message({
+                message: data.data.msg,
+                type: "success"
+              });
               this.$router.push("/businessInformation");
             } else {
               this.$message({
@@ -286,11 +289,6 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      if (this.form.picUrl) {
-        this.$message.error("最多只能上传一张图");
-        imgNumbFlag = false;
-      }
-
       return imgSizeFlag && imgNumbFlag;
     },
 
@@ -302,10 +300,10 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      if (this.form.shopLogoUrl) {
-        this.$message.error("最多只能上传一张图");
-        imgNumbFlag = false;
-      }
+      // if (this.form.shopLogoUrl) {
+      //   this.$message.error("最多只能上传一张图");
+      //   imgNumbFlag = false;
+      // }
 
       return imgSizeFlag && imgNumbFlag;
     },
@@ -318,10 +316,10 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      if (this.form.legalCreditPic) {
-        this.$message.error("最多只能上传一张图");
-        imgNumbFlag = false;
-      }
+      // if (this.form.legalCreditPic) {
+      //   this.$message.error("最多只能上传一张图");
+      //   imgNumbFlag = false;
+      // }
 
       return imgSizeFlag && imgNumbFlag;
     },
@@ -334,16 +332,15 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      if (this.form.legalCreditPic2) {
-        this.$message.error("最多只能上传一张图");
-        imgNumbFlag = false;
-      }
+      // if (this.form.legalCreditPic2) {
+      //   this.$message.error("最多只能上传一张图");
+      //   imgNumbFlag = false;
+      // }
 
       return imgSizeFlag && imgNumbFlag;
     },
 
     cardSuccessFun(response, file, fileList) {
-      debugger;
       this.form.legalCreditPic = file.response.data.url;
     },
 
