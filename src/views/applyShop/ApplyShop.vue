@@ -90,6 +90,11 @@
               <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
+         <el-form-item label="店铺类目"  prop="shopCategoryId" :rules="[{ required: true, message: '请选择店铺类目'}]">
+          <el-select placeholder="请选择店铺类目" v-model="form.shopCategoryId">
+            <el-option v-for="(items, index) in shopCategoryArry"  :label="items.name" :value="items.id" :key="index"></el-option>
+          </el-select>
+         </el-form-item>
         <el-form-item label="店铺类型" prop="shopType">
           <el-radio-group v-model="form.shopType">
             <el-radio v-for="(items, index) in shopTypeArry" :label="items.name" :value="items.code" :key="index"></el-radio>
@@ -169,6 +174,7 @@ export default {
         province: "",
         downtown: ""
       },
+      shopCategoryArry:[],
       expressArry: [],
       companyTypeArry: [],
       shopTypeArry: [],
@@ -189,6 +195,12 @@ export default {
   },
 
   beforeMount() {
+    this.$axios.get('/vendor/shopCategoryList').then( data => {
+      if(data.data.code == 1) {
+        this.shopCategoryArry = data.data.data;
+      }
+    });
+
     this.$axios
       .get("/getDictList", { params: { type: "company_type" } })
       .then(data => {

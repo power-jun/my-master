@@ -12,24 +12,26 @@
    </el-row>
 </template>
 <script>
+let baseInfo = JSON.parse(sessionStorage.getItem('businessUserInfo')) || {};
 export default {
   data() {
     return {
-      name: 'XXX女装旗舰店',
-      shopId: '20170608562364452',
-      url: 'http://www.bac.com/shop?id=123456',
-      shopTypeName: '女装',
+      name: '',
+      shopId: '',
+      url: '',
+      shopTypeName: '',
       status: '',
-      linkman: '李先生',
-      linkmanMobile: '3800138000',
-      linkmanAddress: 'XXX省XXX市XXX区/县XX路XX大楼'
+      linkman: '',
+      linkmanMobile: '',
+      linkmanAddress: ''
     }
   },
   
   created(){
-    this.$axios.get('/vendor/shopInfo', { params: { shopId: '' } })
+    let shopId = baseInfo.shopId;
+    this.$axios.get('/vendor/shopInfo', { params: { shopId: shopId } })
     .then(data => {
-      if(data.data.code === 1) {
+      if(data.data.code == 1) {
         var data = data.data.data;
 
         this.name = data.name;
@@ -40,6 +42,11 @@ export default {
         this.linkman = data.linkman;
         this.linkmanMobile = data.linkmanMobile;
         this.linkmanAddress = data.linkmanAddress;
+      } else {
+        this.$message({
+          message: data.data.msg,
+          type: "warning"
+        });
       }
     });
   }

@@ -1,8 +1,8 @@
 <template>
   <el-row>
     <div class="head-top clearfix">
-      <slot name="title"></slot>
-      <p class="fr" :name="userInfo.age">
+      <!-- <slot name="title"></slot> -->
+      <p class="fr">
         <span class="modify-password quit-btn" @click="logOut"><img src="../../assets/images/quit.png" alt="">退出</span>
         <router-link tag="a" :to="'/changePassword'" class="modify-password"><i class="el-icon-edit"></i>修改密码</router-link>
       </p>
@@ -12,27 +12,14 @@
 
 <script>
 export default {
-  data() {
-    return {
-      childMessage: "header messge",
-      name: 'chen',
-      userInfo: {
-        age: 22
-      }
-    };
-  },
-
-  props: ["parentData", "userName"],
-
-  mounted() {
-    console.log(this.parentData.bodyHeight);
-    console.log(this.userName);
-  },
-
   methods: {
     logOut() {
       this.$axios.post('/vendor/logout').then(data => {
         if(data.data.code === 1) {
+           this.$message({
+            message: '退出成功',
+            type: "success"
+          });
           this.$router.push('/login');
         }
       })

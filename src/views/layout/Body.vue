@@ -5,8 +5,8 @@
         <div class="grid-content bg-purple">
           <div class="header-info">
             <el-row>
-              <p class="person-photo"><img src="../../assets/images/shop-logo.png" alt=""></p>
-              <p class="name">XX茶叶</p>
+              <p class="person-photo"><img :src="info.logoUrl" alt=""></p>
+              <p class="name">{{info.name}}</p>
             </el-row>
           </div>
           <div class="slide-nav">
@@ -38,10 +38,15 @@
 
 <script>
   import Header from './Header';
+  let businessUserInfo = JSON.parse(sessionStorage.getItem('businessUserInfo')) || {};
 
   export default {
     data() {
       return {
+        info: {
+          logoUrl: 'http://dev.pt800.com/' + businessUserInfo.shopLogoUrl,
+          name: businessUserInfo.name
+        },
         navs: [{
             title: '开店申请',
             subnavs: [{
@@ -112,7 +117,6 @@
 
     created: function() {
       this.bodyHeight = window.screen.height - 200;
-      //this.$router.push('/home');
     },
 
     mounted() {

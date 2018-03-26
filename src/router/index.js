@@ -23,112 +23,118 @@ const BusinessInformation = r => require.ensure([], () => r(require('businessInf
 const routers = new VueRouter({
   base: __dirname,
   routes: [{
-    path: '/login',
-    name: 'login',
-    component: Login
-  }, {
-    path: '/registed',
-    name: 'registed',
-    component: Registed
-  }, {
-    path: '/changePassword',
-    name: 'changePassword',
-    component: ChangePassword
-  }, {
-    path: '/forgetPassword',
-    name: 'forgetPassword',
-    component: ForgetPassword
-  },
-  {
-    path: '/',
-    name: 'business',
-    component: Body,
-    children: [
-      {
-        path: '/businessInformation',
-        name: 'BusinessInformation',
-        component: BusinessInformation
-      },
-      {
-        path: '/applyShop',
-        name: 'ApplyShop',
-        component: ApplyShop
-      },
-      {
-        path: '/commodityManage',
-        name: 'CommodityManage',
-        component: CommodityManage
-      },
-      {
-        path: '/editAddedGoods',
-        name: 'EditAddedGoods',
-        component: EditAddedGoods
-      },
-      {
-        path: '/modifyGoods',
-        name: 'ModifyGoods',
-        component: ModifyGoods
-      },
-      {
-        path: '/orderList',
-        name: 'OrderList',
-        component: OrderList
-      },
-      {
-        path: '/orderDetails',
-        name: 'OrderDetails',
-        component: OrderDetails
-      },
-      {
-        path: '/devaluationProducts',
-        name: 'DevaluationProducts',
-        component: DevaluationProducts
-      },
-      {
-        path: '/financialOverview',
-        name: 'FinancialOverview',
-        component: FinancialOverview
-      },
-      {
-        path: '/cashManagement',
-        name: 'CashManagement',
-        component: CashManagement
-      },
-      {
-        path: '/salesStatistics',
-        name: 'SalesStatistics',
-        component: SalesStatistics
-      },
-      {
-        path: '/orderStatistics',
-        name: 'OrderStatistics',
-        component: OrderStatistics
-      },
-      {
-        path: '/profitStatistics',
-        name: 'ProfitStatistics',
-        component: ProfitStatistics
-      }
-    ]
-  }]
+      path: '/login',
+      name: 'login',
+      component: Login
+    }, {
+      path: '/registed',
+      name: 'registed',
+      component: Registed
+    }, {
+      path: '/changePassword',
+      name: 'changePassword',
+      component: ChangePassword
+    }, {
+      path: '/forgetPassword',
+      name: 'forgetPassword',
+      component: ForgetPassword
+    },
+    {
+      path: '/',
+      redirect: '/BusinessInformation',
+      name: 'business',
+      component: Body,
+      children: [{
+          path: '/businessInformation',
+          name: 'BusinessInformation',
+          component: BusinessInformation
+        },
+        {
+          path: '/applyShop',
+          name: 'ApplyShop',
+          component: ApplyShop
+        },
+        {
+          path: '/commodityManage',
+          name: 'CommodityManage',
+          component: CommodityManage
+        },
+        {
+          path: '/editAddedGoods',
+          name: 'EditAddedGoods',
+          component: EditAddedGoods
+        },
+        {
+          path: '/modifyGoods',
+          name: 'ModifyGoods',
+          component: ModifyGoods
+        },
+        {
+          path: '/orderList',
+          name: 'OrderList',
+          component: OrderList
+        },
+        {
+          path: '/orderDetails',
+          name: 'OrderDetails',
+          component: OrderDetails
+        },
+        {
+          path: '/devaluationProducts',
+          name: 'DevaluationProducts',
+          component: DevaluationProducts
+        },
+        {
+          path: '/financialOverview',
+          name: 'FinancialOverview',
+          component: FinancialOverview
+        },
+        {
+          path: '/cashManagement',
+          name: 'CashManagement',
+          component: CashManagement
+        },
+        {
+          path: '/salesStatistics',
+          name: 'SalesStatistics',
+          component: SalesStatistics
+        },
+        {
+          path: '/orderStatistics',
+          name: 'OrderStatistics',
+          component: OrderStatistics
+        },
+        {
+          path: '/profitStatistics',
+          name: 'ProfitStatistics',
+          component: ProfitStatistics
+        }
+      ]
+    }
+  ]
 });
 
-// routers.beforeEach((to, from, next) => {
-//   debugger
-//   if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
-//       if (store.state.token) {  // 通过vuex state获取当前的token是否存在
-//           next();
-//       }
-//       else {
-//           next({
-//               path: '/login',
-//               query: {redirect: to.fullPath}  // 将跳转的路由path作为参数，登录成功后跳转到该路由
-//           })
-//       }
-//   }
-//   else {
-//       next();
-//   }
-// })
+routers.beforeEach((to, from, next) => {
+  let redirectUrl = '';
+
+  // if (this.$route.query && this.$route.query.shopId) {
+  //   redirectUrl = '/businessInformation';
+  // } else {
+  //   redirectUrl = '/ApplyShop';
+  // }
+
+  if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
+    if (store.state.token) { // 通过vuex state获取当前的token是否存在
+      next();
+    } else {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      })
+    }
+  } else {
+    next();
+  }
+})
 
 export default routers;
