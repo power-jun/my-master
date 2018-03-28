@@ -1,10 +1,10 @@
 <template>
   <div class="editor-form">
-    <el-row v-show="!loadingFlag" class="apply-shop-form">
+    <el-row v-show="!loadingFlag" class="apply-shop-form" :style="{height: bodyHeight + 'px'}">
       <!-- <div id="example">
             <p>Computed reversed message: "{{ reversedMessage }}"</p>
           </div>-->
-      <el-form ref="form" :model="form" status-icon label-width="160px">
+      <el-form ref="form" :model="form" status-icon label-width="160px" v-show="applyShopFlag">
         <h3>商家入驻申请</h3>
         <p class="form-line-title">入驻联系人信息</p>
         <el-form-item prop="linkman" label="联系人姓名:" :rules="[{ required: true, message: '请输入联系人姓名'}, {pattern: '[\u4E00-\u9FA5]{2,4}', message: '姓名格式不正确'}]">
@@ -135,6 +135,10 @@
           <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit('form')" class="submit-btn">提交申请</el-button>
         </el-form-item>
       </el-form>
+       <el-row v-show="!applyShopFlag" class="under-review">
+        <p v-if="status == 0">已提交审核,请耐心等待.....</p>
+        <p v-if="status == 2">店铺已关闭</p>
+      </el-row>
     </el-row>
     <Loading v-show="loadingFlag"></Loading>
   </div>
@@ -142,6 +146,7 @@
 
 <script>
 import Loading from "components/loading";
+let baseInfo = JSON.parse(sessionStorage.getItem('businessUserInfo')) || {};
 
 export default {
   data() {
@@ -174,6 +179,8 @@ export default {
         province: "",
         downtown: ""
       },
+      applyShopFlag: false,
+      applyShopStatus: '',
       shopCategoryArry:[],
       expressArry: [],
       companyTypeArry: [],
@@ -186,7 +193,8 @@ export default {
       fullscreenLoading: false,
       loadingFlag: true,
       downtownFlag: true,
-      areaFlag: true
+      areaFlag: true,
+      bodyHeight: ''
     };
   },
 
@@ -233,6 +241,13 @@ export default {
 
   mounted: function() {
     this.loadingFlag = false;
+    this.bodyHeight = window.screen.height - 500;
+    if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
+      this.applyShopFlag = false;
+      this.status = baseInfo.shop.status;
+    } else {
+      this.applyShopFlag = true;
+    }
   },
 
   methods: {
@@ -247,7 +262,8 @@ export default {
                 message: data.data.msg,
                 type: "success"
               });
-              this.$router.push("/businessInformation");
+              this.applyShopFlag = false;
+              // this.$router.push("/businessInformation");
             } else {
               this.$message({
                 message: data.data.msg,
@@ -475,5 +491,14 @@ export default {
 
 .link-select .el-col-7:last-child {
   margin-right: 0;
+}
+
+.under-review {
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  margin-top: -100px;
 }
 </style>

@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: "13755186705",
+        mobile: "18575677076",
         password: "a123456",
         code: ""
       },
@@ -57,12 +57,15 @@ export default {
             .then(data => {
               if (data.data.code === 1) {
                 sessionStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data));
-                let shopId = data.data.data.shopId;
-                if(shopId) {
-                  this.$router.push({ path: '/BusinessInformation', query: { shopId: shopId } });
-                } else {
-                  this.$router.push({ path: '/applyShop', query: { shopId: shopId } });
-                }
+                let datas = data.data.data;
+                let shopId = datas.shopId;
+                let status = datas.shop && datas.shop.status;
+
+                if(shopId && status && status == 1) {
+                    this.$router.push('/BusinessInformation');
+                  } else {
+                   this.$router.push('/applyShop');
+                  }
               } else {
                 this.$message({
                   message: data.data.msg,

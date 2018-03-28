@@ -11,7 +11,7 @@
           </div>
           <div class="slide-nav">
             <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
-              <el-menu-item index="/BusinessInformation"><i class="el-icon-menu"></i>商家信息</el-menu-item>
+              <el-menu-item index="/BusinessInformation" v-if="info.status == 1"><i class="el-icon-menu"></i>商家信息</el-menu-item>
               <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title">
                 <template slot="title">{{nav.title}}</template>
               <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="subnav.title">
@@ -23,7 +23,7 @@
         </div>
     </el-col>
     <el-col :span="20" class="content-right">
-      <Header :parent-data="{bodyHeight}" user-name="xjchen" v-on:childMsg = "getChildMsg">
+      <Header :parent-data="bodyHeight" user-name="xjchen" v-on:childMsg = "getChildMsg">
         <h3 slot="title" class="fl">{{name}}</h3>
       </Header>
       <div class="grid-content bg-purple-light" :style="{maxHeight: bodyHeight + 'px'}">
@@ -37,192 +37,218 @@
 </template>
 
 <script>
-  import Header from './Header';
-  let businessUserInfo = JSON.parse(sessionStorage.getItem('businessUserInfo')) || {};
+import Header from "./Header";
+let businessUserInfo = JSON.parse(sessionStorage.getItem("businessUserInfo")) || {};
+let tabNavs = [];
+let status = businessUserInfo.shop && businessUserInfo.shop.status;
 
-  export default {
-    data() {
-      return {
-        info: {
-          logoUrl: 'http://dev.pt800.com/' + businessUserInfo.shopLogoUrl,
-          name: businessUserInfo.name
+if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.status == 1) {
+  tabNavs = [
+    {
+      title: "商品管理",
+      subnavs: [
+        {
+          title: "商品管理",
+          router: "/commodityManage"
         },
-        navs: [{
-            title: '开店申请',
-            subnavs: [{
-              title: '商家入驻申请',
-              router: '/applyShop'
-            }]
-          },
-          {
-            title: '商品管理',
-            subnavs: [{
-              title: '商品管理',
-              router: '/commodityManage'
-            },{
-              title: '商品新增',
-              router: '/editAddedGoods'
-            }]
-          },
-          {
-            title: '订单管理',
-            subnavs: [{
-              title: '订单列表',
-              router: '/OrderList'
-            },{
-              title: '订单详情',
-              router: '/OrderDetails'
-            }]
-          },
-          {
-            title: '营销管理',
-            subnavs: [{
-              title: '首推产品设置',
-              router: '/devaluationProducts'
-            }]
-          },
-          {
-            title: '财务管理',
-            subnavs: [{
-              title: '财务概览',
-              router: '/financialOverview'
-            },{
-              title: '提现管理',
-              router: '/cashManagement'
-            }]
-          },
-          {
-            title: '销售统计',
-            subnavs: [{
-              title: '销售额统计',
-              router: '/salesStatistics'
-            },{
-              title: '订单统计',
-              router: '/orderStatistics'
-            },{
-              title: '利润统计',
-              router: '/profitStatistics'
-            }]
-          },
-        ],
-
-        bodyHeight: '',
-        name: ''
-      }
+        {
+          title: "商品新增",
+          router: "/editAddedGoods"
+        }
+      ]
     },
-
-    components: {
-      Header
+    {
+      title: "订单管理",
+      subnavs: [
+        {
+          title: "订单列表",
+          router: "/OrderList"
+        },
+        {
+          title: "订单详情",
+          router: "/OrderDetails"
+        }
+      ]
     },
-
-    created: function() {
-      this.bodyHeight = window.screen.height - 200;
+    {
+      title: "营销管理",
+      subnavs: [
+        {
+          title: "首推产品设置",
+          router: "/devaluationProducts"
+        }
+      ]
     },
-
-    mounted() {
-
+    {
+      title: "财务管理",
+      subnavs: [
+        {
+          title: "财务概览",
+          router: "/financialOverview"
+        },
+        {
+          title: "提现管理",
+          router: "/cashManagement"
+        }
+      ]
     },
+    {
+      title: "销售统计",
+      subnavs: [
+        {
+          title: "销售额统计",
+          router: "/salesStatistics"
+        },
+        {
+          title: "订单统计",
+          router: "/orderStatistics"
+        },
+        {
+          title: "利润统计",
+          router: "/profitStatistics"
+        }
+      ]
+    }
+  ];
+} else {
+  tabNavs = [
+    {
+      title: "开店申请",
+      subnavs: [
+        {
+          title: "商家入驻申请",
+          router: "/applyShop"
+        }
+      ]
+    }
+  ];
+}
 
-    methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath)
+export default {
+  data() {
+    return {
+      info: {
+        logoUrl: "http://dev.pt800.com/" + businessUserInfo.shopLogoUrl,
+        name: businessUserInfo.name,
+        shopId: businessUserInfo.shopId,
+        status: status
       },
+      navs: tabNavs,
+      bodyHeight: '',
+      name: ''
+    };
+  },
 
-      getChildMsg(childData) {
-        console.log(childData)
-      }
+  components: {
+    Header
+  },
+
+  created: function() {
+    this.bodyHeight = window.screen.height - 200;
+  },
+
+  mounted() {},
+
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
     },
-    //监控路由的变化
-    watch: {
-      $route(to, form) {
-        console.log('watch route')
-      }
+
+    getChildMsg(childData) {
+      console.log(childData);
+    }
+  },
+  //监控路由的变化
+  watch: {
+    $route(to, form) {
+      console.log("watch route");
     }
   }
+};
 </script>
 
 <style lang="scss">
-  @import '../../assets/css/mixin';
-  // 路由动画
-  .router-fade-enter-active,
-  .router-fade-leave-active {
-    transition: opacity .3s;
-  }
+@import "../../assets/css/mixin";
+// 路由动画
+.router-fade-enter-active,
+.router-fade-leave-active {
+  transition: opacity 0.3s;
+}
 
-  .router-fade-enter,
-  .router-fade-leave-active {
-    opacity: 0;
-  }
+.router-fade-enter,
+.router-fade-leave-active {
+  opacity: 0;
+}
 
-  .info-content {
-    @include minWidth(1290px);
-  }
+.info-content {
+  @include minWidth(1290px);
+}
 
-  .content-left {
-    height: 100%;
-    background: $fc;
-    padding-right: 0!important;
-    // @include minWidth(250px);
-  }
+.content-left {
+  height: 100%;
+  background: $fc;
+  padding-right: 0 !important;
+  // @include minWidth(250px);
+}
 
-  .content-right {
-    @include minHeight(800px);
-    .grid-content {
-      overflow-y: auto;
-      margin-left: 25px;
-      margin-right: 25px;
-      margin-top: 20px;
+.content-right {
+  @include minHeight(800px);
+  .grid-content {
+    overflow-y: auto;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 20px;
+  }
+}
+
+.icon-menu {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid #666;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: 5px;
+}
+
+.header-info {
+  @include wh(100%, 200px);
+  background: #333;
+  position: relative;
+  .el-row {
+    margin-right: 0 !important;
+    @include center;
+  }
+  .name {
+    color: $fc;
+    text-align: center;
+    margin-top: 20px;
+  }
+  @at-root {
+    .person-photo {
+      @include wh(128px, 128px);
+      border: 5px solid $fc;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      background: #88acdb;
+      cursor: pointer;
     }
-  }
-
-  .icon-menu {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border: 1px solid #666;
-    border-radius: 50%;
-    vertical-align: middle;
-    margin-top: -2px;
-    margin-right: 5px;
-  }
-
-  .header-info {
-    @include wh(100%, 200px);
-    background: #333;
-    position: relative;
-    .el-row {
-      margin-right: 0!important;
+    .person-photo img {
+      @include wh(100%, auto);
       @include center;
     }
-    .name {
-      color: $fc;
-      text-align: center;
-      margin-top: 20px;
-    }
-    @at-root {
-      .person-photo {
-        @include wh(128px, 128px);
-        border: 5px solid $fc;
-        border-radius: 50%;
-        position: relative;
-        overflow: hidden;
-        background: #88acdb;
-        cursor: pointer;
-      }
-      .person-photo img {
-        @include wh(100%, auto);
-        @include center;
-      }
-      .person-photo:hover {
-        background: #fff;
-        border: 5px solid #88acdb;
-        -webkit-box-shadow: 0 0 1.5em #88acdb;
-        box-shadow: 0 0 1.5em #88acdb;
-        -webkit-animation: rockAnimation 0.5s linear infinite alternate;
-        -ms-animation: rockAnimation 0.5s linear infinite alternate;
-        -moz-animation: rockAnimation 0.5s linear infinite alternate;
-        animation: rockAnimation 0.5s linear infinite alternate;
-      }
+    .person-photo:hover {
+      background: #fff;
+      border: 5px solid #88acdb;
+      -webkit-box-shadow: 0 0 1.5em #88acdb;
+      box-shadow: 0 0 1.5em #88acdb;
+      -webkit-animation: rockAnimation 0.5s linear infinite alternate;
+      -ms-animation: rockAnimation 0.5s linear infinite alternate;
+      -moz-animation: rockAnimation 0.5s linear infinite alternate;
+      animation: rockAnimation 0.5s linear infinite alternate;
     }
   }
+}
 </style>

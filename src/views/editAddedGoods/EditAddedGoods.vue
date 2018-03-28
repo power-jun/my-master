@@ -41,7 +41,7 @@
         </el-form-item>
         <el-form-item label="限时购买时间:" v-show="limitTimerFlag">
           <el-col :span="20">
-            <el-date-picker v-model="limitProduct.limitdate" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <el-date-picker v-model="limitProduct.limitdate" type="datetimerange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
           </el-col>
         </el-form-item>
         <el-form-item label="邮费:" prop="isBaoyou">
@@ -496,15 +496,6 @@ export default {
       }
 
       return imgNumbFlag && imgSizeFlag;
-    },
-
-    successFun(response, file, fileList) {
-      let imgArr = [];
-      for (let i = 0; i < fileList.length; i++) {
-        imgArr.push(fileList[i].response.data.url);
-      }
-
-      this.form.picUrl = imgArr.join(",");
     },
 
     successQuillFun(response, file, fileList) {
@@ -1059,7 +1050,7 @@ export default {
     successFun(response, file, fileList) {
       let imgArr = [];
       for (let i = 0; i < fileList.length; i++) {
-        imgArr.push(fileList[i].response.data.url);
+        imgArr.push(fileList[i].response.data && fileList[i].response.data.url);
       }
 
       this.form.picUrl = imgArr.join(",");

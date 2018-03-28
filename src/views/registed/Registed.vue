@@ -107,7 +107,11 @@ export default {
               checkCode: this.registedForm.checkCode
             })
             .then(data => {
-              if (data.data.code === "1") {
+              if (data.data.code == 1) {
+                this.$message({
+                  message: data.data.msg,
+                  type: "success"
+                });
                 this.$router.push("/login");
               } else {
                 this.$message({
