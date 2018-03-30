@@ -46,12 +46,12 @@
         </el-form-item>
         <el-form-item label="邮费:" prop="isBaoyou">
          <el-select v-model="form.isBaoyou" clearable placeholder="请选择邮费" @change="postageSelect">
-          <el-option label="包邮" value="0"></el-option>
-          <el-option label="不包邮" value="1"></el-option>
+          <el-option label="包邮" value="1"></el-option>
+          <el-option label="不包邮" value="0"></el-option>
          </el-select>
-         <el-row v-show="postageFlag" prop="postageRadio">
-           <el-col :span="8">满<el-input v-model="postagePrice.baoyouAmt" class="full-reduction"></el-input>元免邮</el-col>
-           <el-col :span="12">快递费 <el-input v-model="postagePrice.postage" class="full-reduction"></el-input></el-col>
+         <el-row v-show="postageFlag" prop="postageRadio" class="el-form-item is-required">
+           <el-col class="el-form-item__label" :span="12" style="width: auto">快递费 <el-input v-model="postagePrice.postage" class="full-reduction"></el-input></el-col>
+           <el-col :span="8"><el-checkbox v-model="postagePrice.amtChecked">满<el-input :disabled="!postagePrice.amtChecked" v-model="postagePrice.baoyouAmt" class="full-reduction"></el-input>元免邮</el-checkbox></el-col>
          </el-row>
         </el-form-item>
         <el-form-item label="商品分类:" prop="type" :rules="[{ required: true, message: '请选择商品分类'}]">
@@ -211,7 +211,8 @@ export default {
       },
       postagePrice: {
         baoyouAmt: "",
-        postage: ""
+        postage: "",
+        amtChecked: false
       },
       inputValArry: [
         { originalPrice: "" },
@@ -345,9 +346,10 @@ export default {
             }
 
             // 是否包邮
-            if (this.form.isBaoyou == 1) {
-              this.postagePrice.baoyouAmt = this.form.baoyouAmt;
+            if (this.form.isBaoyou == 0) {
+              this.postagePrice.baoyouAmt = this.form.baoyouAmt && this.form.baoyouAmt;
               this.postagePrice.postage = this.form.postage;
+              this.postagePrice.amtChecked = true;
               this.postageFlag = true;
             } else {
               this.postageFlag = false;
@@ -523,7 +525,7 @@ export default {
     },
 
     postageSelect(value) {
-      if (value == 1) {
+      if (value == 0) {
         this.postageFlag = true;
       } else {
         this.postageFlag = false;
@@ -890,18 +892,8 @@ export default {
         }
       }
       if (this.form.isBaoyou.length) {
-        if (this.form.isBaoyou == 1) {
-          if (this.postagePrice.baoyouAmt) {
-            this.form.baoyouAmt = this.postagePrice.baoyouAmt;
-          } else {
-            this.fullscreenLoading = false;
-            this.$message({
-              message: "请填写满多少钱免邮",
-              type: "warning"
-            });
-            return false;
-          }
-
+        // 不包邮
+        if (this.form.isBaoyou == 0) {
           if (this.postagePrice.postage) {
             this.form.postage = this.postagePrice.postage;
           } else {
@@ -911,6 +903,19 @@ export default {
               type: "warning"
             });
             return false;
+          }
+
+          if(this.postagePrice.amtChecked) {
+            if (this.postagePrice.baoyouAmt) {
+              this.form.baoyouAmt = this.postagePrice.baoyouAmt;
+            } else {
+              this.fullscreenLoading = false;
+              this.$message({
+                message: "请填写满多少钱免邮",
+                type: "warning"
+              });
+              return false;
+            }
           }
         }
       } else {
