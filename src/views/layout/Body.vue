@@ -9,12 +9,12 @@
               <p class="name">{{info.name}}</p>
             </el-row>
           </div>
-          <div class="slide-nav">
+          <div class="slide-nav" id="slideNav">
             <el-menu router class="el-menu-vertical-demo" default-active="/home" @open="handleOpen">
               <el-menu-item index="/BusinessInformation" v-if="info.status == 1"><i class="el-icon-menu"></i>商家信息</el-menu-item>
-              <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title">
+              <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title" :class="nav.titleClass">
                 <template slot="title">{{nav.title}}</template>
-              <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="subnav.title">
+                <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="subnav.title">
                 <i class="icon-menu"></i>{{subnav.title}}
               </el-menu-item>
             </el-submenu>
@@ -42,10 +42,21 @@ let businessUserInfo = JSON.parse(sessionStorage.getItem("businessUserInfo")) ||
 let tabNavs = [];
 let status = businessUserInfo.shop && businessUserInfo.shop.status;
 
-if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.status == 1) {
+// if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.status == 1) {
   tabNavs = [
     {
+      title: "开店申请",
+      titleClass: 'apply-shop',
+      subnavs: [
+        {
+          title: "商家入驻申请",
+          router: "/applyShop"
+        }
+      ]
+    },
+    {
       title: "商品管理",
+      titleClass: 'no-apply-shop',
       subnavs: [
         {
           title: "商品管理",
@@ -59,6 +70,7 @@ if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.st
     },
     {
       title: "订单管理",
+      titleClass: 'no-apply-shop',
       subnavs: [
         {
           title: "订单列表",
@@ -72,6 +84,7 @@ if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.st
     },
     {
       title: "营销管理",
+      titleClass: 'no-apply-shop',
       subnavs: [
         {
           title: "首推产品设置",
@@ -81,6 +94,7 @@ if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.st
     },
     {
       title: "财务管理",
+      titleClass: 'no-apply-shop',
       subnavs: [
         {
           title: "财务概览",
@@ -94,6 +108,7 @@ if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.st
     },
     {
       title: "销售统计",
+      titleClass: 'no-apply-shop',
       subnavs: [
         {
           title: "销售额统计",
@@ -110,28 +125,29 @@ if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.st
       ]
     }
   ];
-} else {
-  tabNavs = [
-    {
-      title: "开店申请",
-      subnavs: [
-        {
-          title: "商家入驻申请",
-          router: "/applyShop"
-        }
-      ]
-    }
-  ];
-}
+
+//  else {
+//   tabNavs = [
+//     {
+//       title: "开店申请",
+//       subnavs: [
+//         {
+//           title: "商家入驻申请",
+//           router: "/applyShop"
+//         }
+//       ]
+//     }
+//   ];
+// }
 
 export default {
   data() {
     return {
       info: {
-        logoUrl: "http://dev.pt800.com/" + businessUserInfo.shopLogoUrl,
-        name: businessUserInfo.name,
-        shopId: businessUserInfo.shopId,
-        status: status
+        logoUrl: businessUserInfo && ("http://dev.pt800.com/" + businessUserInfo.shopLogoUrl || ''),
+        name: businessUserInfo.shop && (businessUserInfo.shop.name || ''),
+        shopId: businessUserInfo.shopId || '',
+        status: status || ''
       },
       navs: tabNavs,
       bodyHeight: '',
@@ -147,7 +163,8 @@ export default {
     this.bodyHeight = window.screen.height - 200;
   },
 
-  mounted() {},
+  mounted() {
+  },
 
   methods: {
     handleOpen(key, keyPath) {

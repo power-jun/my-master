@@ -5,7 +5,7 @@
       <el-col :span="20">店铺链接：{{url}}</el-col>
       <el-col :span="20">店铺名称： {{name}}</el-col>
       <el-col :span="20">店铺类目： {{shopTypeName}}</el-col>
-      <el-col :span="20">店铺状态： {{status}}</el-col>
+      <el-col :span="20">店铺状态： {{statusName}}</el-col>
       <el-col :span="20">联系人： {{linkman}}</el-col>
       <el-col :span="20">联系人手机： {{linkmanMobile}}</el-col>
       <el-col :span="20">联系地址： {{linkmanAddress}}</el-col>
@@ -20,7 +20,7 @@ export default {
       shopId: '',
       url: '',
       shopTypeName: '',
-      status: '',
+      statusName: '',
       linkman: '',
       linkmanMobile: '',
       linkmanAddress: ''
@@ -28,6 +28,14 @@ export default {
   },
   
   created(){
+    // var navParent = document.getElementById('slideNav');
+    // var noApplyShop = document.getElementsByClassName('no-apply-shop');
+    // debugger
+    // for(var i=0; i < noApplyShop.length; i++) {
+    //   noApplyShop[]
+    // }
+    // navParent.removeChild(noApplyShop);
+
     let shopId = baseInfo.shopId;
     this.$axios.get('/vendor/shopInfo', { params: { shopId: shopId } })
     .then(data => {
@@ -38,7 +46,7 @@ export default {
         this.shopId = data.shopId;
         this.url = data.url;
         this.shopTypeName = data.shopTypeName;
-        this.status = data.status;
+        this.statusName = data.statusName;
         this.linkman = data.linkman;
         this.linkmanMobile = data.linkmanMobile;
         this.linkmanAddress = data.linkmanAddress;

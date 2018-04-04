@@ -73,7 +73,7 @@ export default {
               reNewPassword: this.registedForm.reNewPassword
             })
             .then(data => {
-              if (data.data.code === "1") {
+              if (data.data.code == 1) {
                 this.$router.push("/");
               } else {
                 this.$message({

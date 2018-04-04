@@ -194,7 +194,8 @@ export default {
       loadingFlag: true,
       downtownFlag: true,
       areaFlag: true,
-      bodyHeight: ''
+      bodyHeight: '',
+      status: 0
     };
   },
 
@@ -242,6 +243,7 @@ export default {
   mounted: function() {
     this.loadingFlag = false;
     this.bodyHeight = window.screen.height - 500;
+
     if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
       this.applyShopFlag = false;
       this.status = baseInfo.shop.status;

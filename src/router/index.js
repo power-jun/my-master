@@ -41,7 +41,7 @@ const routers = new VueRouter({
     },
     {
       path: '/',
-      redirect: '/BusinessInformation',
+      redirect: '/login',
       name: 'business',
       component: Body,
       children: [{
@@ -116,24 +116,26 @@ const routers = new VueRouter({
 
 routers.beforeEach((to, from, next) => {
   let redirectUrl = '';
+  var businessUserInfo = JSON.parse(sessionStorage.getItem("businessUserInfo")) || {};
 
-  // if (this.$route.query && this.$route.query.shopId) {
-  //   redirectUrl = '/businessInformation';
-  // } else {
-  //   redirectUrl = '/ApplyShop';
-  // }
-
-  if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
-    if (store.state.token) { // 通过vuex state获取当前的token是否存在
+  if (!businessUserInfo.shopId) { // 还未成为商户
+    if (to.path == '/applyShop' || to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
       next();
     } else {
+      alert('请先申请入住店铺')
       next({
-        path: '/login',
-        query: { redirect: to.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
+        path: '/applyShop'
       })
     }
   } else {
-    next();
+    if (to.path == '/applyShop') {
+      alert('您已经是店家，不需要再申请');
+      next({
+        path: from.path
+      });
+    } else {
+      next();
+    }
   }
 })
 

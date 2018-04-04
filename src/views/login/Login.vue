@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: "18575677076",
+        mobile: "15302752350", //18575677076
         password: "a123456",
         code: ""
       },
