@@ -15,19 +15,19 @@
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
-        <el-form-item label="库存量:" prop="stock" :rules="[{ required: true, message: '请输入库存量'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位数字'}]">
+        <el-form-item label="库存量:" prop="stock" :rules="[{ required: true, message: '请输入库存量'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位整数'}]">
           <el-input  v-model="form.stock"></el-input>
         </el-form-item>
-        <el-form-item label="单账号限购数量:" prop="limitNum" :rules="[{ required: true, message: '请输入单账号限购数量'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位数字'}]">
+        <el-form-item label="单账号限购数量:" prop="limitNum" :rules="[{ required: true, message: '请输入单账号限购数量'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位整数'}]">
           <el-input v-model="form.limitNum"></el-input> 
         </el-form-item>
-        <el-form-item label="成本:" prop="primeCost" :rules="[{ required: true, message: '请输入成本'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位数字'}]">
+        <el-form-item label="成本:" prop="primeCost" :rules="[{ required: true, message: '请输入成本'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.primeCost"></el-input>
         </el-form-item>
-        <el-form-item label="原价:" prop="originalPrice" :rules="[{ required: true, message: '请输入原价'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位数字'}]">
+        <el-form-item label="原价:" prop="originalPrice" :rules="[{ required: true, message: '请输入原价'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.originalPrice"></el-input>
         </el-form-item>
-        <el-form-item label="最大优惠金额:" prop="maxDiscount" :rules="[{ required: true, message: '请输入最大优惠金额'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位数字'}]">
+        <el-form-item label="最大优惠金额:" prop="maxDiscount" :rules="[{ required: true, message: '请输入最大优惠金额'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.maxDiscount"></el-input>
         </el-form-item>
          <el-form-item label="是否限时购买:">
@@ -36,7 +36,7 @@
             <el-radio label="0">否</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="限时购买价:" v-show="limitTimerFlag" prop="limitPrice" :rules="[{ pattern: /^\d{1,20}$/, message: '只能输入1-20位数字'}]">
+        <el-form-item label="限时购买价:" v-show="limitTimerFlag" prop="limitPrice" :rules="[{ pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="limitProduct.limitPrice"></el-input>
         </el-form-item>
         <el-form-item label="限时购买时间:" v-show="limitTimerFlag">

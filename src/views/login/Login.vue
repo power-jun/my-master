@@ -56,6 +56,7 @@ export default {
             })
             .then(data => {
               if (data.data.code === 1) {
+                debugger
                 sessionStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data));
                 let datas = data.data.data;
                 let shopId = datas.shopId;

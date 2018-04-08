@@ -22,7 +22,7 @@ function setup(params, callback) {
 }
 
 function initInterceptors() {
-
+debugger
   let CancelToken = axios.CancelToken;
   let source = CancelToken.source();
 
