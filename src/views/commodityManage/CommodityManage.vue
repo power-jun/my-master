@@ -6,7 +6,7 @@
         <el-input v-model="formSearch.name" placeholder="商品名称"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="formSearch.status" placeholder="商品状态" clearable>
+        <el-select v-model="formSearch.status" placeholder="商品状态" clearable @change="statusSelect">
           <el-option label="全部" value=""></el-option>
           <el-option v-for="(item, index) in statusArry" :label="item.name" :value="item.code" :key="index"></el-option>
         </el-select>
@@ -24,7 +24,7 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="tableData3" v-loading="tabLoadingFlag" border style="width: 100%;text-align: center">
+    <el-table :data="tableData3" v-loading="tabLoadingFlag" border height="620" style="width: 100%;text-align: center">
       <el-table-column
         prop="id"
         label="ID"
@@ -192,6 +192,10 @@ export default {
 
     handleCurrentChange(value) {
       this.formSearch.pageNo = value;
+      this.onSubmit();
+    },
+
+    statusSelect() {
       this.onSubmit();
     },
 

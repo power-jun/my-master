@@ -609,7 +609,7 @@ export default {
         } else {
           resultSelectArry.push({ value: value[i], label: value[i] });
         }
-      }
+      }                        
 
       this.specificationArry = resultSelectArry;
 
@@ -759,6 +759,9 @@ export default {
       let obj = {};
       let item = this.productTypeAttr;
       let breakFlag = true;
+
+      nameArryOne = [];
+      nameArryTwo = [];
 
       for (var i in item) {
         if (item[i].id == value) {
@@ -928,6 +931,7 @@ export default {
       }
 
       this.form.specList = [];
+      
       if (nameArryOne.length) {
         let specListOne = [{}];
         specListOne[0].attrId = nameArryOne[0].prop;
@@ -986,7 +990,7 @@ export default {
           }
         }
       }
-
+console.log(this.form)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!inputValFlag) {

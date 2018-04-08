@@ -1,6 +1,6 @@
 <template>
   <div class="editor-form">
-    <el-row v-show="!loadingFlag" class="apply-shop-form" :style="{height: bodyHeight + 'px'}">
+    <el-row v-show="!loadingFlag" class="apply-shop-form">
       <!-- <div id="example">
             <p>Computed reversed message: "{{ reversedMessage }}"</p>
           </div>-->
@@ -242,7 +242,7 @@ export default {
 
   mounted: function() {
     this.loadingFlag = false;
-    this.bodyHeight = window.screen.height - 500;
+    this.bodyHeight = window.screen.height;
 
     if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
       this.applyShopFlag = false;

@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: "15302752350", //18575677076
+        mobile: "18575677076", //15302752350
         password: "a123456",
         code: ""
       },
@@ -56,7 +56,6 @@ export default {
             })
             .then(data => {
               if (data.data.code === 1) {
-                debugger
                 sessionStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data));
                 let datas = data.data.data;
                 let shopId = datas.shopId;
@@ -94,7 +93,6 @@ export default {
   // },
   watch: {
    '$route' (to, from) {
-     debugger
      console.log(this.getStatus(this.$route.path))
    }
   }

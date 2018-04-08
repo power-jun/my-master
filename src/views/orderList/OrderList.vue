@@ -6,7 +6,7 @@
           <el-input v-model="formSearch.orderNo" placeholder="订单编号"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="formSearch.status" placeholder="订单状态">
+          <el-select v-model="formSearch.status" placeholder="订单状态" @change="statusSelect">
             <el-option label="全部" value=""></el-option>
             <el-option v-for="(items, index) in orderTypeList" :label="items.name" :value="items.code" :key="index"></el-option>
           </el-select>
@@ -23,7 +23,7 @@
           <el-button @click="onSubmit" style="margin-left: 8px">导出</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData3" height="600" border style="width: 100%;text-align: center">
+      <el-table :data="tableData3"  v-loading="tabLoadingFlag" height="600" border style="width: 100%;text-align: center">
         <el-table-column
           prop="memberName"
           label="用户昵称"
@@ -43,7 +43,7 @@
           label="下单时间" align="center">
         </el-table-column>
         <el-table-column
-          prop="status"
+          prop="statusName"
           label="订单状态" align="center">
         </el-table-column>
         <el-table-column
@@ -51,20 +51,20 @@
           label="订单金额" align="center">
         </el-table-column>
         <el-table-column
-          prop="payType"
+          prop="payTypeName"
           label="付款方式" align="center">
         </el-table-column>
         <el-table-column
-          prop="envelopeUsage"
+          prop="couponReducePrice"
           label="红包使用情况" align="center">
         </el-table-column>
         <el-table-column
           label="操作"
           width="260" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="handleShip(scope.$index, scope.row)">发货</el-button>
-            <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-            <el-button size="mini" type="primary" @click="handleRefund(scope.$index, scope.row)">退款审核</el-button>
+            <el-button size="mini"  @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+            <el-button size="mini" v-if="scope.row.status == 1" type="primary" @click="handleShip(scope.$index, scope.row)">发货</el-button>
+            <el-button size="mini" v-else-if="(scope.row.status == 6 || scope.row.status == 10)" type="primary" @click="handleRefund(scope.$index, scope.row)">退款审核</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -87,11 +87,17 @@
         <el-form-item label="收货人姓名:">
           <el-input v-model="shopForm.memberName" auto-complete="off" disabled></el-input>
         </el-form-item>
+         <el-form-item label="收货人电话:">
+          <el-input v-model="shopForm.phone" auto-complete="off" disabled></el-input>
+        </el-form-item>
         <el-form-item label="收货人地址:">
           <el-input v-model="shopForm.address" auto-complete="off" disabled></el-input>
         </el-form-item>
+        <el-form-item label="收货人邮编:">
+          <el-input v-model="shopForm.zipCode" auto-complete="off" disabled></el-input>
+        </el-form-item>
         <el-form-item label="快递公司:">
-          <el-select v-model="shopForm.express" placeholder="请选择快递公司">
+          <el-select v-model="shopForm.express" placeholder="请选择快递公司" @change="companySel">
             <el-option v-for="(items, index) in expressArry" :label="items.name" :value="items.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
@@ -104,28 +110,31 @@
         <el-button type="primary" @click="shopConfirm">确 定</el-button>
       </div>
     </el-dialog>
+
+
     <el-dialog title="退款退货申请" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
       <el-form :model="shopForm"  label-width="100px">
         <el-form-item label="订单编号:">
-          <el-input v-model="shopForm.orderNo" auto-complete="off" disabled></el-input>
+          <el-input v-model="refundForm.orderNo" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="收货人姓名:">
-          <el-input v-model="shopForm.memberName" auto-complete="off" disabled></el-input>
+        <el-form-item label="退款金额:">
+          <el-input v-model="refundForm.amt" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="收货人地址:">
-          <el-input v-model="shopForm.address" auto-complete="off" disabled></el-input>
+        <el-form-item label="退款选择:">
+          <el-input v-model="refundForm.select" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="快递公司:">
-          <el-select v-model="shopForm.express" placeholder="请选择快递公司">
-            <el-option v-for="(items, index) in expressArry" :label="items.name" :value="items.code" :key="index"></el-option>
-          </el-select>
+        <el-form-item label="退款说明:">
+          <el-input v-model="refundForm.reason" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="快递单号:">
-          <el-input v-model="shopForm.trackingNumber" auto-complete="off"></el-input>
+        <el-form-item label="退款图片:">
+          <img :src="'http://dev.pt800.com/' + refundForm.pic" alt="">
+        </el-form-item>
+        <el-form-item label="退款备注:">
+          <el-input v-model="refundForm.remark" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="defundConfirm">确认退款</el-button>
+        <el-button type="primary" @click="refundConfirm">确认退款</el-button>
         <el-button @click="dialogVisibleRefund = false">驳回退款申请</el-button>
       </div>
     </el-dialog>
@@ -141,12 +150,13 @@ export default {
   data() {
     return {
       loadingFlag: true,
+      tabLoadingFlag: true,
       dialogVisibleShop: false,
       dialogVisibleRefund: false,
       orderTypeList: [],
       expressArry: [],
       payTime: '',
-      total: '',
+      total: 0,
       formSearch: {
         shopId: '',
         orderNo: '',
@@ -157,8 +167,18 @@ export default {
       shopForm: {
         orderNo: "",
         memberName: "",
-        address: "XXX省XXX市XXX区XXXX街道XXX小区XXXX楼",
-        trackingNumber: ""
+        address: "",
+        phone: '',
+        trackingNumber: "",
+        zipCode: ''
+      },
+      refundForm: {
+        orderNo: '',
+        amt: 0,
+        select: '',
+        reason: '',
+        pic: '',
+        remark: ''
       },
       pickerOptions2: {
         shortcuts: [
@@ -192,28 +212,7 @@ export default {
         ]
       },
 
-      tableData3: [
-        {
-          memberName: "KKKKK",
-          orderNo: "S20170623562389",
-          productName: "XXX韩版女装",
-          addTime: "2016-06-23 00:00:00",
-          status: "未支付",
-          amountPayable: "￥50.00",
-          payType: "微信",
-          envelopeUsage: "通用红包"
-        },
-        {
-          memberName: "KKKKK",
-          orderNo: "S20170623562389",
-          productName: "XXX韩版女装",
-          addTime: "2016-06-23 00:00:00",
-          status: "未支付",
-          amountPayable: "￥50.00",
-          payType: "微信",
-          envelopeUsage: "通用红包"
-        }
-      ]
+      tableData3: []
     };
   },
 
@@ -236,6 +235,8 @@ export default {
             });
         }
       });
+
+      this.onSubmit();
   },
 
   mounted: function() {
@@ -243,6 +244,14 @@ export default {
   },
 
   methods: {
+    companySel(val) {
+      this.express = val;
+    },
+
+    statusSelect() {
+      this.onSubmit();
+    },
+
     handleDetail(index, row) {
       this.$router.push({
         path: "/orderDetails",
@@ -252,19 +261,89 @@ export default {
 
     handleShip(index, row) {
       this.shopForm.orderNo = row.orderNo;
-      this.shopForm.memberName = row.memberName;
+      this.shopForm.memberName = row.consignee;
+      this.shopForm.phone = row.mobile;
+      this.shopForm.address = row.provinceName + row.cityName + row.districtName + row.address;
+      this.shopForm.zipCode = row.zipCode;
       this.dialogVisibleShop = true;
     },
 
     shopConfirm() {
-      this.dialogVisibleShop = false;
+      var param = {};
+
+      if(!this.shopForm.express) {
+        this.$message({
+              message: '请选择快递公司',
+              type: "warning"
+            });
+            return;
+      }
+
+      if(!this.shopForm.trackingNumber) {
+          this.$message({
+              message: '请输入快递单号',
+              type: "warning"
+            });
+            return;
+      }
+
+      param.orderNo = this.shopForm.orderNo;
+      param.express = this.shopForm.express;
+      param.deliveryNo = this.shopForm.trackingNumber;
+
+      this.$axios
+        .post("/vendor/orderDelivery", param)
+        .then(data => {
+          if (data.data.code == 1) {
+            this.$message({
+              message: "发货成功",
+              type: "success"
+            });
+
+            this.dialogVisibleShop = false;
+            this.onSubmit();
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
+          }
+        });
     },
 
     handleRefund(index, row) {
-      this.dialogVisibleRefund = true;
+     this.dialogVisibleRefund = false;
     },
 
-    defundConfirm() {
+    refundConfirm(type) {
+      // 确认退款
+      var param = {};
+      param.orderNo = this.refundForm.orderNo;
+      param.status = type;
+
+      if(type == 12 && this.refundForm.remarks) {
+        this.$message({
+           message: '请填写驳回说明',
+           type: "warning"
+        });
+      }
+
+      param.remarks = this.refundForm.remark;
+
+      this.$axios
+        .get("/vendor/orderRefund", { params: param })
+        .then(data => {
+          if (data.data.code == 1) {
+            this.$message({
+              message: "退款成功",
+              type: "success"
+            });
+
+            this.dialogVisibleRefund = false;
+            this.onSubmit();
+          }
+        });
+
       this.dialogVisibleRefund = false;
     },
 
@@ -276,6 +355,14 @@ export default {
     handleCurrentChange(value) {
       this.formSearch.pageNo = value;
       this.onSubmit();
+    },
+
+    zeroFilling(n) {
+      if (n > 10) {
+        return n;
+      } else if (n < 10) {
+        return "0" + n + "";
+      }
     },
 
     onSubmit: function() {
@@ -295,19 +382,20 @@ export default {
           "-" +
           this.zeroFilling(end.getDate());
       }
-      debugger
-
+      this.tabLoadingFlag = true;
       this.$axios
-        .get("/vendor/productList", { params: this.formSearch })
+        .get("/vendor/orderList", { params: this.formSearch })
         .then(data => {
-          if (data.data.code === 1) {
+          if (data.data.code == 1) {
             this.tableData3 = data.data.data;
-            console.log(this.tableData3.length);
-            for (let i = 0; i < this.tableData3.length; i++) {
-              this.dialogVisible.push({ dialog: false });
-            }
-
             this.total = data.data.total;
+            this.tabLoadingFlag = false;
+          } else {
+            this.tabLoadingFlag = false;
+            this.$message({
+              message: "退款成功",
+              type: "warning"
+            });
           }
         });
     }

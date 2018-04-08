@@ -75,10 +75,6 @@ let status = businessUserInfo.shop && businessUserInfo.shop.status;
         {
           title: "订单列表",
           router: "/OrderList"
-        },
-        {
-          title: "订单详情",
-          router: "/OrderDetails"
         }
       ]
     },

@@ -12,21 +12,12 @@
     </el-row>
     <el-table :data="userInfo.orderDetailList" border style="text-align: center">
       <el-table-column
-        prop="productNo"
-        label="商品编号"
-        align="center">
-      </el-table-column>
-      <el-table-column
         prop="productName"
         label="商品名称" align="center">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="产地" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="specifications"
-        label="重量规格" align="center">
+        prop="spec"
+        label="规格" align="center">
       </el-table-column>
       <el-table-column
         prop="originalPrice"
@@ -43,16 +34,16 @@
     </el-table>
     <div class="order-address">
       <el-row class="order-detail">
-        <el-col :span="6">应付款：{{userInfo.amountPayable}}元</el-col>
+        <el-col :span="6">应付款：{{userInfo.amountPayable}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">通用红包: -{{userInfo.couponReducePrice}}元</el-col>
+        <el-col :span="20">红包使用情况: {{userInfo.couponReducePrice}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">付款方式：{{userInfo.payType}}</el-col>
+        <el-col :span="20">付款方式：{{userInfo.payTypeName}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">实付款: ￥{{userInfo.amountPaid}}</el-col>
+        <el-col :span="20">实付款: {{userInfo.amountPaid}}</el-col>
       </el-row>
       <el-row class="order-detail">
         <el-col :span="20">收货人信息：{{userInfo.consignee}}</el-col>
@@ -86,9 +77,9 @@ export default {
       loadingFlag: true,
       remarkSystem: "",
       userInfo: {
-        orderNo: "20170608562364452",
+        orderNo: "",
         memberId: "",
-        memberName: "飞扬",
+        memberName: "",
         amountPayable: "",
         couponReducePrice: "",
         amountPaid: "",
@@ -96,26 +87,7 @@ export default {
         mobile: "",
         address: "",
         payType: "",
-        orderDetailList: [
-          {
-            productNo: "S20170623562389",
-            productName: "XXX韩版女装",
-            address: "广东",
-            specifications: "350ML",
-            originalPrice: "￥50.00",
-            primeCost: "￥30.00",
-            quantity: "4"
-          },
-          {
-            productNo: "S20170623562389",
-            productName: "XXX韩版女装",
-            address: "广东",
-            specifications: "350ML",
-            originalPrice: "￥50.00",
-            primeCost: "￥30.00",
-            quantity: "4"
-          }
-        ]
+        orderDetailList: []
       }
     };
   },
@@ -127,7 +99,9 @@ export default {
   beforeMount() {
     this.$axios.get('/vendor/orderDetail', { params: {orderNo : this.$route.query.orderNo }}).then(data => {
       if(data.data.code === 1) {
-        this.userInfo = data.data.data;
+        var datas = data.data.data;
+        this.userInfo = datas;
+        this.userInfo.address = datas.provinceName + datas.cityName + datas.districtName + datas.address;
       }
     })
   },
@@ -138,10 +112,18 @@ export default {
 
   methods: {
     submitForm() {
+      if(!this.remarkSystem) {
+        this.$message({
+              message: '备注信息不能为空',
+              type: "warning"
+            });
+            return;
+      }
+
       this.$axios
         .post("/vendor/saveRemarkSystem", {
           orderNo: this.userInfo.orderNo,
-          remarkSystem: this.remarkSystem
+          remarks: this.remarkSystem
         })
         .then(data => {
           if (data.data.code === 1) {
@@ -149,6 +131,7 @@ export default {
               message: data.data.msg,
               type: "success"
             });
+            this.remarkSystem = '';
           } else {
             this.$message({
               message: data.data.msg,
