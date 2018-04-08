@@ -201,6 +201,7 @@ export default {
   height: 100%;
   background: $fc;
   padding-right: 0 !important;
+  overflow-y: auto;
   // @include minWidth(250px);
 }
 
