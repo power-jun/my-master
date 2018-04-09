@@ -111,31 +111,33 @@
       </div>
     </el-dialog>
 
-
     <el-dialog title="退款退货申请" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
       <el-form :model="shopForm"  label-width="100px">
         <el-form-item label="订单编号:">
           <el-input v-model="refundForm.orderNo" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="退款金额:">
-          <el-input v-model="refundForm.amt" auto-complete="off" disabled></el-input>
+        <el-form-item label="商品状态:">
+          <el-input v-model="refundForm.deliveryStatusName" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="退款选择:">
-          <el-input v-model="refundForm.select" auto-complete="off" disabled></el-input>
+         <el-form-item label="退款原因:">
+          <el-input v-model="refundForm.reason" auto-complete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="退款说明:">
-          <el-input v-model="refundForm.reason" auto-complete="off" disabled></el-input>
+          <el-input v-model="refundForm.remarks" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="退款金额:">
+          <el-input v-model="refundForm.amt" auto-complete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="退款图片:">
           <img :src="'http://dev.pt800.com/' + refundForm.pic" alt="">
         </el-form-item>
         <el-form-item label="退款备注:">
-          <el-input v-model="refundForm.remark" auto-complete="off"></el-input>
+          <el-input v-model="refundForm.shopRemark" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="refundConfirm">确认退款</el-button>
-        <el-button @click="dialogVisibleRefund = false">驳回退款申请</el-button>
+        <el-button type="primary" @click="refundConfirm(6)">确认退款</el-button>
+        <el-button @click="refundConfirm(12)">驳回退款申请</el-button>
       </div>
     </el-dialog>
     
@@ -175,10 +177,11 @@ export default {
       refundForm: {
         orderNo: '',
         amt: 0,
-        select: '',
+        deliveryStatusName: '',
         reason: '',
         pic: '',
-        remark: ''
+        shopRemark: '',
+        remarks: ''
       },
       pickerOptions2: {
         shortcuts: [
@@ -312,7 +315,14 @@ export default {
     },
 
     handleRefund(index, row) {
-     this.dialogVisibleRefund = false;
+      this.refundForm.orderNo = row.orderNo;
+      this.refundForm.amt = row.refundInfo.refundAmt;
+      this.refundForm.deliveryStatusName = row.refundInfo.deliveryStatusName;
+      this.refundForm.reason = row.refundInfo.reason;
+      this.refundForm.pic = row.refundInfo.picUrl && row.refundInfo.picUrl.split(',')[0];
+      this.refundForm.remarks = row.refundInfo.remrks;
+
+     this.dialogVisibleRefund = true;
     },
 
     refundConfirm(type) {
@@ -321,30 +331,35 @@ export default {
       param.orderNo = this.refundForm.orderNo;
       param.status = type;
 
-      if(type == 12 && this.refundForm.remarks) {
+      if(type == 12 && !this.refundForm.shopRemark) {
         this.$message({
            message: '请填写驳回说明',
            type: "warning"
         });
+        return;
       }
 
-      param.remarks = this.refundForm.remark;
+      param.remarks = this.refundForm.shopRemark;
 
       this.$axios
-        .get("/vendor/orderRefund", { params: param })
+        .post("/vendor/orderRefund", param)
         .then(data => {
           if (data.data.code == 1) {
             this.$message({
-              message: "退款成功",
+              message: data.data.msg,
               type: "success"
             });
-
-            this.dialogVisibleRefund = false;
-            this.onSubmit();
+            setTimeout(() => {
+              this.dialogVisibleRefund = false;
+              this.onSubmit();
+            }, 1000);
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
           }
         });
-
-      this.dialogVisibleRefund = false;
     },
 
     handleSizeChange(value) {
@@ -393,7 +408,7 @@ export default {
           } else {
             this.tabLoadingFlag = false;
             this.$message({
-              message: "退款成功",
+              message: data.data.msg,
               type: "warning"
             });
           }
