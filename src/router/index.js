@@ -129,12 +129,23 @@ routers.beforeEach((to, from, next) => {
     }
   } else {
     if (to.path == '/applyShop') {
-      alert('您已经是店家，不需要再申请');
-      next({
-        path: from.path
-      });
+      if (to.query && to.query.status == 0) {
+        next();
+      } else {
+        alert('您已经是店家，不需要再申请');
+        next({
+          path: from.path
+        });
+      }
     } else {
-      next();
+      if (from.query.status == 0) {
+        // alert('店铺还在审核中')
+        // next({
+        //   path: '/applyShop'
+        // })
+      } else {
+        next();
+      }
     }
   }
 })

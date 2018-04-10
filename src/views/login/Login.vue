@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: "18575677076", //15302752350
+        mobile: "15302752350", //18575677076
         password: "a123456",
         code: ""
       },
@@ -64,7 +64,7 @@ export default {
                 if(shopId && status && status == 1) {
                     this.$router.push('/BusinessInformation');
                   } else {
-                   this.$router.push('/applyShop');
+                   this.$router.push({ path: "/applyShop", query: { status: status } });
                   }
               } else {
                 this.$message({

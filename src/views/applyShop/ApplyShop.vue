@@ -243,7 +243,7 @@ export default {
   mounted: function() {
     this.loadingFlag = false;
     this.bodyHeight = window.screen.height;
-
+debugger
     if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
       this.applyShopFlag = false;
       this.status = baseInfo.shop.status;
@@ -497,10 +497,6 @@ export default {
 
 .under-review {
   width: 100%;
-  height: 200px;
   text-align: center;
-  position: absolute;
-  top: 50%;
-  margin-top: -100px;
 }
 </style>

@@ -135,14 +135,14 @@
     </el-dialog>
 
     <el-dialog title="退款信息" class="" width="30%" :center="true" :visible.sync="dialogLookRefund">
-      <el-row class="order-detail">
+      <el-row class="o`rder-detail`">
         <el-col :span="20">订单编号： {{lookRefundInfo.orderNo}}</el-col>
       </el-row>
       <el-row class="order-detail">
         <el-col :span="20">退款类型: {{lookRefundInfo.typeName}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款金额: {{lookRefundInfo.refundPayable}}</el-col>
+        <el-col :span="20">退款金额: {{lookRefundInfo.refundPayable}}元</el-col>
       </el-row>
       <el-row class="order-detail">
         <el-col :span="20">退款原因: {{lookRefundInfo.customReturnReason}}</el-col>
@@ -154,7 +154,11 @@
         <el-col :span="20">退单原因: {{lookRefundInfo.returnReasonIdName}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款图片: {{lookRefundInfo.picUrl}}</el-col>
+        <el-col :span="20">退款图片: 
+          <p class="refun-img" v-for="(item,index) in lookRefundInfo.picUrl" :index="index" :key="index" >
+            <img :src="'http://dev.pt800.com/' + item" alt="">
+          </p>
+        </el-col>
       </el-row>
       <el-row class="order-detail">
         <el-col :span="20">收件人: {{lookRefundInfo.consignee}}</el-col>
@@ -370,6 +374,7 @@ export default {
         .then(data => {
           if (data.data.code == 1) {
             this.lookRefundInfo = data.data.data;
+            this.lookRefundInfo.picUrl = data.data.data.picUrl.split(',');
           } else {
             this.$message({
               message: data.data.msg,
@@ -498,7 +503,7 @@ export default {
       param.orderNo = this.refundForm.orderNo;
       // 退货退款
       if(this.refundStatus == 10) {
-        url = '/vendor/orderReturnConfirm';
+        url = '/vendor/orderReturn';
         if(flag) {
           // 同意
           param.status = 14;
@@ -678,5 +683,21 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+
+.refun-img {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  margin-right: 10px;
+  vertical-align: middle;
+   img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.order-detail {
+  margin-bottom: 10px;
 }
 </style>
