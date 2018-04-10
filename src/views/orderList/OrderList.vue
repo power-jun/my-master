@@ -65,6 +65,8 @@
             <el-button size="mini"  @click="handleDetail(scope.$index, scope.row)">详情</el-button>
             <el-button size="mini" v-if="scope.row.status == 1" type="primary" @click="handleShip(scope.$index, scope.row)">发货</el-button>
             <el-button size="mini" v-else-if="(scope.row.status == 6 || scope.row.status == 10)" type="primary" @click="handleRefund(scope.$index, scope.row)">退款审核</el-button>
+            <el-button size="mini" v-else-if="(scope.row.status == 16)" type="primary" @click="confirmRefund(scope.$index, scope.row)">确认退款</el-button>
+            <el-button size="mini" v-else-if="(scope.row.status == 11)" type="primary" @click="handLookRefundInfo(scope.$index, scope.row)">查看退款信息</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -111,7 +113,79 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="退款退货申请" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
+    <el-dialog title="确认退款" class="" width="30%" :center="true" :visible.sync="dialogVisibleConfirm">
+      <el-form :model="confirmForm"  label-width="100px">
+        <el-form-item label="订单编号:">
+          <el-input v-model="confirmForm.orderNo" auto-complete="off" disabled></el-input>
+        </el-form-item>
+         <el-form-item label="退货快递公司:">
+          <el-input v-model="confirmForm.deliveryName" auto-complete="off" disabled></el-input>
+        </el-form-item>
+         <el-form-item label="退货快递单号:">
+          <el-input v-model="confirmForm.deliveryNo" auto-complete="off" disabled></el-input>
+        </el-form-item>
+         <el-form-item label="退款备注:">
+          <el-input v-model="confirmForm.shopRemark" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="refundConfirmTwo(11)">确认退款</el-button>
+        <el-button @click="refundConfirmTwo(13)">驳回退款申请</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="退款信息" class="" width="30%" :center="true" :visible.sync="dialogLookRefund">
+      <el-row class="order-detail">
+        <el-col :span="20">订单编号： {{lookRefundInfo.orderNo}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退款类型: {{lookRefundInfo.typeName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退款金额: {{lookRefundInfo.refundPayable}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退款原因: {{lookRefundInfo.customReturnReason}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退单状态: {{lookRefundInfo.returnStatusIdName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退单原因: {{lookRefundInfo.returnReasonIdName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退款图片: {{lookRefundInfo.picUrl}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">收件人: {{lookRefundInfo.consignee}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">电话号: {{lookRefundInfo.mobile}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">地址: {{lookRefundInfo.address}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">是否已经收货: {{lookRefundInfo.deliveryStatusName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">快递公司: {{lookRefundInfo.deliveryName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">快递单号: {{lookRefundInfo.deliveryNo}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退单申请时间: {{lookRefundInfo.addTime}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">退单完成时间: {{lookRefundInfo.finishTime}}</el-col>
+      </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogLookRefund=false">确定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog :title="refundForm.statusName" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
       <el-form :model="shopForm"  label-width="100px">
         <el-form-item label="订单编号:">
           <el-input v-model="refundForm.orderNo" auto-complete="off" disabled></el-input>
@@ -128,16 +202,25 @@
         <el-form-item label="退款金额:">
           <el-input v-model="refundForm.amt" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-form-item label="退款图片:">
+        <el-form-item label="退款图片:" class="refund-img">
           <img :src="'http://dev.pt800.com/' + refundForm.pic" alt="">
+        </el-form-item>
+        <el-form-item label="收件人姓名:">
+          <el-input v-model="refundForm.consignee" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="收件人手机:">
+          <el-input v-model="refundForm.mobile" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="收件人地址:">
+          <el-input v-model="refundForm.address" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="退款备注:">
           <el-input v-model="refundForm.shopRemark" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="refundConfirm(6)">确认退款</el-button>
-        <el-button @click="refundConfirm(12)">驳回退款申请</el-button>
+        <el-button type="primary" @click="refundConfirm(true)">确认退货/退款</el-button>
+        <el-button @click="refundConfirm(false)">驳回退货/退款申请</el-button>
       </div>
     </el-dialog>
     
@@ -154,7 +237,9 @@ export default {
       loadingFlag: true,
       tabLoadingFlag: true,
       dialogVisibleShop: false,
+      dialogVisibleConfirm: false,
       dialogVisibleRefund: false,
+      dialogLookRefund: false,
       orderTypeList: [],
       expressArry: [],
       payTime: '',
@@ -165,6 +250,10 @@ export default {
         status: '',
         pageSize: '',
         pageNo: ''
+      },
+      confirmForm:  {
+        orderNo: "",
+        shopRemark: ''
       },
       shopForm: {
         orderNo: "",
@@ -181,7 +270,18 @@ export default {
         reason: '',
         pic: '',
         shopRemark: '',
-        remarks: ''
+        remarks: '',
+        statusName: ''
+      },
+      lookRefundInfo: {
+        orderNo: '',
+        refundPayable: '',
+        customReturnReason: '',
+        picUrl: '',
+        consignee: '',
+        mobile: '',
+        address: '',
+        addTime: ''
       },
       pickerOptions2: {
         shortcuts: [
@@ -262,6 +362,65 @@ export default {
       });
     },
 
+    //查看退款信息
+    handLookRefundInfo(index, row) {
+      this.dialogLookRefund = true;
+      this.$axios
+        .get("/vendor/orderReturnInfo", {params: { orderNo: row.orderNo }})
+        .then(data => {
+          if (data.data.code == 1) {
+            this.lookRefundInfo = data.data.data;
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+
+    //确认退款
+    confirmRefund(index, row) {
+      this.confirmForm.orderNo = row.orderNo;
+      this.confirmForm.deliveryName = row.refundInfo.deliveryName;
+      this.confirmForm.deliveryNo = row.refundInfo.deliveryNo;
+      this.dialogVisibleConfirm = true;
+    },
+
+    refundConfirmTwo(type) {
+      if(type == 13 && !this.confirmForm.shopRemark) {
+         this.$message({
+              message: '请输入退款备注',
+              type: "warning"
+            });
+            return;
+      }
+
+      var param = {};
+      param.orderNo = this.confirmForm.orderNo;
+      param.status = type;
+      param.remarks = this.confirmForm.shopRemark;
+
+      this.$axios
+        .post("/vendor/orderReturnConfirm", param)
+        .then(data => {
+          if (data.data.code == 1) {
+            this.$message({
+              message: "退款成功",
+              type: "success"
+            });
+
+            this.dialogVisibleConfirm = false;
+            this.onSubmit();
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+
     handleShip(index, row) {
       this.shopForm.orderNo = row.orderNo;
       this.shopForm.memberName = row.consignee;
@@ -322,16 +481,68 @@ export default {
       this.refundForm.pic = row.refundInfo.picUrl && row.refundInfo.picUrl.split(',')[0];
       this.refundForm.remarks = row.refundInfo.remrks;
 
-     this.dialogVisibleRefund = true;
+      if(row.status == 10) {
+        this.refundForm.statusName = '退款退货审核';
+      } else if(row.status == 6) {
+        this.refundForm.statusName = '退款审核';
+      }
+
+      this.refundStatus = row.status;
+      this.dialogVisibleRefund = true;
     },
 
-    refundConfirm(type) {
+    refundConfirm(flag) {
       // 确认退款
+      var url = '';
       var param = {};
       param.orderNo = this.refundForm.orderNo;
-      param.status = type;
+      // 退货退款
+      if(this.refundStatus == 10) {
+        url = '/vendor/orderReturnConfirm';
+        if(flag) {
+          // 同意
+          param.status = 14;
+        } else {
+          // 驳回
+          param.status = 13;
+        }
+      } else if(this.refundStatus == 6) {
+        ///退款
+        url = '/vendor/orderRefund';
+        if(flag) {
+          param.status = 17;
+        } else {
+          param.status = 12;
+        }
+      }
 
-      if(type == 12 && !this.refundForm.shopRemark) {
+      if(this.refundStatus == 10) {
+        if(!this.refundForm.consignee) {
+           this.$message({
+           message: '请填写收件人',
+           type: "warning"
+          });
+          return;
+        }
+
+        if(!this.refundForm.mobile) {
+           this.$message({
+           message: '请填写收件人电话',
+           type: "warning"
+          });
+          return;
+        }
+        
+        if(!this.refundForm.address) {
+           this.$message({
+           message: '请填写收件人地址',
+           type: "warning"
+          });
+          return;
+        }
+      }
+
+      if((param.status == 12 || param.status == 13) && !this.refundForm.shopRemark) {
         this.$message({
            message: '请填写驳回说明',
            type: "warning"
@@ -340,9 +551,12 @@ export default {
       }
 
       param.remarks = this.refundForm.shopRemark;
+      param.consignee = this.refundForm.consignee;
+      param.mobile = this.refundForm.mobile;
+      param.address = this.refundForm.address;
 
       this.$axios
-        .post("/vendor/orderRefund", param)
+        .post(url, param)
         .then(data => {
           if (data.data.code == 1) {
             this.$message({
@@ -452,5 +666,17 @@ export default {
 
 .el-date-editor .el-range-separator {
   width: 8%;
+}
+
+.refund-img {
+  .el-form-item__content {
+    width: 80px;
+    height: 80px;
+  }
+  img {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

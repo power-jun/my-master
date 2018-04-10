@@ -34,6 +34,9 @@
     </el-table>
     <div class="order-address">
       <el-row class="order-detail">
+        <el-col :span="6">订单状态：{{userInfo.statusName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
         <el-col :span="6">应付款：{{userInfo.amountPayable}}</el-col>
       </el-row>
       <el-row class="order-detail">
