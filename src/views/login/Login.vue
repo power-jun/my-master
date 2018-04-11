@@ -45,6 +45,7 @@ export default {
     submitForm(formName) {
       let _this = this;
       this.fullscreenLoading = true;
+      localStorage.setItem('businessUserInfo',  '');
 
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -56,7 +57,7 @@ export default {
             })
             .then(data => {
               if (data.data.code === 1) {
-                sessionStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data));
+                localStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data));
                 let datas = data.data.data;
                 let shopId = datas.shopId;
                 let status = datas.shop && datas.shop.status;

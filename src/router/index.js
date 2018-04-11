@@ -116,36 +116,19 @@ const routers = new VueRouter({
 
 routers.beforeEach((to, from, next) => {
   let redirectUrl = '';
-  var businessUserInfo = JSON.parse(sessionStorage.getItem("businessUserInfo")) || {};
+  var businessUserInfo = JSON.parse(localStorage.getItem("businessUserInfo")) || {};
 
-  if (!businessUserInfo.shopId) { // 还未成为商户
+  if (businessUserInfo.shopId && businessUserInfo.shop.status == 1) { // 已经成为商户
+    if(to.path == '/applyShop') {
+      alert('您已经入驻了店铺,不需要再申请');
+    } else {
+      next();
+    }
+  } else {
     if (to.path == '/applyShop' || to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
       next();
     } else {
-      alert('请先申请入住店铺')
-      next({
-        path: '/applyShop'
-      })
-    }
-  } else {
-    if (to.path == '/applyShop') {
-      if (to.query && to.query.status == 0) {
-        next();
-      } else {
-        alert('您已经是店家，不需要再申请');
-        next({
-          path: from.path
-        });
-      }
-    } else {
-      if (from.query.status == 0) {
-        // alert('店铺还在审核中')
-        // next({
-        //   path: '/applyShop'
-        // })
-      } else {
-        next();
-      }
+      alert('请先申请入住店铺');
     }
   }
 })

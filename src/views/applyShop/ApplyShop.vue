@@ -146,7 +146,7 @@
 
 <script>
 import Loading from "components/loading";
-let baseInfo = JSON.parse(sessionStorage.getItem('businessUserInfo')) || {};
+let baseInfo = JSON.parse(localStorage.getItem('businessUserInfo')) || {};
 
 export default {
   data() {
@@ -243,7 +243,7 @@ export default {
   mounted: function() {
     this.loadingFlag = false;
     this.bodyHeight = window.screen.height;
-debugger
+
     if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
       this.applyShopFlag = false;
       this.status = baseInfo.shop.status;

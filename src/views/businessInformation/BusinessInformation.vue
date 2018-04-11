@@ -12,7 +12,7 @@
    </el-row>
 </template>
 <script>
-let baseInfo = JSON.parse(sessionStorage.getItem('businessUserInfo')) || {};
+let baseInfo = JSON.parse(localStorage.getItem('businessUserInfo')) || {};
 export default {
   data() {
     return {

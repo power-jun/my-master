@@ -20,6 +20,7 @@ export default {
             message: '退出成功',
             type: "success"
           });
+          localStorage.setItem('businessUserInfo',  '');
           this.$router.push('/login');
         }
       })

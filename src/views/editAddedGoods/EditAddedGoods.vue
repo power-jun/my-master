@@ -370,6 +370,7 @@ export default {
                       // 显示第一级 并且赋值
                       if (specList.length == 1) {
                         this.specificationOneFlag = false;
+                        this.specListBtnTwoFlag = false;
                         this.specificationOne = specList[0].attrValue.split(
                           ","
                         );
@@ -448,10 +449,11 @@ export default {
                           primeCost: stockList[i].primeCost
                         };
 
-                        bodyLineObj[stockList[i].attrList[0].attrId] =
-                          stockList[i].attrList[0].attrValue;
-                        bodyLineObj[stockList[i].attrList[1].attrId] =
-                          stockList[i].attrList[1].attrValue;
+                        bodyLineObj[stockList[i].attrList[0].attrId] = stockList[i].attrList[0].attrValue;
+                        // 如果有两级
+                        if(stockList[i].attrList[1]) {
+                          bodyLineObj[stockList[i].attrList[1].attrId] = stockList[i].attrList[1].attrValue;
+                        }
                         this.specificationsTabData.push(bodyLineObj);
                         this.inputValArry.push(inputValItem);
                       }
@@ -612,7 +614,7 @@ export default {
       }                        
 
       this.specificationArry = resultSelectArry;
-
+debugger
       // 添加表格Header
       if (this.specificationsTabHead.length <= 6) {
         if (type == "one") {
@@ -698,8 +700,7 @@ export default {
       }
 
       // 组织第一个规格名数据
-      let totalTabLine =
-        this.specificationOne.length * this.specificationTwo.length; //table的总行数
+      let totalTabLine = this.specificationOne.length * this.specificationTwo.length; //table的总行数
       let resultTotalArr = [];
 
       if (this.specificationOne.length) {
@@ -990,7 +991,7 @@ export default {
           }
         }
       }
-console.log(this.form)
+      console.log(this.form)
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!inputValFlag) {
