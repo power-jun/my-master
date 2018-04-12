@@ -15,7 +15,7 @@ export default {
   methods: {
     logOut() {
       this.$axios.post('/vendor/logout').then(data => {
-        if(data.data.code === 1) {
+        if(data.data.code == -1) {
            this.$message({
             message: '退出成功',
             type: "success"

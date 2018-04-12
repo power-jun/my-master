@@ -17,6 +17,9 @@
       <el-form-item class="login-center login-btn">
         <el-button type="primary" @click="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading">登录</el-button>
       </el-form-item>
+      <el-form-item style="margin-left: 90px">
+        <el-checkbox v-model="rememberPass" @change="rememberPassChange">记住账号密码</el-checkbox>
+      </el-form-item>
       <el-row class="login-center" style="margin-left: 90px;">
         <router-link tag="a" :to="'/registed'">去注册</router-link>
         <router-link tag="a" :to="'/forgetPassword'">忘记密码</router-link>
@@ -26,14 +29,17 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue from "vue";
+import utils from "utils";
+import md5 from "md5";
 
 export default {
   data() {
     return {
+      rememberPass: false,
       loginForm: {
-        mobile: "15302752350", //18575677076
-        password: "a123456",
+        mobile: "15302752350", //15302752350
+        password: "",
         code: ""
       },
       fullscreenLoading: false,
@@ -41,11 +47,44 @@ export default {
     };
   },
 
+  mounted: function() {
+    this.loadAccountInfo();
+  },
+
   methods: {
+    loadAccountInfo: function() {
+      let accountInfo = utils.getCookie("accountInfo");
+      
+      //如果cookie里没有账号信息
+      if (Boolean(accountInfo) == false) {
+        console.log("cookie中没有检测到账号信息！");
+        return false;
+      } else {
+        //如果cookie里有账号信息
+        console.log("cookie中检测到账号信息！现在开始预填写！");
+        let userName = "";
+        let passWord = "";
+        let index = accountInfo.indexOf("&");
+
+        userName = accountInfo.substring(0, index);
+        passWord = accountInfo.substring(index + 1);
+
+        this.loginForm.mobile = userName;
+        this.loginForm.password = passWord;
+        this.rememberPass = true;
+        var mm = md5;
+        console.log(md5(passWord), '密码')
+      }
+    },
+
+    rememberPassChange: function(e) {
+      this.rememberPass = e;
+    },
+
     submitForm(formName) {
       let _this = this;
       this.fullscreenLoading = true;
-      localStorage.setItem('businessUserInfo',  '');
+      localStorage.setItem("businessUserInfo", "");
 
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -56,24 +95,40 @@ export default {
               code: this.loginForm.code
             })
             .then(data => {
-              if (data.data.code === 1) {
-                localStorage.setItem('businessUserInfo',  JSON.stringify(data.data.data));
+              if (data.data.code == 1) {
+                let rememberStatus = this.rememberPass;
+                 let accountInfo = this.loginForm.mobile + "&" + this.loginForm.password;
+                if (rememberStatus) {
+                  console.log("勾选了记住密码，现在开始写入cookie");
+                  utils.setCookie("accountInfo", accountInfo, 1440 * 3);
+                } else {
+                  console.log("没有勾选记住密码，现在开始删除账号cookie");
+                  utils.delCookie("accountInfo");
+                }
+
+                localStorage.setItem(
+                  "businessUserInfo",
+                  JSON.stringify(data.data.data)
+                );
                 let datas = data.data.data;
                 let shopId = datas.shopId;
                 let status = datas.shop && datas.shop.status;
 
-                if(shopId && status && status == 1) {
-                    this.$router.push('/BusinessInformation');
-                  } else {
-                   this.$router.push({ path: "/applyShop", query: { status: status } });
-                  }
+                if (shopId && status && status == 1) {
+                  this.$router.push("/BusinessInformation");
+                } else {
+                  this.$router.push({
+                    path: "/applyShop",
+                    query: { status: status }
+                  });
+                }
               } else {
                 this.$message({
                   message: data.data.msg,
                   type: "warning"
                 });
               }
-              
+
               this.fullscreenLoading = false;
             });
         } else {
@@ -85,7 +140,7 @@ export default {
     },
 
     getCodeImg() {
-      this.codeImgSrc = 'api/validateCode?'+ Math.random();
+      this.codeImgSrc = "api/validateCode?" + Math.random();
     }
   },
   // beforeRouteLeave(to,from,next) {
@@ -93,9 +148,9 @@ export default {
   //   next();
   // },
   watch: {
-   '$route' (to, from) {
-     console.log(this.getStatus(this.$route.path))
-   }
+    $route(to, from) {
+      console.log(this.getStatus(this.$route.path));
+    }
   }
 };
 </script>
@@ -110,7 +165,6 @@ export default {
 
 .form-box {
   width: 300px;
-  height: 270px;
   background: #fff;
   padding: 50px;
   position: absolute;
@@ -124,6 +178,7 @@ export default {
 .login-center {
   margin-bottom: 10px;
   margin-left: 120px;
+  margin-top: -10px;
 }
 
 .login-btn {

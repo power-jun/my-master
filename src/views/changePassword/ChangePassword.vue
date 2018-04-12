@@ -104,7 +104,6 @@ export default {
 
 .form-box {
   width: 300px;
-  height: 260px;
   background: #fff;
   padding: 50px;
   position: absolute;

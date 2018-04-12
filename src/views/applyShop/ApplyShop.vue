@@ -58,7 +58,7 @@
         <el-form-item label="银行开户名:" prop="bankName" :rules="[{ required: true, message: '请输入银行开户名'}, { pattern: '[\u4E00-\u9FA5]{2,4}', message: '银行开户名格式不正确'}]">
           <el-input v-model="form.bankName"></el-input>
         </el-form-item>
-        <el-form-item prop="bankAccount" label="公司银行账号:" :rules="[{ required: true, message: '请输入公司银行账号'}, { pattern: /^\d{18,30}$/, message: '银行账号必须为18位以上数字值'}]">
+        <el-form-item prop="bankAccount" label="公司银行账号:" :rules="[{ required: true, message: '请输入公司银行账号'}, { pattern: /^\d{10,30}$/, message: '银行账号格式不正确'}]">
           <el-input v-model="form.bankAccount"></el-input>
         </el-form-item>
         <el-form-item prop="bankBranchName" label="开户行支行名称:" :rules="[{ required: true, message: '请输入开户行支行名称'}]">
@@ -69,19 +69,19 @@
         </el-form-item>
         <p class="form-line-title">经营信息</p>
         <el-form-item label="公司类型:" prop="companyType" :rules="[{ required: true, message: '请选择公司类型'}]">
-          <el-select v-model="form.companyType" aria-placeholder="请选择公司类型">
+          <el-select placeholder="请选择公司类型" v-model="form.companyType">
             <el-option v-for="(item, index) in companyTypeArry" :label="item.name" :value="item.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="salesAmount" label="最近一年销售额:" :rules="[{ required: true, message: '请输入最近一年销售额'}]">
-          <el-input v-model="form.salesAmount"></el-input>
+          <el-input v-model="form.salesAmount"></el-input>万
         </el-form-item>
         <el-form-item prop="avgPrice" label="预计评价客单价:" :rules="[{ required: true, message: '请输入预计评价客单价'}]">
-          <el-input v-model="form.avgPrice"></el-input>
+          <el-input v-model="form.avgPrice"></el-input>元
         </el-form-item>
          <el-form-item label="常用快递公司:"  prop="express" :rules="[{ required: true, message: '请选择常用快递公司'}]">
           <el-select placeholder="请选择快递公司" v-model="form.express">
-            <el-option v-for="(items, index) in expressArry"  :label="items.name" :value="items.id" :key="index"></el-option>
+            <el-option v-for="(items, index) in expressArry"  :label="items.name" :value="items.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
         <p class="form-line-title">店铺信息</p>
@@ -152,30 +152,30 @@ export default {
   data() {
     return {
       form: {
-        linkman: "的地方",
-        linkmanMobile: "18574637489",
-        linkmanEmail: "506403423@qq.com",
-        companyName: "绿茶茶叶",
-        companyCreditNo: "23534590348590438",
-        legalPerson: "李木木",
-        legalPersonCreditNo: "43052419923118823x",
-        legalCreditPic: "/shangcheng/userfiles/null/2018/3/15/shop8.png",
-        legalCreditPic2: "/shangcheng/userfiles/null/2018/3/15/shop4.png",
-        picUrl: "/shangcheng/userfiles/null/2018/3/15/shop6.png",
-        bankName: "李木木",
-        bankAccount: "234223234223234223234223234223",
-        bankBranchName: "中国银行南山支行",
-        bankBranchAddress: "南山大道",
-        companyType: "agent",
-        salesAmount: "32",
-        avgPrice: "3434",
-        express: "南山",
-        shopName: "深圳茶叶",
-        shopLogoUrl: "/shangcheng/userfiles/null/2018/3/15/shop2.jpg",
+        linkman: "",
+        linkmanMobile: "",
+        linkmanEmail: "",
+        companyName: "",
+        companyCreditNo: "",
+        legalPerson: "",
+        legalPersonCreditNo: "",
+        legalCreditPic: "",
+        legalCreditPic2: "",
+        picUrl: "",
+        bankName: "",
+        bankAccount: "",
+        bankBranchName: "",
+        bankBranchAddress: "",
+        companyType: "",
+        salesAmount: "",
+        avgPrice: "",
+        express: "",
+        shopName: "",
+        shopLogoUrl: "",
         shopCategoryId: "",
         shopType: "",
-        shopDesc: "深圳茶叶深圳茶叶深圳茶叶深圳茶叶",
-        regionId: "6",
+        shopDesc: "",
+        regionId: "",
         province: "",
         downtown: ""
       },
@@ -204,6 +204,39 @@ export default {
   },
 
   beforeMount() {
+    
+  },
+
+  mounted: function() {
+    this.loadingFlag = false;
+    this.bodyHeight = window.screen.height;
+
+    if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
+      if(baseInfo.shop.status == 3) {
+        this.$message({
+             message: '店铺审核不通过，请重生申请',
+             type: "warning"
+        });
+
+        this.applyShopFlag = true;
+      } else {
+        this.applyShopFlag = false;
+      }
+      
+      this.status = baseInfo.shop.status;
+    } else {
+      this.applyShopFlag = true;
+    }
+
+    this.initData();
+  },
+
+  methods: {
+    initData: function() {
+      if(!this.applyShopFlag) {
+      return;
+    }
+
     this.$axios.get('/vendor/shopCategoryList').then( data => {
       if(data.data.code == 1) {
         this.shopCategoryArry = data.data.data;
@@ -220,12 +253,12 @@ export default {
         this.$axios
           .get("/getDictList", { params: { type: "shop_type" } })
           .then(data => {
-            if (data.data.code === 1) {
+            if (data.data.code == 1) {
               this.shopTypeArry = data.data.data;
               this.$axios
                 .get("/getDictList", { params: { type: "express_company" } })
                 .then(data => {
-                  if (data.data.code === 1) {
+                  if (data.data.code == 1) {
                     this.expressArry = data.data.data;
                   }
                 });
@@ -233,26 +266,13 @@ export default {
           });
       });
 
-    this.$axios.get("/getRegionList", { params: { pid: "" } }).then(data => {
-      if (data.data.code === 1) {
-        this.provinceArry = data.data.data;
-      }
-    });
-  },
+      this.$axios.get("/getRegionList", { params: { pid: "" } }).then(data => {
+        if (data.data.code === 1) {
+          this.provinceArry = data.data.data;
+        }
+      });
+    },
 
-  mounted: function() {
-    this.loadingFlag = false;
-    this.bodyHeight = window.screen.height;
-
-    if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
-      this.applyShopFlag = false;
-      this.status = baseInfo.shop.status;
-    } else {
-      this.applyShopFlag = true;
-    }
-  },
-
-  methods: {
     onSubmit(formName) {
       console.log(this.form);
       this.fullscreenLoading = true;
@@ -285,10 +305,10 @@ export default {
 
     getLinkCity(id, type) {
       this.$axios.get("/getRegionList", { params: { pid: id } }).then(data => {
-        if (data.data.code === 1) {
-          if (type === "city") {
+        if (data.data.code == 1) {
+          if (type == "city") {
             this.downtownArry = data.data.data;
-          } else if (type === "area") {
+          } else if (type == "area") {
             this.areaArry = data.data.data;
           }
         }
@@ -297,18 +317,18 @@ export default {
 
     provinceSelect(val) {
       this.getLinkCity(val, "city");
-
-      if (this.downtownFlag) {
-        this.downtownFlag = false;
-      } else {
-        this.downtownFlag = true;
-        this.areaFlag = true;
-      }
+      this.downtownArry =  [];
+      this.areaArry = [];
+      this.form.regionId = '';
+      this.form.downtown = '';
+      this.downtownFlag = false;
+      this.areaFlag = true;
     },
 
     citySelect(val) {
       this.getLinkCity(val, "area");
       this.areaFlag = false;
+      this.form.regionId = '';
     },
 
     picUrlBeforeUpload(file) {
@@ -498,5 +518,11 @@ export default {
 .under-review {
   width: 100%;
   text-align: center;
+  padding: 20px 0;
+}
+
+.apply-shop-form .el-input {
+  width: 95%;
+  margin-right: 5px;
 }
 </style>

@@ -175,7 +175,6 @@ export default {
 
 .form-box {
   width: 300px;
-  height: 300px;
   background: #fff;
   padding: 50px;
   position: absolute;
