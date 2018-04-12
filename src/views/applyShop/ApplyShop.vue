@@ -4,7 +4,7 @@
       <!-- <div id="example">
             <p>Computed reversed message: "{{ reversedMessage }}"</p>
           </div>-->
-      <el-form ref="form" :model="form" status-icon label-width="160px" v-show="applyShopFlag">
+      <el-form ref="form" :model="form" status-icon label-width="160px" v-if="applyShopFlag">
         <h3>商家入驻申请</h3>
         <p class="form-line-title">入驻联系人信息</p>
         <el-form-item prop="linkman" label="联系人姓名:" :rules="[{ required: true, message: '请输入联系人姓名'}, {pattern: '[\u4E00-\u9FA5]{2,4}', message: '姓名格式不正确'}]">
@@ -30,14 +30,14 @@
           <el-input v-model="form.legalPersonCreditNo"></el-input>
         </el-form-item>
         <el-form-item label="营业执照副本电子版:" prop="picUrl" :rules="[{ required: true, message: '请上传营业执照'}]">
-          <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="picUrlBeforeUpload" :on-success="picUrlSuccessFun" :on-remove="picUrlhandleRemove">
+          <el-upload action="api/upload" list-type="picture-card" :file-list="picUrlList" :on-error="errorFun" :before-upload="picUrlBeforeUpload" :on-success="picUrlSuccessFun" :on-remove="picUrlhandleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
         <el-form-item label="法人身份证电子版:" prop="legalCreditPic" :rules="[{ required: true, message: '请上传身份证正面'}]">
           <el-row class="id-card">
             <el-col :span="20">
-              <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="cardBeforeUpload" :on-success="cardSuccessFun" :on-remove="cardHandleRemove">
+              <el-upload action="api/upload" list-type="picture-card" :file-list="legalList1" :on-error="errorFun" :before-upload="cardBeforeUpload" :on-success="cardSuccessFun" :on-remove="cardHandleRemove">
                 <i class="el-icon-plus"></i>
               </el-upload>
               <p class="pic-tips">正面</p>
@@ -47,7 +47,7 @@
         <el-form-item label="" prop="legalCreditPic2" :rules="[{ required: true, message: '请上传身份证反面'}]">
           <el-row>
              <el-col :span="20">
-              <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="card2BeforeUpload" :on-success="card2SuccessFun" :on-remove="card2HandleRemove">
+              <el-upload action="api/upload" list-type="picture-card" :file-list="legalList2" :on-error="errorFun" :before-upload="card2BeforeUpload" :on-success="card2SuccessFun" :on-remove="card2HandleRemove">
                 <i class="el-icon-plus"></i>
               </el-upload>
               <p class="pic-tips">反面</p>
@@ -86,7 +86,7 @@
         </el-form-item>
         <p class="form-line-title">店铺信息</p>
         <el-form-item label="店铺头像:" prop="shopLogoUrl" :rules="[{ required: true, message: '请上传店铺头像'}]">
-          <el-upload action="api/upload" list-type="picture-card" :on-error="errorFun" :before-upload="logBeforeUpload" :on-success="logSuccessFun" :on-remove="logHandleRemove">
+          <el-upload action="api/upload" list-type="picture-card" :file-list="shopLogoList" :on-error="errorFun" :before-upload="logBeforeUpload" :on-success="logSuccessFun" :on-remove="logHandleRemove">
               <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
@@ -116,15 +116,15 @@
           </el-form-item>
           </el-col>
            <el-col :span="7">
-          <el-form-item label=""  prop="downtown" :rules="[{ required: true, message: '请选择城市'}]">
-              <el-select placeholder="请选择城市" v-model="form.downtown" :disabled="downtownFlag" @change="citySelect">
+          <el-form-item label=""  prop="city" :rules="[{ required: true, message: '请选择城市'}]">
+              <el-select placeholder="请选择城市" v-model="form.city" :disabled="downtownFlag" @change="citySelect">
             <el-option v-for="(items, index) in downtownArry"  :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
           </el-form-item>
           </el-col>
           <el-col :span="7">
-          <el-form-item label=""  prop="regionId" :rules="[{ required: true, message: '请选择区域'}]">
-               <el-select placeholder="请选择区域" v-model="form.regionId" :disabled="areaFlag">
+          <el-form-item label=""  prop="district" :rules="[{ required: true, message: '请选择区域'}]">
+               <el-select placeholder="请选择区域" v-model="form.district" :disabled="areaFlag">
             <el-option v-for="(items, index) in areaArry"  :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
           </el-form-item>
@@ -135,9 +135,13 @@
           <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit('form')" class="submit-btn">提交申请</el-button>
         </el-form-item>
       </el-form>
-       <el-row v-show="!applyShopFlag" class="under-review">
+       <el-row v-else class="under-review">
         <p v-if="status == 0">已提交审核,请耐心等待.....</p>
         <p v-if="status == 2">店铺已关闭</p>
+        <p v-if="status == 1">
+          <span style="display: block;margin-bottom: 10px;">您已经是店家，如需修改店铺资料信息,请点击修改(<span style="color: #f60">修改店铺资料提交成功后,店铺其他功能暂时不能使用,等待公司审核通过！</span>)</span>
+          <el-button type="primary" @click="modify" class="submit-btn">修改</el-button>
+        </p>
       </el-row>
     </el-row>
     <Loading v-show="loadingFlag"></Loading>
@@ -146,7 +150,7 @@
 
 <script>
 import Loading from "components/loading";
-let baseInfo = JSON.parse(localStorage.getItem('businessUserInfo')) || {};
+let baseInfo = (localStorage.getItem('businessUserInfo') && JSON.parse(localStorage.getItem('businessUserInfo'))) || {};
 
 export default {
   data() {
@@ -175,10 +179,14 @@ export default {
         shopCategoryId: "",
         shopType: "",
         shopDesc: "",
-        regionId: "",
+        district: "",
         province: "",
-        downtown: ""
+        city: ""
       },
+      shopLogoList: [],
+      picUrlList: [],
+      legalList1: [],
+      legalList2: [],
       applyShopFlag: false,
       applyShopStatus: '',
       shopCategoryArry:[],
@@ -204,7 +212,7 @@ export default {
   },
 
   beforeMount() {
-    
+    // this.getShopDetails();
   },
 
   mounted: function() {
@@ -218,11 +226,12 @@ export default {
              type: "warning"
         });
 
+        this.getShopDetails();
         this.applyShopFlag = true;
-      } else {
+      } else {  
         this.applyShopFlag = false;
       }
-      
+
       this.status = baseInfo.shop.status;
     } else {
       this.applyShopFlag = true;
@@ -232,12 +241,39 @@ export default {
   },
 
   methods: {
-    initData: function() {
-      if(!this.applyShopFlag) {
-      return;
-    }
+    modify: function() {
+      this.applyShopFlag = true;
+      this.getShopDetails();
+    },
 
-    this.$axios.get('/vendor/shopCategoryList').then( data => {
+    getShopDetails: function() {
+      this.$axios.get('/vendor/shopDetail',{ params: { shopId: baseInfo.shopId } }).then( data => {
+        if(data.data.code == 1) {
+          this.shopDetailsData = data.data.data;
+          let datas = data.data.data;
+          this.form = datas;
+
+          this.shopLogoList.push({
+            url: "http://dev.pt800.com" + datas.shopLogoUrl
+          });
+
+          this.picUrlList.push({
+            url: "http://dev.pt800.com" + datas.picUrl
+          });
+
+          this.legalList1.push({
+            url: "http://dev.pt800.com" + datas.legalCreditPic
+          });
+
+          this.legalList2.push({
+            url: "http://dev.pt800.com" + datas.legalCreditPic2
+          });
+        }
+      });
+    },
+
+  initData: function() {
+    this.$axios.get('/vendor/shopCategoryList', { params: { type: "company_type" } }).then( data => {
       if(data.data.code == 1) {
         this.shopCategoryArry = data.data.data;
       }
@@ -274,9 +310,15 @@ export default {
     },
 
     onSubmit(formName) {
-      console.log(this.form);
       this.fullscreenLoading = true;
+
       this.$refs[formName].validate(valid => {
+        var params = this.form;
+        
+        if(this.shopDetailsData) {
+          params.shopId = baseInfo.shopId;
+        }
+
         if (valid) {
           this.$axios.post("/vendor/apply", this.form).then(data => {
             if (data.data.code == 1) {
@@ -285,6 +327,12 @@ export default {
                 type: "success"
               });
               this.applyShopFlag = false;
+              if(data.data.data.status){
+                this.status = data.data.data.status;
+                baseInfo.shop.status = data.data.data.status;
+                
+                localStorage.setItem('businessUserInfo', JSON.stringify(baseInfo));
+              }
               // this.$router.push("/businessInformation");
             } else {
               this.$message({
@@ -319,8 +367,8 @@ export default {
       this.getLinkCity(val, "city");
       this.downtownArry =  [];
       this.areaArry = [];
-      this.form.regionId = '';
-      this.form.downtown = '';
+      this.form.district = '';
+      this.form.city = '';
       this.downtownFlag = false;
       this.areaFlag = true;
     },
@@ -328,7 +376,7 @@ export default {
     citySelect(val) {
       this.getLinkCity(val, "area");
       this.areaFlag = false;
-      this.form.regionId = '';
+      this.form.district = '';
     },
 
     picUrlBeforeUpload(file) {
@@ -349,11 +397,11 @@ export default {
       if (!imgSizeFlag) {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
-
-      // if (this.form.shopLogoUrl) {
-      //   this.$message.error("最多只能上传一张图");
-      //   imgNumbFlag = false;
-      // }
+      
+      if (this.form.shopLogoUrl) {
+        this.$message.error("最多只能上传一张图");
+        imgNumbFlag = false;
+      }
 
       return imgSizeFlag && imgNumbFlag;
     },
@@ -366,10 +414,10 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      // if (this.form.legalCreditPic) {
-      //   this.$message.error("最多只能上传一张图");
-      //   imgNumbFlag = false;
-      // }
+      if (this.form.legalCreditPic) {
+        this.$message.error("最多只能上传一张图");
+        imgNumbFlag = false;
+      }
 
       return imgSizeFlag && imgNumbFlag;
     },
@@ -382,10 +430,10 @@ export default {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
 
-      // if (this.form.legalCreditPic2) {
-      //   this.$message.error("最多只能上传一张图");
-      //   imgNumbFlag = false;
-      // }
+      if (this.form.legalCreditPic2) {
+        this.$message.error("最多只能上传一张图");
+        imgNumbFlag = false;
+      }
 
       return imgSizeFlag && imgNumbFlag;
     },

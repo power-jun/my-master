@@ -119,11 +119,7 @@ routers.beforeEach((to, from, next) => {
   var businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
 
   if (businessUserInfo.shopId && businessUserInfo.shop.status == 1) { // 已经成为商户
-    if(to.path == '/applyShop') {
-      alert('您已经入驻了店铺,不需要再申请');
-    } else {
-      next();
-    }
+    next();
   } else {
     if (to.path == '/applyShop' || to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
       next();

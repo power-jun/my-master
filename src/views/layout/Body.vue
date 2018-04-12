@@ -38,6 +38,7 @@
 
 <script>
 import Header from "./Header";
+
 let businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
 let tabNavs = [];
 let status = businessUserInfo.shop && businessUserInfo.shop.status;

@@ -7,7 +7,7 @@
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="商品图片:" prop="picUrl" :rules="[{ required: true, message: '请上传商品图片'}]">
-          <el-upload action="api/upload" list-type="picture-card" :limit="5" :file-list="cardFileList" multiple :on-exceed="handleExceed" :before-upload="beforeAvatarUpload" :on-error="errorFun" :on-preview="handlePreview" :on-success="successFun" :on-remove="handleRemove">
+          <el-upload action="api/upload" list-type="picture-card" :limit="5" :file-list="cardFileList" multiple :on-exceed="handleExceed" :before-upload="beforeAvatarUpload" :on-error="errorFun" :on-success="successFun" :on-remove="handleRemove">
             <i class="el-icon-plus"></i>
           </el-upload>
           <p class="pic-tips-left">建议上传比例为 1:1 的图片，图片大小不超过 200KB,图片最多不能超过五张</p>
@@ -486,12 +486,12 @@ export default {
     },
 
     beforeQuillUpload(file) {
-      const isJPG = file.type == "image/png";
+      const isJPG = file.type == "image/png" || "image/jpg" || "image/jpeg";
       const imgSizeFlag = file.size / 1024 / 1024 < 6;
       let imgNumbFlag = true;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 PNG 格式!");
+        this.$message.error("上传图片只能是 png jpg jpeg格式!");
         imgNumbFlag = false;
       }
 
@@ -1028,12 +1028,12 @@ debugger
     },
 
     beforeAvatarUpload(file) {
-      const isJPG = file.type == "image/png";
+      const isJPG = file.type == "image/png" || "image/jpg" || "image/jpeg";;
       const imgSizeFlag = file.size / 1024 / 1024 < 6;
       let imgNumbFlag = true;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 PNG 格式!");
+        this.$message.error("上传图片只能是 png jpg jpeg格式!");
         imgNumbFlag = false;
       }
 
@@ -1052,10 +1052,10 @@ debugger
       );
     },
 
-    handlePreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
+    // handlePreview(file) {
+    //   this.dialogImageUrl = file.url;
+    //   this.dialogVisible = true;
+    // },
 
     successFun(response, file, fileList) {
       let imgArr = [];
@@ -1199,5 +1199,10 @@ debugger
 
 .ql-snow .ql-editor img {
   width: 400px;
+}
+
+.el-icon-delete,
+.el-icon-zoom-in {
+  color: #fff;
 }
 </style>
