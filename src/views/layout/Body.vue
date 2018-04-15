@@ -62,10 +62,6 @@ let status = businessUserInfo.shop && businessUserInfo.shop.status;
         {
           title: "商品管理",
           router: "/commodityManage"
-        },
-        {
-          title: "商品新增",
-          router: "/editAddedGoods"
         }
       ]
     },

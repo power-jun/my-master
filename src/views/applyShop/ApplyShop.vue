@@ -69,7 +69,7 @@
         </el-form-item>
         <p class="form-line-title">经营信息</p>
         <el-form-item label="公司类型:" prop="companyType" :rules="[{ required: true, message: '请选择公司类型'}]">
-          <el-select placeholder="请选择公司类型" v-model="form.companyType">
+          <el-select placeholder="请选择公司类型" v-model="form.companyType" @change="companySelect">
             <el-option v-for="(item, index) in companyTypeArry" :label="item.name" :value="item.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
@@ -80,7 +80,7 @@
           <el-input v-model="form.avgPrice"></el-input>元
         </el-form-item>
          <el-form-item label="常用快递公司:"  prop="express" :rules="[{ required: true, message: '请选择常用快递公司'}]">
-          <el-select placeholder="请选择快递公司" v-model="form.express">
+          <el-select placeholder="请选择快递公司" v-model="form.express"  @change="expressSelect">
             <el-option v-for="(items, index) in expressArry"  :label="items.name" :value="items.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
@@ -91,12 +91,12 @@
           </el-upload>
         </el-form-item>
          <el-form-item label="店铺类目"  prop="shopCategoryId" :rules="[{ required: true, message: '请选择店铺类目'}]">
-          <el-select placeholder="请选择店铺类目" v-model="form.shopCategoryId">
+          <el-select placeholder="请选择店铺类目" v-model="form.shopCategoryId" @change="categorySelect">
             <el-option v-for="(items, index) in shopCategoryArry"  :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
          </el-form-item>
         <el-form-item label="店铺类型" prop="shopType">
-          <el-radio-group v-model="form.shopType">
+          <el-radio-group v-model="form.shopType" @change="shopTypeSelect">
             <el-radio v-for="(items, index) in shopTypeArry" :label="items.name" :value="items.code" :key="index"></el-radio>
           </el-radio-group>
         </el-form-item>
@@ -252,6 +252,13 @@ export default {
           this.shopDetailsData = data.data.data;
           let datas = data.data.data;
           this.form = datas;
+          
+          this.cacheCityId = this.form.city;
+          this.cacheDistrictId = this.form.district;
+
+          // 因为初始化的时候没有加载对于的市区数据
+          this.form.city = this.form.cityName;
+          this.form.district = this.form.districtName;
 
           this.shopLogoList.push({
             url: "http://dev.pt800.com" + datas.shopLogoUrl
@@ -309,8 +316,36 @@ export default {
       });
     },
 
+    companySelect(val){
+      this.form.companyType = val;
+    },
+
+    expressSelect(val){
+      this.form.express = val;
+    },
+
+    categorySelect(val) {
+      this.form.shopCategoryId = val;
+    },
+
+    shopTypeSelect(val) {
+     let selectItems = this.shopTypeArry.filter(function(item){
+        return item.name == val
+      });
+
+      this.form.shopType = selectItems[0].code;
+    },
+
     onSubmit(formName) {
       this.fullscreenLoading = true;
+      let reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+      if(reg.test(this.form.city)) {
+        this.form.city = this.cacheCityId;
+      }
+
+      if(reg.test(this.form.district)) {
+        this.form.district = this.cacheDistrictId;
+      }
 
       this.$refs[formName].validate(valid => {
         var params = this.form;

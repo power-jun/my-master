@@ -41,7 +41,7 @@
         </el-form-item>
         <el-form-item label="限时购买时间:" v-show="limitTimerFlag">
           <el-col :span="20">
-            <el-date-picker v-model="limitProduct.limitdate" type="datetimerange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <el-date-picker v-model="limitProduct.limitdate"  type="datetimerange" align="right" unlink-panels range-separator="至" :start-placeholder="limitProduct.startPlaceholder" :end-placeholder="limitProduct.endPlaceholder"></el-date-picker>
           </el-col>
         </el-form-item>
         <el-form-item label="邮费:" prop="isBaoyou">
@@ -60,29 +60,31 @@
           </el-select>
         </el-form-item>
         <el-form-item label="商品分组:">
-          <el-select :disabled="typeAttrFlag" clearable v-model="specListSelectVOne" @change="specListSelectNOne" placeholder="请选择规格名">
-            <el-option v-for="(items, index) in productTypeAttr" :label="items.name" :value="items.id" :key="index"></el-option>
-          </el-select>
-          <el-button type="primary" v-show="!specListBtnTwoFlag" @click="specListTwoShow">添加规格项目</el-button>
-          <el-row class="specification-list">
-            <el-select
-              v-model="specificationOne"
-              filterable
-              allow-create
-              default-first-option
-              multiple
-              placeholder="请选择规格值"
-              size=40
-              :disabled="specificationOneFlag"
-              @change="specificationChangeOne">
-              <el-option
-                v-for="(item, index) in specificationArry"
-                :key="index"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
+          <div v-show="specListOneFlag">
+            <el-select :disabled="typeAttrFlag" clearable v-model="specListSelectVOne" @change="specListSelectNOne" placeholder="请选择规格名">
+              <el-option v-for="(items, index) in productTypeAttr" :label="items.name" :value="items.id" :key="index"></el-option>
             </el-select>
-          </el-row>
+            <el-button type="primary" v-show="!specListBtnTwoFlag" @click="specListTwoShowFn">添加规格项目</el-button>
+            <el-row class="specification-list">
+              <el-select
+                v-model="specificationOne"
+                filterable
+                allow-create
+                default-first-option
+                multiple
+                placeholder="请选择规格值"
+                size=40
+                :disabled="specificationOneFlag"
+                @change="specificationChangeOne">
+                <el-option
+                  v-for="(item, index) in specificationArry"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-row>
+          </div>
           <div v-show="specListTwoFlag">
             <el-select :disabled="typeAttrFlag" clearable v-model="specListSelectVTwo" @change="specListSelectNTwo" placeholder="请选择规格名">
               <el-option v-for="(item, index) in productTypeAttr" :label="item.name" :value="item.id" :key="index"></el-option>
@@ -190,7 +192,7 @@ export default {
       form: {
         name: "",
         stock: "",
-        productDesc:'',
+        productDesc: "",
         picUrl: "",
         limitNum: "",
         primeCost: "",
@@ -206,6 +208,8 @@ export default {
       },
       cardFileList: [],
       limitProduct: {
+        startPlaceholder: "起始时间",
+        endPlaceholder: "开始时间",
         limitPrice: "",
         limitdate: []
       },
@@ -257,8 +261,8 @@ export default {
           name: "成本价"
         }
       ],
-      specListSelectVOne: "", // 属性规格
-      specListSelectVTwo: "",
+      specListSelectVOne: "", //第一级属性规格
+      specListSelectVTwo: "", //第二级属性规格
       shopId: "",
       content: "",
       editorOption: {
@@ -290,6 +294,7 @@ export default {
       limitTimerFlag: false,
       typeAttrFlag: true,
       specListTwoFlag: false,
+      specListOneFlag: false,
       specListBtnTwoFlag: true,
       specificationTabFlag: false
     };
@@ -333,12 +338,12 @@ export default {
 
             // 是否限时抢购
             if (this.form.limitBuy == 1) {
-              this.limitProduct.limitdate[0] = new Date(
-                this.form.limitBuyStartTime
-              );
-              this.limitProduct.limitdate[1] = new Date(
-                this.form.limitBuyEndTime
-              );
+              this.limitProduct.limitdate[0] = new Date(this.form.limitBuyStartTime);
+              this.limitProduct.startPlaceholder = this.form.limitBuyStartTime;
+
+              this.limitProduct.limitdate[1] = new Date(this.form.limitBuyEndTime);
+              this.limitProduct.endPlaceholder = this.form.limitBuyEndTime;
+
               this.limitProduct.limitPrice = this.form.limitPrice;
               this.limitTimerFlag = true;
             } else {
@@ -347,7 +352,8 @@ export default {
 
             // 是否包邮
             if (this.form.isBaoyou == 0) {
-              this.postagePrice.baoyouAmt = this.form.baoyouAmt && this.form.baoyouAmt;
+              this.postagePrice.baoyouAmt =
+                this.form.baoyouAmt && this.form.baoyouAmt;
               this.postagePrice.postage = this.form.postage;
               this.postagePrice.amtChecked = true;
               this.postageFlag = true;
@@ -367,15 +373,15 @@ export default {
                     let specList = this.form.specList;
                     if (specList && specList.length) {
                       this.typeAttrFlag = false;
+                      this.specListOneFlag = true;
                       // 显示第一级 并且赋值
                       if (specList.length == 1) {
                         this.specificationOneFlag = false;
                         this.specListBtnTwoFlag = false;
-                        this.specificationOne = specList[0].attrValue.split(
-                          ","
-                        );
+                        this.specificationOne = specList[0].attrValue.split(",");
                         this.specListSelectVOne = specList[0].attrId;
                         nameArryOne = [{ prop: specList[0].attrId }];
+                        this.specListNameArryOne = [{ prop: specList[0].attrId, name: specList[0].name }];
                       } else if (specList.length == 2) {
                         // 显示第二级 并且赋值
                         this.specificationTwoFlag = false;
@@ -390,12 +396,14 @@ export default {
                             );
                             this.specListSelectVOne = specList[i].attrId;
                             nameArryOne = [{ prop: specList[i].attrId }];
+                            this.specListNameArryOne = [{ prop: specList[i].attrId, name: specList[i].name }];
                           } else if (specList[i].sort == 2) {
                             this.specificationTwo = specList[i].attrValue.split(
                               ","
                             );
                             this.specListSelectVTwo = specList[i].attrId;
                             nameArryTwo = [{ prop: specList[i].attrId }];
+                            this.specListNameArryTwo = [{ prop: specList[i].attrId, name: specList[i].name }];
                           }
                         }
                       }
@@ -449,11 +457,14 @@ export default {
                           primeCost: stockList[i].primeCost
                         };
 
-                        bodyLineObj[stockList[i].attrList[0].attrId] = stockList[i].attrList[0].attrValue;
+                        bodyLineObj[stockList[i].attrList[0].attrId] =
+                          stockList[i].attrList[0].attrValue;
                         // 如果有两级
-                        if(stockList[i].attrList[1]) {
-                          bodyLineObj[stockList[i].attrList[1].attrId] = stockList[i].attrList[1].attrValue;
+                        if (stockList[i].attrList[1]) {
+                          bodyLineObj[stockList[i].attrList[1].attrId] =
+                            stockList[i].attrList[1].attrValue;
                         }
+
                         this.specificationsTabData.push(bodyLineObj);
                         this.inputValArry.push(inputValItem);
                       }
@@ -481,7 +492,9 @@ export default {
   methods: {
     // 触发文本框中el-upload图片上传功能
     async imgHandler() {
-      let $uploadFormMulti = document.getElementById("uploadFormMulti").getElementsByTagName('input')[0];
+      let $uploadFormMulti = document
+        .getElementById("uploadFormMulti")
+        .getElementsByTagName("input")[0];
       $uploadFormMulti.click();
     },
 
@@ -509,7 +522,7 @@ export default {
       try {
         if (quillImgUrl != null && quillImgUrl.length > 0) {
           this.addImgRange = this.$refs.QuillEditor.quill.getSelection();
-          quillImgUrl = 'http://dev.pt800.com' + quillImgUrl;
+          quillImgUrl = "http://dev.pt800.com" + quillImgUrl;
           // 插入到富文本框中
           this.$refs.QuillEditor.quill.insertEmbed(
             this.addImgRange != null ? this.addImgRange.index : 0,
@@ -559,12 +572,7 @@ export default {
     },
 
     productChange(value) {
-      this.specificationOneFlag = true;
-      this.specificationTwoFlag = true;
-      this.specificationTabFlag = false;
-      // this.specListTwoFlag = false;
-      this.specificationOne = [];
-      this.specificationTwo = [];
+      this.clearAll("all");
 
       this.productTypeAttr = [];
 
@@ -574,22 +582,29 @@ export default {
           .then(data => {
             if (data.data.code == 1) {
               this.productTypeAttr = data.data.data;
-              this.specificationsTabHead.length > 4 &&
-                (this.specificationsTabHead = specificationsCacheTabHead);
-              this.typeAttrFlag = false;
+              if (!this.productTypeAttr.length) {
+                this.specListOneFlag = false;
+              } else {
+                this.specListOneFlag = true;
+                this.specificationsTabHead.length > 4 &&
+                  (this.specificationsTabHead = specificationsCacheTabHead);
+                this.typeAttrFlag = false;
+              }
             }
           });
       } else {
         this.productTypeAttr = [];
         this.typeAttrFlag = true;
+        this.specListOneFlag = false;
       }
     },
 
     specificationChangeOne(value) {
-      if (value) {
+      if (value.length) {
         this.specificationTabFlag = true;
       } else {
         this.specificationTabFlag = false;
+        this.specListBtnTwoFlag = false;
       }
 
       this.specificationChangePublic(value, "one");
@@ -600,21 +615,23 @@ export default {
     },
 
     specificationChangePublic(value, type) {
-      let resultSelectArry = [];
-      for (var i in value) {
-        if (selectArry.length) {
-          for (var j in selectArry) {
-            if (value[i] !== selectArry[j]) {
-              resultSelectArry.push({ value: value[i], label: value[i] });
+      if(value) {
+        let resultSelectArry = [];
+        for (var i in value) {
+          if (selectArry.length) {
+            for (var j in selectArry) {
+              if (value[i] !== selectArry[j]) {
+                resultSelectArry.push({ value: value[i], label: value[i] });
+              }
             }
+          } else {
+            resultSelectArry.push({ value: value[i], label: value[i] });
           }
-        } else {
-          resultSelectArry.push({ value: value[i], label: value[i] });
         }
-      }                        
+  
+        this.specificationArry = resultSelectArry; // 赋值缓存用户使用过的规格值
+      }
 
-      this.specificationArry = resultSelectArry;
-debugger
       // 添加表格Header
       if (this.specificationsTabHead.length <= 6) {
         if (type == "one") {
@@ -631,12 +648,9 @@ debugger
               }
             }
 
-            this.specListBtnTwoFlag = false;
+            // this.specListBtnTwoFlag = false;
           } else {
-            if (
-              this.specificationsTabHead.length > 4 &&
-              this.specificationsTabHead.length <= 6
-            ) {
+            if (this.specificationsTabHead.length > 4 && this.specificationsTabHead.length <= 6) {
               this.specificationsTabData = [];
               this.specificationTabFlag = false;
               this.specListNameArryTwo = [];
@@ -645,7 +659,7 @@ debugger
               this.specificationsTabHead.splice(0, 1);
             }
 
-            this.specListBtnTwoFlag = true;
+            // this.specListBtnTwoFlag = true;
             this.specListTwoFlag = false;
           }
         } else if (type == "two") {
@@ -664,11 +678,10 @@ debugger
                 nameArryTwo = this.specListNameArryTwo;
               }
             }
-          } else if (
-            this.specificationsTabHead.length > 4 &&
-            this.specificationsTabHead.length <= 6
-          ) {
-            this.specificationsTabHead.splice(1, 1);
+          } else if (this.specificationsTabHead.length > 4 &&this.specificationsTabHead.length <= 6) {
+            if(this.specificationsTabHead[1].prop != 'originalPrice' ) {
+              this.specificationsTabHead.splice(1, 1);
+            }
           }
         }
       }
@@ -700,7 +713,8 @@ debugger
       }
 
       // 组织第一个规格名数据
-      let totalTabLine = this.specificationOne.length * this.specificationTwo.length; //table的总行数
+      let totalTabLine =
+        this.specificationOne.length * this.specificationTwo.length; //table的总行数
       let resultTotalArr = [];
 
       if (this.specificationOne.length) {
@@ -764,82 +778,102 @@ debugger
       nameArryOne = [];
       nameArryTwo = [];
 
-      for (var i in item) {
-        if (item[i].id == value) {
-          obj.name = item[i].name;
-          // this.productTypeAttr.splice(i, 1);
-        }
-      }
-
-      for (let i = 0; i < this.specificationsTabHead.length; i++) {
-        if (this.specificationsTabHead[i].prop == value) {
-          this.$message({
-            message: "已经存在该规格名",
-            type: "warning"
-          });
-          this.specListSelectVOne = [];
-          breakFlag = false;
-          return false;
-        }
-      }
-
-      if (!breakFlag) {
-        return false;
-      }
-
-      this.specListNameArryOne = [{ name: obj.name, prop: value }];
-
       if (value) {
+        for (var i in item) {
+          if (item[i].id == value) {
+            obj.name = item[i].name;
+            // this.productTypeAttr.splice(i, 1);
+          }
+        }
+
+        // for (let i = 0; i < this.specificationsTabHead.length; i++) {
+        //   if (this.specificationsTabHead[i].prop == value) {
+        //     this.$message({
+        //       message: "已经存在该规格名",
+        //       type: "warning"
+        //     });
+        //     this.specListSelectVOne = "";
+        //     breakFlag = false;
+        //     break;
+        //   }
+        // }
+
+        // if (!breakFlag) {
+        //   return false;
+        // }
+
         this.specificationOneFlag = false;
+        this.specListNameArryOne = [{ name: obj.name, prop: value }];
+        this.specListSelectVOne = value;
       } else {
         this.specificationOneFlag = true;
-        this.specificationOne = [];
-        this.specificationTwo = [];
-        this.specListBtnTwoFlag = true;
-        this.specListTwoFlag = false;
-        this.specificationTabFlag = false;
-        this.specificationsTabData = [];
+        this.specListNameArryOne = [];
+        this.specListSelectVOne = '';
       }
+
+      this.clearAll();
+    },
+
+    clearAll(type) {
+      if (type == "all") {
+        this.specListSelectVOne = '';
+      }
+
+      this.specificationOne = [];
+      this.specificationTwo = [];
+      this.specListSelectVTwo = '';
+      this.specListNameArryTwo = [];
+      this.specListBtnTwoFlag = false;
+      this.specListTwoFlag = false;
+      this.specificationTabFlag = false;
+      this.specificationsTabData = [];
     },
 
     specListSelectNTwo(value) {
       let obj = {};
       let item = this.productTypeAttr;
       let breakFlag = true;
-
-      for (var i in item) {
+      
+      if(value) {
+        for (var i in item) {
         if (item[i].id == value) {
-          obj.name = item[i].name;
+            obj.name = item[i].name;
+          }
         }
-      }
 
-      for (let i = 0; i < this.specificationsTabHead.length; i++) {
-        if (this.specificationsTabHead[i].prop == value) {
-          this.$message({
-            message: "已经存在该规格名",
-            type: "warning"
-          });
-          this.specListSelectVTwo = [];
-          breakFlag = false;
-          return false;
+        for (let i = 0; i < this.specificationsTabHead.length; i++) {
+          if (this.specificationsTabHead[i].prop == value) {
+            this.$message({
+              message: "已经存在该规格名",
+              type: "warning"
+            });
+            breakFlag = false;
+            break;
+          }
         }
-      }
 
-      if (!breakFlag) {
-        return false;
-      }
-
-      this.specListNameArryTwo = [{ name: obj.name, prop: value }];
-
-      if (value) {
-        this.specificationTwoFlag = false;
+        if (!breakFlag) {
+          this.specListSelectVTwo = '';
+          this.specListNameArryTwo = '';
+          this.specificationTwo = [];
+          this.specificationTwoFlag = true;
+        } else {
+          this.specListNameArryTwo = [{ name: obj.name, prop: value }];
+          this.specListSelectVTwo = value;
+          this.specificationTwo = [];
+          this.specificationTwoFlag = false;
+        }
       } else {
-        this.specificationTwoFlag = true;
+        this.specListSelectVTwo = '';
+        this.specListNameArryTwo = '';
         this.specificationTwo = [];
+        this.specificationTwoFlag = true;
       }
+
+      this.specificationChangePublic([], "two");
     },
 
-    specListTwoShow() {
+    specListTwoShowFn() {
       this.specListTwoFlag = true;
       this.specListBtnTwoFlag = true;
     },
@@ -868,13 +902,25 @@ debugger
             "-" +
             this.zeroFilling(start.getMonth() + 1) +
             "-" +
-            this.zeroFilling(start.getDate());
+            this.zeroFilling(start.getDate()) +
+            " " +
+            this.zeroFilling(start.getHours()) +
+            ":" +
+            this.zeroFilling(start.getMinutes()) +
+            ":" +
+            this.zeroFilling(start.getSeconds());
           this.form.limitBuyEndTime =
             end.getFullYear() +
             "-" +
             this.zeroFilling(end.getMonth() + 1) +
             "-" +
-            this.zeroFilling(end.getDate());
+            this.zeroFilling(end.getDate()) +
+            " " +
+            this.zeroFilling(end.getHours()) +
+            ":" +
+            this.zeroFilling(end.getMinutes()) +
+            ":" +
+            this.zeroFilling(end.getSeconds());
         } else {
           this.$message({
             message: "请填写限时抢购时间段",
@@ -883,7 +929,7 @@ debugger
           this.fullscreenLoading = false;
           return false;
         }
-
+debugger
         if (this.limitProduct.limitPrice) {
           this.form.limitPrice = this.limitProduct.limitPrice;
         } else {
@@ -909,7 +955,7 @@ debugger
             return false;
           }
 
-          if(this.postagePrice.amtChecked) {
+          if (this.postagePrice.amtChecked) {
             if (this.postagePrice.baoyouAmt) {
               this.form.baoyouAmt = this.postagePrice.baoyouAmt;
             } else {
@@ -932,7 +978,7 @@ debugger
       }
 
       this.form.specList = [];
-      
+
       if (nameArryOne.length) {
         let specListOne = [{}];
         specListOne[0].attrId = nameArryOne[0].prop;
@@ -991,7 +1037,7 @@ debugger
           }
         }
       }
-      console.log(this.form)
+      console.log(this.form);
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!inputValFlag) {
@@ -1028,7 +1074,7 @@ debugger
     },
 
     beforeAvatarUpload(file) {
-      const isJPG = file.type == "image/png" || "image/jpg" || "image/jpeg";;
+      const isJPG = file.type == "image/png" || "image/jpg" || "image/jpeg";
       const imgSizeFlag = file.size / 1024 / 1024 < 6;
       let imgNumbFlag = true;
 

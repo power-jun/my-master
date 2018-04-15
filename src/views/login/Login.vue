@@ -31,7 +31,7 @@
 <script>
 import Vue from "vue";
 import utils from "utils";
-import md5 from "md5";
+// import md5 from "md5";
 
 export default {
   data() {
@@ -72,8 +72,8 @@ export default {
         this.loginForm.mobile = userName;
         this.loginForm.password = passWord;
         this.rememberPass = true;
-        var mm = md5;
-        console.log(md5(passWord), '密码')
+        // var mm = md5;
+        // console.log(md5(passWord), '密码')
       }
     },
 
