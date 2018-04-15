@@ -119,15 +119,16 @@ routers.beforeEach((to, from, next) => {
   var businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
 
   if (businessUserInfo.shopId && businessUserInfo.shop.status == 1) { // 已经成为商户
-    if (to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
-      if (from.query) {
-        next({ path: from.path, query: from.query })
-      } else {
-        next({ path: from.path });
-      }
-    } else {
-      next();
-    }
+    // if (to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
+    //   if (from.query) {
+    //     next({ path: from.path, query: from.query })
+    //   } else {
+    //     next({ path: from.path });
+    //   }
+    // } else {
+    //   next();
+    // }
+    next();
   } else {
     if (to.path == '/applyShop' || to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
       next();
