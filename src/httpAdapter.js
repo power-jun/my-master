@@ -49,7 +49,6 @@ function initInterceptors() {
     return res;
   }, (error) => {
     //响应错误时
-    location.reload()
     console.log('response error=', error);
     return Promise.reject(error);
   });

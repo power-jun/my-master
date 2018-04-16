@@ -9,7 +9,10 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/base';
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+Vue.prototype.getUseInfo = function() {};
+
 Vue.use(VueRouter);
 Vue.use(ElementUI);
 

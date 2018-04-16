@@ -72,7 +72,7 @@
                 allow-create
                 default-first-option
                 multiple
-                placeholder="请选择规格值"
+                placeholder="请输入规格值并按回车确定"
                 size=40
                 :disabled="specificationOneFlag"
                 @change="specificationChangeOne">
@@ -887,11 +887,58 @@ export default {
     },
 
     onSubmit(formName) {
-      this.fullscreenLoading = true;
-
       if (this.$route.query && this.$route.query.id) {
         this.form.id = this.$route.query.id;
       }
+
+      if(!this.form.name) {
+        this.$message({
+            message: "请填写商品名",
+            type: "warning"
+          });
+          return false;
+      }
+
+      if(!this.form.picUrl) {
+        this.$message({
+            message: "请上传商品图片",
+            type: "warning"
+          });
+          return;
+      }
+
+      if(!this.form.stock) {
+        this.$message({
+            message: "请填写库存量",
+            type: "warning"
+          });
+          return;
+      }
+
+      if(!this.form.primeCost) {
+        this.$message({
+            message: "请填写单账号限购数量",
+            type: "warning"
+          });
+          return;
+      }
+
+      if(!this.form.originalPrice) {
+        this.$message({
+            message: "请填写原价",
+            type: "warning"
+          });
+          return;
+      }
+
+      if(!this.form.maxDiscount) {
+        this.$message({
+            message: "请填写最大优惠金额",
+            type: "warning"
+          });
+          return;
+      }
+
 
       if (this.form.limitBuy == 1) {
         if (this.limitProduct.limitdate.length) {
@@ -929,7 +976,7 @@ export default {
           this.fullscreenLoading = false;
           return false;
         }
-debugger
+
         if (this.limitProduct.limitPrice) {
           this.form.limitPrice = this.limitProduct.limitPrice;
         } else {
@@ -1037,7 +1084,15 @@ debugger
           }
         }
       }
-      console.log(this.form);
+
+      if(!this.form.productDesc) {
+        this.$message({
+            message: "请填写商品描述",
+            type: "warning"
+          });
+          return;
+      }
+      this.fullscreenLoading = true;
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (!inputValFlag) {

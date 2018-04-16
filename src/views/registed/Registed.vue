@@ -5,7 +5,7 @@
         <span>注册</span>
       </el-row>
        <el-form-item prop="mobile">
-        <el-input v-model="registedForm.mobile"  placeholder="请输入手机号"></el-input>
+        <el-input v-model="registedForm.mobile" v-on:blur="blurMobile" placeholder="请输入手机号"></el-input>
       </el-form-item>
        <el-form-item prop="checkCode" :inline="true" class="code-line">
          <el-col :span="14"><el-input v-model="registedForm.checkCode" placeholder="请输入短信验证码"></el-input></el-col>
@@ -75,10 +75,10 @@ export default {
     };
     return {
       registedForm: {
-        mobile: "18575677076",
+        mobile: "",
         checkCode: "",
-        pass: "a123456",
-        checkPass: "a123456"
+        pass: "",
+        checkPass: ""
       },
       rules2: {
         mobile: [{ validator: checkMobile, trigger: "blur" }],
@@ -88,7 +88,7 @@ export default {
       },
       fullscreenLoading: false,
       getCodeMsg: "获取验证码",
-      getCodeFlag: false,
+      getCodeFlag: true,
       phoneVerification: false
     };
   },
@@ -128,6 +128,33 @@ export default {
           return false;
         }
       });
+    },
+
+    blurMobile(e) {
+      let pattern = /^[1][3,4,5,7,8][0-9]{9}$/;
+      if(!pattern.test(this.registedForm.mobile)) {
+        return;
+      }
+
+      this.$axios
+        .get("/vendor/verifyMobile", { params: {
+          mobile: this.registedForm.mobile
+        }})
+        .then(data => {
+          if(data.data.code == 1){
+            this.getCodeFlag = false;
+            this.$message({
+               message: '手机号可用',
+               type: "success"
+            });
+          } else {
+            this.getCodeFlag = true;
+            this.$message({
+               message: data.data.msg,
+               type: "warning"
+            });
+          }
+        })
     },
 
     getCode() {

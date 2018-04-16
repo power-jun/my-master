@@ -38,12 +38,9 @@
 
 <script>
 import Header from "./Header";
-
-let businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
 let tabNavs = [];
-let status = businessUserInfo.shop && businessUserInfo.shop.status;
+let businessUserInfo = {};
 
-// if (businessUserInfo.shopId && businessUserInfo.shop && businessUserInfo.shop.status == 1) {
   tabNavs = [
     {
       title: "开店申请",
@@ -119,28 +116,14 @@ let status = businessUserInfo.shop && businessUserInfo.shop.status;
     }
   ];
 
-//  else {
-//   tabNavs = [
-//     {
-//       title: "开店申请",
-//       subnavs: [
-//         {
-//           title: "商家入驻申请",
-//           router: "/applyShop"
-//         }
-//       ]
-//     }
-//   ];
-// }
-
 export default {
   data() {
     return {
       info: {
-        logoUrl: businessUserInfo && ("http://dev.pt800.com/" + businessUserInfo.shopLogoUrl || ''),
-        name: businessUserInfo.shop && (businessUserInfo.shop.name || ''),
-        shopId: businessUserInfo.shopId || '',
-        status: status || ''
+        logoUrl: '',
+        name: '',
+        shopId: '',
+        status: ''
       },
       navs: tabNavs,
       bodyHeight: '',
@@ -157,6 +140,9 @@ export default {
   },
 
   mounted() {
+   businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
+   let status = businessUserInfo.shop && businessUserInfo.shop.status;
+   this.getInfo();
   },
 
   methods: {
@@ -166,6 +152,13 @@ export default {
 
     getChildMsg(childData) {
       console.log(childData);
+    },
+
+    getInfo() {
+      this.info.logoUrl = businessUserInfo && ("http://dev.pt800.com/" + businessUserInfo.shopLogoUrl || '');
+      this.info.name = businessUserInfo.shop && (businessUserInfo.shop.name || '');
+      this.info.shopId = businessUserInfo.shopId || '';
+      this.info.status = status || '';
     }
   },
   //监控路由的变化

@@ -133,7 +133,10 @@ routers.beforeEach((to, from, next) => {
     if (to.path == '/applyShop' || to.path == '/login' || to.path == '/registed' || to.path == '/forgetPassword') {
       next();
     } else {
-      alert('请先申请入住店铺');
+      // if(businessUserInfo.shop.status == 0){
+
+      // }
+      alert('请等待商家资料审核通过，或联系平台管理员');
     }
   }
 })

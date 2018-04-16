@@ -10,8 +10,8 @@
       <el-form-item prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}, { pattern:/^[A-Za-z0-9]{6,20}$/, message: '6-20位字母数字组合', trigger: 'blur'}]">
         <el-input v-model="loginForm.password"  placeholder="密码" type="password"></el-input>
       </el-form-item>
-       <el-form-item prop="code" :inline="true" class="login-code-line" :rules="[{ required: true, message: '请输入验证码', trigger: 'blur' }]">
-         <el-col :span="18"><el-input v-model="loginForm.code" placeholder="请输入验证码"></el-input></el-col>
+       <el-form-item prop="code" v-if="codeFlag" :inline="true" class="login-code-line" :rules="[{ required: codeFlag, message: '请输入验证码', trigger: 'blur' }]">
+         <el-col :span="18"><el-input @keyup.enter.native="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading" v-model="loginForm.code" placeholder="请输入验证码"></el-input></el-col>
          <el-col :span="6" class="code-img"><img :src="codeImgSrc" @click="getCodeImg()" alt=""/></el-col>
       </el-form-item>
       <el-form-item class="login-center login-btn">
@@ -38,11 +38,12 @@ export default {
     return {
       rememberPass: false,
       loginForm: {
-        mobile: "15302752350", //15302752350
+        mobile: "", //15302752350
         password: "",
         code: ""
       },
       fullscreenLoading: false,
+      codeFlag: false,
       codeImgSrc: "/api/validateCode"
     };
   },
@@ -122,7 +123,9 @@ export default {
                     query: { status: status }
                   });
                 }
+                this.codeFlag = false;
               } else {
+                this.codeFlag = true;
                 this.$message({
                   message: data.data.msg,
                   type: "warning"
@@ -166,7 +169,7 @@ export default {
 .form-box {
   width: 300px;
   background: #fff;
-  padding: 50px;
+  padding: 50px 50px 20px 50px;
   position: absolute;
   left: 50%;
   top: 50%;
