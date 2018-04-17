@@ -222,7 +222,7 @@ export default {
     if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
       if(baseInfo.shop.status == 3) {
         this.$message({
-             message: '店铺审核不通过，请重生申请',
+             message: '店铺审核不通过，'+ baseInfo.shop.remarks +'，请重生申请',
              type: "warning"
         });
 

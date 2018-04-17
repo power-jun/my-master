@@ -8,7 +8,7 @@
         <el-input v-model="loginForm.mobile"  placeholder="请输入手机号"></el-input>
       </el-form-item>
       <el-form-item prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}, { pattern:/^[A-Za-z0-9]{6,20}$/, message: '6-20位字母数字组合', trigger: 'blur'}]">
-        <el-input v-model="loginForm.password"  placeholder="密码" type="password"></el-input>
+        <el-input v-model="loginForm.password" @keyup.enter.native="submitForm('loginForm')"  placeholder="密码" type="password"></el-input>
       </el-form-item>
        <el-form-item prop="code" v-if="codeFlag" :inline="true" class="login-code-line" :rules="[{ required: codeFlag, message: '请输入验证码', trigger: 'blur' }]">
          <el-col :span="18"><el-input @keyup.enter.native="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading" v-model="loginForm.code" placeholder="请输入验证码"></el-input></el-col>
