@@ -219,10 +219,12 @@ export default {
     this.loadingFlag = false;
     this.bodyHeight = window.screen.height;
 
+ 
+
     if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
       if(baseInfo.shop.status == 3) {
         this.$message({
-             message: '店铺审核不通过，'+ baseInfo.shop.remarks +'，请重生申请',
+             message: '店铺审核不通过，请重新申请！审核意见：'+ baseInfo.shop.remarks +'',
              type: "warning"
         });
 
