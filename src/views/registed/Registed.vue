@@ -7,6 +7,10 @@
        <el-form-item prop="mobile">
         <el-input v-model="registedForm.mobile" v-on:blur="blurMobile" placeholder="请输入手机号"></el-input>
       </el-form-item>
+      <el-form-item prop="code" :inline="true" class="login-code-line" :rules="[{ required: true, message: '请输入图像验证码', trigger: 'blur' }]">
+         <el-col :span="18"><el-input v-model="registedForm.code" placeholder="请输入图像验证码"></el-input></el-col>
+         <el-col :span="6" class="code-img"><img :src="codeImgSrc" @click="getCodeImg()" alt=""/></el-col>
+      </el-form-item>
        <el-form-item prop="checkCode" :inline="true" class="code-line">
          <el-col :span="14"><el-input v-model="registedForm.checkCode" placeholder="请输入短信验证码"></el-input></el-col>
          <el-col :span="6" class="get-code-btn"><el-button type="primary" :disabled="getCodeFlag" @click="getCode">{{getCodeMsg}}</el-button></el-col>
@@ -74,7 +78,9 @@ export default {
       }
     };
     return {
+      codeImgSrc: "/api/validateCode",
       registedForm: {
+        code: '',
         mobile: "",
         checkCode: "",
         pass: "",
@@ -93,6 +99,9 @@ export default {
     };
   },
   methods: {
+    getCodeImg() {
+      this.codeImgSrc = "api/validateCode?" + Math.random();
+    },
     submitForm(formName) {
       let _this = this;
       this.fullscreenLoading = true;
@@ -164,13 +173,22 @@ export default {
         return;
       }
 
+      if(!this.registedForm.code) {
+        this.$message({
+           message: '请输入图像验证码',
+           type: "warning"
+        });
+        return;
+      }
+
       this.getCodeFlag = true;
       this.$axios
         .post("/vendor/sendSmsVerifyCode", {
-          mobile: this.registedForm.mobile
+          mobile: this.registedForm.mobile,
+          code: this.registedForm.code
         })
         .then(data => {
-          if (data.data.code === 1) {
+          if (data.data.code == 1) {
             let wait = 60;
             let codeTimer = null;
             codeTimer = setInterval(() => {
@@ -185,6 +203,10 @@ export default {
               }
             }, 1000);
           } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
             this.getCodeFlag = false;
           }
         });
@@ -241,5 +263,11 @@ export default {
       color: #fff;
     }
   }
+}
+.code-img img {
+  display: inline-block;
+  width: 80px;
+  height: 39px;
+  cursor: pointer;
 }
 </style>
