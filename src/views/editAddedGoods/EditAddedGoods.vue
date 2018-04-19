@@ -889,143 +889,144 @@ export default {
     onSubmit(formName) {
       if (this.$route.query && this.$route.query.id) {
         this.form.id = this.$route.query.id;
+        this.form.saleAttrList = [];
       }
 
-      if(!this.form.name) {
-        this.$message({
-            message: "请填写商品名",
-            type: "warning"
-          });
-          return false;
-      }
+      // if(!this.form.name) {
+      //   this.$message({
+      //       message: "请填写商品名",
+      //       type: "warning"
+      //     });
+      //     return false;
+      // }
 
-      if(!this.form.picUrl) {
-        this.$message({
-            message: "请上传商品图片",
-            type: "warning"
-          });
-          return;
-      }
+      // if(!this.form.picUrl) {
+      //   this.$message({
+      //       message: "请上传商品图片",
+      //       type: "warning"
+      //     });
+      //     return;
+      // }
 
-      if(!this.form.stock) {
-        this.$message({
-            message: "请填写库存量",
-            type: "warning"
-          });
-          return;
-      }
+      // if(!this.form.stock) {
+      //   this.$message({
+      //       message: "请填写库存量",
+      //       type: "warning"
+      //     });
+      //     return;
+      // }
 
-      if(!this.form.primeCost) {
-        this.$message({
-            message: "请填写单账号限购数量",
-            type: "warning"
-          });
-          return;
-      }
+      // if(!this.form.primeCost) {
+      //   this.$message({
+      //       message: "请填写单账号限购数量",
+      //       type: "warning"
+      //     });
+      //     return;
+      // }
 
-      if(!this.form.originalPrice) {
-        this.$message({
-            message: "请填写原价",
-            type: "warning"
-          });
-          return;
-      }
+      // if(!this.form.originalPrice) {
+      //   this.$message({
+      //       message: "请填写原价",
+      //       type: "warning"
+      //     });
+      //     return;
+      // }
 
-      if(!this.form.maxDiscount) {
-        this.$message({
-            message: "请填写最大优惠金额",
-            type: "warning"
-          });
-          return;
-      }
+      // if(!this.form.maxDiscount) {
+      //   this.$message({
+      //       message: "请填写最大优惠金额",
+      //       type: "warning"
+      //     });
+      //     return;
+      // }
 
 
-      if (this.form.limitBuy == 1) {
-        if (this.limitProduct.limitdate.length) {
-          let start = new Date(this.limitProduct.limitdate[0]);
-          let end = new Date(this.limitProduct.limitdate[1]);
-          this.form.limitBuyStartTime =
-            start.getFullYear() +
-            "-" +
-            this.zeroFilling(start.getMonth() + 1) +
-            "-" +
-            this.zeroFilling(start.getDate()) +
-            " " +
-            this.zeroFilling(start.getHours()) +
-            ":" +
-            this.zeroFilling(start.getMinutes()) +
-            ":" +
-            this.zeroFilling(start.getSeconds());
-          this.form.limitBuyEndTime =
-            end.getFullYear() +
-            "-" +
-            this.zeroFilling(end.getMonth() + 1) +
-            "-" +
-            this.zeroFilling(end.getDate()) +
-            " " +
-            this.zeroFilling(end.getHours()) +
-            ":" +
-            this.zeroFilling(end.getMinutes()) +
-            ":" +
-            this.zeroFilling(end.getSeconds());
-        } else {
-          this.$message({
-            message: "请填写限时抢购时间段",
-            type: "warning"
-          });
-          this.fullscreenLoading = false;
-          return false;
-        }
+      // if (this.form.limitBuy == 1) {
+      //   if (this.limitProduct.limitdate.length) {
+      //     let start = new Date(this.limitProduct.limitdate[0]);
+      //     let end = new Date(this.limitProduct.limitdate[1]);
+      //     this.form.limitBuyStartTime =
+      //       start.getFullYear() +
+      //       "-" +
+      //       this.zeroFilling(start.getMonth() + 1) +
+      //       "-" +
+      //       this.zeroFilling(start.getDate()) +
+      //       " " +
+      //       this.zeroFilling(start.getHours()) +
+      //       ":" +
+      //       this.zeroFilling(start.getMinutes()) +
+      //       ":" +
+      //       this.zeroFilling(start.getSeconds());
+      //     this.form.limitBuyEndTime =
+      //       end.getFullYear() +
+      //       "-" +
+      //       this.zeroFilling(end.getMonth() + 1) +
+      //       "-" +
+      //       this.zeroFilling(end.getDate()) +
+      //       " " +
+      //       this.zeroFilling(end.getHours()) +
+      //       ":" +
+      //       this.zeroFilling(end.getMinutes()) +
+      //       ":" +
+      //       this.zeroFilling(end.getSeconds());
+      //   } else {
+      //     this.$message({
+      //       message: "请填写限时抢购时间段",
+      //       type: "warning"
+      //     });
+      //     this.fullscreenLoading = false;
+      //     return false;
+      //   }
 
-        if (this.limitProduct.limitPrice) {
-          this.form.limitPrice = this.limitProduct.limitPrice;
-        } else {
-          this.fullscreenLoading = false;
-          this.$message({
-            message: "请填写限时抢购价格",
-            type: "warning"
-          });
-          return false;
-        }
-      }
-      if (this.form.isBaoyou.length) {
-        // 不包邮
-        if (this.form.isBaoyou == 0) {
-          if (this.postagePrice.postage) {
-            this.form.postage = this.postagePrice.postage;
-          } else {
-            this.fullscreenLoading = false;
-            this.$message({
-              message: "请填写快递费",
-              type: "warning"
-            });
-            return false;
-          }
+      //   if (this.limitProduct.limitPrice) {
+      //     this.form.limitPrice = this.limitProduct.limitPrice;
+      //   } else {
+      //     this.fullscreenLoading = false;
+      //     this.$message({
+      //       message: "请填写限时抢购价格",
+      //       type: "warning"
+      //     });
+      //     return false;
+      //   }
+      // }
+      // if (this.form.isBaoyou.length) {
+      //   // 不包邮
+      //   if (this.form.isBaoyou == 0) {
+      //     if (this.postagePrice.postage) {
+      //       this.form.postage = this.postagePrice.postage;
+      //     } else {
+      //       this.fullscreenLoading = false;
+      //       this.$message({
+      //         message: "请填写快递费",
+      //         type: "warning"
+      //       });
+      //       return false;
+      //     }
 
-          if (this.postagePrice.amtChecked) {
-            if (this.postagePrice.baoyouAmt) {
-              this.form.baoyouAmt = this.postagePrice.baoyouAmt;
-            } else {
-              this.fullscreenLoading = false;
-              this.$message({
-                message: "请填写满多少钱免邮",
-                type: "warning"
-              });
-              return false;
-            }
-          }
-        }
-      } else {
-        this.fullscreenLoading = false;
-        this.$message({
-          message: "请选择邮费",
-          type: "warning"
-        });
-        return false;
-      }
+      //     if (this.postagePrice.amtChecked) {
+      //       if (this.postagePrice.baoyouAmt) {
+      //         this.form.baoyouAmt = this.postagePrice.baoyouAmt;
+      //       } else {
+      //         this.fullscreenLoading = false;
+      //         this.$message({
+      //           message: "请填写满多少钱免邮",
+      //           type: "warning"
+      //         });
+      //         return false;
+      //       }
+      //     }
+      //   }
+      // } else {
+      //   this.fullscreenLoading = false;
+      //   this.$message({
+      //     message: "请选择邮费",
+      //     type: "warning"
+      //   });
+      //   return false;
+      // }
 
       this.form.specList = [];
-
+debugger
       if (nameArryOne.length) {
         let specListOne = [{}];
         specListOne[0].attrId = nameArryOne[0].prop;
@@ -1282,6 +1283,13 @@ export default {
 .specification-list {
   margin-top: 10px;
   margin-bottom: 10px;
+  .el-select__caret {
+    display: none;
+  }
+}
+
+.el-select-dropdown.is-multiple {
+  display: none;
 }
 
 .specifications-input {

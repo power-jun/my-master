@@ -96,8 +96,8 @@
           </el-select>
          </el-form-item>
         <el-form-item label="店铺类型" prop="shopType">
-          <el-radio-group v-model="form.shopType" @change="shopTypeSelect">
-            <el-radio v-for="(items, index) in shopTypeArry" :label="items.name" :value="items.code" :key="index"></el-radio>
+          <el-radio-group v-model="form.shopTypeName" @change="shopTypeSelect">
+            <el-radio v-for="(items, index) in shopTypeArry" :label="items.name" :value="items.name" :key="index"></el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item prop="shopName" label="店铺名称:" :rules="[{ required: true, message: '请输入店铺名称'}]">
@@ -178,6 +178,7 @@ export default {
         shopLogoUrl: "",
         shopCategoryId: "",
         shopType: "",
+        shopTypeName: '',
         shopDesc: "",
         district: "",
         province: "",
@@ -254,7 +255,6 @@ export default {
           this.shopDetailsData = data.data.data;
           let datas = data.data.data;
           this.form = datas;
-          
           this.cacheCityId = this.form.city;
           this.cacheDistrictId = this.form.district;
 
@@ -336,6 +336,7 @@ export default {
       });
 
       this.form.shopType = selectItems[0].code;
+      this.form.shopTypeName = selectItems[0].name;
     },
 
     onSubmit(formName) {
