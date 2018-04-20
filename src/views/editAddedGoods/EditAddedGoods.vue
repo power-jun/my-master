@@ -121,7 +121,7 @@
               <template slot-scope="scope">
                 <input v-if="item.prop == 'originalPrice'" type="number" v-model="inputValArry[scope.$index].originalPrice" class="specifications-input"/>
                 <input v-else-if="item.prop == 'stock'" type="number" v-model="inputValArry[scope.$index].stock" class="specifications-input"/>
-                <input v-else-if="item.prop == 'specCode'" type="number" v-model="inputValArry[scope.$index].specCode" class="specifications-input"/>
+                <input v-else-if="item.prop == 'specCode'" v-model="inputValArry[scope.$index].specCode" class="specifications-input"/>
                 <input v-else-if="item.prop == 'primeCost'" type="number" v-model="inputValArry[scope.$index].primeCost" class="specifications-input"/>
                 <p v-else>{{scope.row[item.prop]}}</p>
               </template>
@@ -378,7 +378,7 @@ export default {
                       if (specList.length == 1) {
                         this.specificationOneFlag = false;
                         this.specListBtnTwoFlag = false;
-                        this.specificationOne = specList[0].attrValue.split(",");
+                        this.specificationOneCache = this.specificationOne = specList[0].attrValue.split(",");
                         this.specListSelectVOne = specList[0].attrId;
                         nameArryOne = [{ prop: specList[0].attrId }];
                         this.specListNameArryOne = [{ prop: specList[0].attrId, name: specList[0].name }];
@@ -409,30 +409,30 @@ export default {
                       }
                     }
 
-                    let stockList = this.form.stockList;
+                    
+                     let stockList = this.form.stockList;
+                     let saleAttrList = this.form.saleAttrList;
+
                     if (stockList && stockList.length) {
                       this.specificationTabFlag = true;
                       //组织表格header
                       if (specList.length == 1) {
                         this.specificationsTabHead.unshift({
-                          prop: stockList[0].attrList[0].attrId,
-                          name: stockList[0].attrList[0].attrValue
+                          prop: saleAttrList[0].id,
+                          name: saleAttrList[0].name
                         });
                       } else if (specList.length == 2) {
-                        let attrList = stockList[0].attrList;
                         let oneUnshift = {};
                         let twoUnshift = {};
-
-                        for (let i = 0; i < attrList.length; i++) {
-                          if (attrList[i].sort == 1) {
-                            twoUnshift.prop = attrList[i].attrId;
-                            twoUnshift.name = attrList[i].attrValue;
-                          } else if (attrList[i].sort == 2) {
-                            oneUnshift.prop = attrList[i].attrId;
-                            oneUnshift.name = attrList[i].attrValue;
+                        for (let i = 0; i < saleAttrList.length; i++) {
+                          if (saleAttrList[i].sort == 1) {
+                            twoUnshift.prop = saleAttrList[i].id;
+                            twoUnshift.name = saleAttrList[i].name;
+                          } else if (saleAttrList[i].sort == 2) {
+                            oneUnshift.prop = saleAttrList[i].id;
+                            oneUnshift.name = saleAttrList[i].name;
                           }
                         }
-
                         this.specificationsTabHead.unshift(oneUnshift);
                         this.specificationsTabHead.unshift(twoUnshift);
                       }
@@ -455,6 +455,7 @@ export default {
                           stock: stockList[i].stock,
                           specCode: stockList[i].specCode,
                           primeCost: stockList[i].primeCost
+                          // sort: stockList[i].sort
                         };
 
                         bodyLineObj[stockList[i].attrList[0].attrId] =
@@ -582,12 +583,12 @@ export default {
           .then(data => {
             if (data.data.code == 1) {
               this.productTypeAttr = data.data.data;
+
               if (!this.productTypeAttr.length) {
                 this.specListOneFlag = false;
               } else {
                 this.specListOneFlag = true;
-                this.specificationsTabHead.length > 4 &&
-                  (this.specificationsTabHead = specificationsCacheTabHead);
+                this.specificationsTabHead.length > 4 && (this.specificationsTabHead = specificationsCacheTabHead);
                 this.typeAttrFlag = false;
               }
             }
@@ -607,10 +608,24 @@ export default {
         this.specListBtnTwoFlag = false;
       }
 
+      // Array.prototype.diff = function(a) {
+      //     return this.filter(function(i) {return a.indexOf(i) < 0;});
+      // };
+
+      // var deleteIndex = this.specificationOneCache.indexOf(this.specificationOneCache.diff(this.specificationOne)[0]);
+
+      // if(deleteIndex > 0) {
+      //   this.inputValArry = this.inputValArry.filter(function(items){
+      //     return items.sort != (deleteIndex+1)
+      //   });
+      //   debugger
+      // }
+
       this.specificationChangePublic(value, "one");
     },
 
     specificationChangeTwo(value) {
+      // this.inputValArry = [];
       this.specificationChangePublic(value, "two");
     },
 
@@ -757,16 +772,30 @@ export default {
     },
 
     makeInput() {
-      this.inputValArry = [];
-      for (let i = 0; i < this.specificationsTabData.length; i++) {
-        let inputValItem = {
+      debugger
+      if(this.inputValArry && this.inputValArry.length) {
+        var creatLength = this.specificationsTabData.length - this.inputValArry.length;
+        for(let i=0;i<creatLength;i++) {
+          let inputValItem = {
           originalPrice: "",
           stock: "",
           specCode: "",
           primeCost: ""
         };
 
-        this.inputValArry.push(inputValItem);
+          this.inputValArry.push(inputValItem);
+        }
+      } else {
+        this.inputValArry = [];
+        for (let i = 0; i < this.specificationsTabData.length; i++) {
+          let inputValItem = {
+          originalPrice: "",
+          stock: "",
+          specCode: "",
+          primeCost: ""
+        };
+          this.inputValArry.push(inputValItem);
+        }
       }
     },
 
@@ -777,6 +806,8 @@ export default {
 
       nameArryOne = [];
       nameArryTwo = [];
+      this.inputValArry = [];
+      this.specificationsTabHead = specificationsCacheTabHead;
 
       if (value) {
         for (var i in item) {
@@ -892,141 +923,148 @@ export default {
         this.form.saleAttrList = [];
       }
 
-      // if(!this.form.name) {
-      //   this.$message({
-      //       message: "请填写商品名",
-      //       type: "warning"
-      //     });
-      //     return false;
-      // }
+      if(!this.form.name) {
+        this.$message({
+            message: "请填写商品名",
+            type: "warning"
+          });
+          return false;
+      }
 
-      // if(!this.form.picUrl) {
-      //   this.$message({
-      //       message: "请上传商品图片",
-      //       type: "warning"
-      //     });
-      //     return;
-      // }
+      if(!this.form.picUrl) {
+        this.$message({
+            message: "请上传商品图片",
+            type: "warning"
+          });
+          return;
+      }
 
-      // if(!this.form.stock) {
-      //   this.$message({
-      //       message: "请填写库存量",
-      //       type: "warning"
-      //     });
-      //     return;
-      // }
+      if(!this.form.stock) {
+        this.$message({
+            message: "请填写库存量",
+            type: "warning"
+          });
+        return;
+      }
 
-      // if(!this.form.primeCost) {
-      //   this.$message({
-      //       message: "请填写单账号限购数量",
-      //       type: "warning"
-      //     });
-      //     return;
-      // }
+      if(!this.form.primeCost) {
+        this.$message({
+            message: "请填写单账号限购数量",
+            type: "warning"
+          });
+          return;
+      }
 
-      // if(!this.form.originalPrice) {
-      //   this.$message({
-      //       message: "请填写原价",
-      //       type: "warning"
-      //     });
-      //     return;
-      // }
+      if(!this.form.originalPrice) {
+        this.$message({
+            message: "请填写原价",
+            type: "warning"
+          });
+          return;
+      }
 
-      // if(!this.form.maxDiscount) {
-      //   this.$message({
-      //       message: "请填写最大优惠金额",
-      //       type: "warning"
-      //     });
-      //     return;
-      // }
+      if(!this.form.maxDiscount) {
+        this.$message({
+            message: "请填写最大优惠金额",
+            type: "warning"
+          });
+          return;
+      }
 
+      if(this.form.maxDiscount > this.form.originalPrice) {
+        this.$message({
+            message: "最大优惠金额大于原价",
+            type: "warning"
+          });
+          return;
+      }
 
-      // if (this.form.limitBuy == 1) {
-      //   if (this.limitProduct.limitdate.length) {
-      //     let start = new Date(this.limitProduct.limitdate[0]);
-      //     let end = new Date(this.limitProduct.limitdate[1]);
-      //     this.form.limitBuyStartTime =
-      //       start.getFullYear() +
-      //       "-" +
-      //       this.zeroFilling(start.getMonth() + 1) +
-      //       "-" +
-      //       this.zeroFilling(start.getDate()) +
-      //       " " +
-      //       this.zeroFilling(start.getHours()) +
-      //       ":" +
-      //       this.zeroFilling(start.getMinutes()) +
-      //       ":" +
-      //       this.zeroFilling(start.getSeconds());
-      //     this.form.limitBuyEndTime =
-      //       end.getFullYear() +
-      //       "-" +
-      //       this.zeroFilling(end.getMonth() + 1) +
-      //       "-" +
-      //       this.zeroFilling(end.getDate()) +
-      //       " " +
-      //       this.zeroFilling(end.getHours()) +
-      //       ":" +
-      //       this.zeroFilling(end.getMinutes()) +
-      //       ":" +
-      //       this.zeroFilling(end.getSeconds());
-      //   } else {
-      //     this.$message({
-      //       message: "请填写限时抢购时间段",
-      //       type: "warning"
-      //     });
-      //     this.fullscreenLoading = false;
-      //     return false;
-      //   }
+      if (this.form.limitBuy == 1) {
+        if (this.limitProduct.limitdate.length) {
+          let start = new Date(this.limitProduct.limitdate[0]);
+          let end = new Date(this.limitProduct.limitdate[1]);
+          this.form.limitBuyStartTime =
+            start.getFullYear() +
+            "-" +
+            this.zeroFilling(start.getMonth() + 1) +
+            "-" +
+            this.zeroFilling(start.getDate()) +
+            " " +
+            this.zeroFilling(start.getHours()) +
+            ":" +
+            this.zeroFilling(start.getMinutes()) +
+            ":" +
+            this.zeroFilling(start.getSeconds());
+          this.form.limitBuyEndTime =
+            end.getFullYear() +
+            "-" +
+            this.zeroFilling(end.getMonth() + 1) +
+            "-" +
+            this.zeroFilling(end.getDate()) +
+            " " +
+            this.zeroFilling(end.getHours()) +
+            ":" +
+            this.zeroFilling(end.getMinutes()) +
+            ":" +
+            this.zeroFilling(end.getSeconds());
+        } else {
+          this.$message({
+            message: "请填写限时抢购时间段",
+            type: "warning"
+          });
+          this.fullscreenLoading = false;
+          return false;
+        }
 
-      //   if (this.limitProduct.limitPrice) {
-      //     this.form.limitPrice = this.limitProduct.limitPrice;
-      //   } else {
-      //     this.fullscreenLoading = false;
-      //     this.$message({
-      //       message: "请填写限时抢购价格",
-      //       type: "warning"
-      //     });
-      //     return false;
-      //   }
-      // }
-      // if (this.form.isBaoyou.length) {
-      //   // 不包邮
-      //   if (this.form.isBaoyou == 0) {
-      //     if (this.postagePrice.postage) {
-      //       this.form.postage = this.postagePrice.postage;
-      //     } else {
-      //       this.fullscreenLoading = false;
-      //       this.$message({
-      //         message: "请填写快递费",
-      //         type: "warning"
-      //       });
-      //       return false;
-      //     }
+        if (this.limitProduct.limitPrice) {
+          this.form.limitPrice = this.limitProduct.limitPrice;
+        } else {
+          this.fullscreenLoading = false;
+          this.$message({
+            message: "请填写限时抢购价格",
+            type: "warning"
+          });
+          return false;
+        }
+      }
+      if (this.form.isBaoyou.length) {
+        // 不包邮
+        if (this.form.isBaoyou == 0) {
+          if (this.postagePrice.postage) {
+            this.form.postage = this.postagePrice.postage;
+          } else {
+            this.fullscreenLoading = false;
+            this.$message({
+              message: "请填写快递费",
+              type: "warning"
+            });
+            return false;
+          }
 
-      //     if (this.postagePrice.amtChecked) {
-      //       if (this.postagePrice.baoyouAmt) {
-      //         this.form.baoyouAmt = this.postagePrice.baoyouAmt;
-      //       } else {
-      //         this.fullscreenLoading = false;
-      //         this.$message({
-      //           message: "请填写满多少钱免邮",
-      //           type: "warning"
-      //         });
-      //         return false;
-      //       }
-      //     }
-      //   }
-      // } else {
-      //   this.fullscreenLoading = false;
-      //   this.$message({
-      //     message: "请选择邮费",
-      //     type: "warning"
-      //   });
-      //   return false;
-      // }
+          if (this.postagePrice.amtChecked) {
+            if (this.postagePrice.baoyouAmt) {
+              this.form.baoyouAmt = this.postagePrice.baoyouAmt;
+            } else {
+              this.fullscreenLoading = false;
+              this.$message({
+                message: "请填写满多少钱免邮",
+                type: "warning"
+              });
+              return false;
+            }
+          }
+        }
+      } else {
+        this.fullscreenLoading = false;
+        this.$message({
+          message: "请选择邮费",
+          type: "warning"
+        });
+        return false;
+      }
 
       this.form.specList = [];
-debugger
+
       if (nameArryOne.length) {
         let specListOne = [{}];
         specListOne[0].attrId = nameArryOne[0].prop;
@@ -1104,7 +1142,8 @@ debugger
             });
             return false;
           }
-
+          console.log(this.form);
+debugger
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
               this.$message({
