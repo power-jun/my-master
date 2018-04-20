@@ -9,6 +9,7 @@ function setup(params, callback) {
   // 初始化所有请求的默认参数
 
   axios.defaults.baseURL = params.baseUrl;
+  axios.defaults.headers = {'X-Requested-With': 'XMLHttpRequest'},
   axios.defaults.withCredentials = true;
   axios.defaults.params = {
     // // 将sessionId 作为每一个请求的默认参数
