@@ -391,9 +391,7 @@ export default {
 
                         for (let i = 0; i < specList.length; i++) {
                           if (specList[i].sort == 1) {
-                            this.specificationOneCache = this.specificationOne = specList[i].attrValue.split(
-                              ","
-                            );
+                            this.specificationOneCache = this.specificationOne = specList[i].attrValue.split(",");
                             this.specListSelectVOne = specList[i].attrId;
                             nameArryOne = [{ prop: specList[i].attrId }];
                             this.specListNameArryOne = [{ prop: specList[i].attrId, name: specList[i].name }];
@@ -466,11 +464,9 @@ export default {
                             stockList[i].attrList[1].attrValue;
                         }
 
-                        console.log(inputValItem, stockList[i].sort)
                         this.specificationsTabData.push(bodyLineObj);
                         // this.inputValArry.push(inputValItem);
                         this.inputValArry[stockList[i].sort-1] = inputValItem;
-                        console.log(this.inputValArry)
                       }
                     }
                   }
@@ -619,6 +615,10 @@ export default {
       currentDiffVal = this.valDiff(this.specificationOneCache, this.specificationOne)[0];
 
       if(currentDiffVal) {
+        if(!currentDiffVal.trim()) {
+          return;
+        }
+
         for(let i=0;i<stockList.length;i++){
         let currentFilter = stockList[i].attrList.filter(function(item) {
           return item.attrValue == currentDiffVal;
@@ -631,6 +631,10 @@ export default {
               inputValArryTmp.push(this.inputValArry.slice(i, i+1)[0]);
             }
           }
+        }
+      } else {
+        if(this.specificationOne[0] && !this.specificationOne[0].trim()) {
+          return;
         }
       }
       
@@ -646,7 +650,11 @@ export default {
     },
 
     valDiff(val1, val2) {
-         return val1.filter(function(item) {return val2.indexOf(item) < 0;});
+      if(val1) {
+        return val1.filter(function(item) {return val2.indexOf(item) < 0;});
+      } else {
+        return false;
+      }
      },
 
     specificationChangeTwo(value) {
@@ -658,6 +666,10 @@ export default {
       currentDiffVal = this.valDiff(this.specificationTwoCache, this.specificationTwo)[0];
 
       if(currentDiffVal) {
+        if(!currentDiffVal.trim()) {
+          return;
+        }
+
         for(let i=0;i<stockList.length;i++){
         let currentFilter = stockList[i].attrList.filter(function(item) {
           return item.attrValue == currentDiffVal;
@@ -670,6 +682,10 @@ export default {
               inputValArryTmp.push(this.inputValArry.slice(i, i+1)[0]);
             }
           }
+        }
+      } else {
+        if(this.specificationTwo[0] && !this.specificationTwo[0].trim()) {
+          return;
         }
       }
 
@@ -695,7 +711,7 @@ export default {
   
         this.specificationArry = resultSelectArry; // 赋值缓存用户使用过的规格值
       }
-
+debugger
       // 添加表格Header
       if (this.specificationsTabHead.length <= 6) {
         if (type == "one") {
@@ -812,7 +828,6 @@ export default {
           }
 
           this.specificationsTabData = [];
-debugger
           for (var i in resultArryOne) {
             this.specificationsTabData.push(resultArryOne[i]);
           }
