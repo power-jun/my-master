@@ -141,7 +141,6 @@ export default {
 
   mounted() {
    businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
-   let status = businessUserInfo.shop && businessUserInfo.shop.status;
    this.getInfo();
   },
 
@@ -158,7 +157,7 @@ export default {
       this.info.logoUrl = businessUserInfo && ("http://dev.pt800.com/" + businessUserInfo.shopLogoUrl || '');
       this.info.name = businessUserInfo.shop && (businessUserInfo.shop.name || '');
       this.info.shopId = businessUserInfo.shopId || '';
-      this.info.status = status || '';
+      this.info.status = businessUserInfo.shop && businessUserInfo.shop.status || '';
     }
   },
   //监控路由的变化

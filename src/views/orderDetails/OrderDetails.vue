@@ -57,6 +57,12 @@
       <el-row class="order-detail">
         <el-col :span="20">收货人地址：{{userInfo.address}}</el-col>
       </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">快递公司：{{userInfo.deliveryInfo && userInfo.deliveryInfo.expressCompanyName}}</el-col>
+      </el-row>
+      <el-row class="order-detail">
+        <el-col :span="20">快递单号：{{userInfo.deliveryInfo && userInfo.deliveryInfo.expressNo}}</el-col>
+      </el-row>
       <el-form :inline="true" class="form-inline">
         <el-form-item label="商家订单备注：">
           <el-input type="textarea" v-model="remarkSystem" placeholder="最多输入100字"></el-input>
@@ -90,6 +96,7 @@ export default {
         mobile: "",
         address: "",
         payType: "",
+        deliveryInfo: {},
         orderDetailList: []
       }
     };
@@ -129,7 +136,7 @@ export default {
           remarks: this.remarkSystem
         })
         .then(data => {
-          if (data.data.code === 1) {
+          if (data.data.code == 1) {
             this.$message({
               message: data.data.msg,
               type: "success"

@@ -220,25 +220,27 @@ export default {
     this.loadingFlag = false;
     this.bodyHeight = window.screen.height;
 
- 
+    this.$axios.get('/vendor/shopStatus', {params: {shopId: baseInfo.shop.id}}).then((res) => {
+          baseInfo.shop.status = res.data.data.status;
+          localStorage.setItem('businessUserInfo', JSON.stringify(baseInfo));
+          if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
+          if(baseInfo.shop.status == 3) {
+            this.$message({
+                message: '店铺审核不通过，请重新申请！审核意见：'+ baseInfo.shop.remarks +'',
+                type: "warning"
+            });
 
-    if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
-      if(baseInfo.shop.status == 3) {
-        this.$message({
-             message: '店铺审核不通过，请重新申请！审核意见：'+ baseInfo.shop.remarks +'',
-             type: "warning"
-        });
+            this.getShopDetails();
+            this.applyShopFlag = true;
+          } else {  
+            this.applyShopFlag = false;
+          }
 
-        this.getShopDetails();
-        this.applyShopFlag = true;
-      } else {  
-        this.applyShopFlag = false;
-      }
-
-      this.status = baseInfo.shop.status;
-    } else {
-      this.applyShopFlag = true;
-    }
+          this.status = baseInfo.shop.status;
+        } else {
+          this.applyShopFlag = true;
+        }
+    });
 
     this.initData();
   },

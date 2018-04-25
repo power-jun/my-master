@@ -391,14 +391,14 @@ export default {
 
                         for (let i = 0; i < specList.length; i++) {
                           if (specList[i].sort == 1) {
-                            this.specificationOne = specList[i].attrValue.split(
+                            this.specificationOneCache = this.specificationOne = specList[i].attrValue.split(
                               ","
                             );
                             this.specListSelectVOne = specList[i].attrId;
                             nameArryOne = [{ prop: specList[i].attrId }];
                             this.specListNameArryOne = [{ prop: specList[i].attrId, name: specList[i].name }];
                           } else if (specList[i].sort == 2) {
-                            this.specificationTwo = specList[i].attrValue.split(
+                            this.specificationTwoCache = this.specificationTwo = specList[i].attrValue.split(
                               ","
                             );
                             this.specListSelectVTwo = specList[i].attrId;
@@ -466,8 +466,11 @@ export default {
                             stockList[i].attrList[1].attrValue;
                         }
 
+                        console.log(inputValItem, stockList[i].sort)
                         this.specificationsTabData.push(bodyLineObj);
-                        this.inputValArry.push(inputValItem);
+                        // this.inputValArry.push(inputValItem);
+                        this.inputValArry[stockList[i].sort-1] = inputValItem;
+                        console.log(this.inputValArry)
                       }
                     }
                   }
@@ -608,25 +611,71 @@ export default {
         this.specListBtnTwoFlag = false;
       }
 
-      // Array.prototype.diff = function(a) {
-      //     return this.filter(function(i) {return a.indexOf(i) < 0;});
-      // };
 
-      // var deleteIndex = this.specificationOneCache.indexOf(this.specificationOneCache.diff(this.specificationOne)[0]);
+      let currentDiffVal = '';
+      let stockList = this.form.stockList;
+      let inputValArryTmp = [];
 
-      // if(deleteIndex > 0) {
-      //   this.inputValArry = this.inputValArry.filter(function(items){
-      //     return items.sort != (deleteIndex+1)
-      //   });
-      //   debugger
-      // }
+      currentDiffVal = this.valDiff(this.specificationOneCache, this.specificationOne)[0];
 
+      if(currentDiffVal) {
+        for(let i=0;i<stockList.length;i++){
+        let currentFilter = stockList[i].attrList.filter(function(item) {
+          return item.attrValue == currentDiffVal;
+        });
+
+        if(currentFilter.length) {
+            if(i >= this.inputValArry.length) {
+              inputValArryTmp.push(this.inputValArry.slice(this.inputValArry.length-1, this.inputValArry.length)[0]);
+            } else {
+              inputValArryTmp.push(this.inputValArry.slice(i, i+1)[0]);
+            }
+          }
+        }
+      }
+      
+      this.inputValArry = this.difference(this.inputValArry, inputValArryTmp);
       this.specificationChangePublic(value, "one");
+      this.specificationOneCache = value;
     },
+
+    difference(a,b) {
+       return a.concat(b).filter(function(v) {
+              return a.indexOf(v) === -1 || b.indexOf(v) === -1
+          })
+    },
+
+    valDiff(val1, val2) {
+         return val1.filter(function(item) {return val2.indexOf(item) < 0;});
+     },
 
     specificationChangeTwo(value) {
       // this.inputValArry = [];
+      let currentDiffVal = '';
+      let stockList = this.form.stockList;
+      let inputValArryTmp = [];
+
+      currentDiffVal = this.valDiff(this.specificationTwoCache, this.specificationTwo)[0];
+
+      if(currentDiffVal) {
+        for(let i=0;i<stockList.length;i++){
+        let currentFilter = stockList[i].attrList.filter(function(item) {
+          return item.attrValue == currentDiffVal;
+        });
+
+        if(currentFilter.length) {
+            if(i >= this.inputValArry.length) {
+              inputValArryTmp.push(this.inputValArry.slice(this.inputValArry.length-1, this.inputValArry.length)[0]);
+            } else {
+              inputValArryTmp.push(this.inputValArry.slice(i, i+1)[0]);
+            }
+          }
+        }
+      }
+
+      this.inputValArry = this.difference(this.inputValArry, inputValArryTmp);
       this.specificationChangePublic(value, "two");
+      this.specificationTwoCache = value;
     },
 
     specificationChangePublic(value, type) {
@@ -744,8 +793,11 @@ export default {
           }
 
           for (var i = 0; i < resultTotalArr.length; i++) {
-            this.specificationsTabData.push(JSON.parse(resultTotalArr[i]));
+            var resultTotalArrParse = JSON.parse(resultTotalArr[i]);
+            resultTotalArrParse.sort = i+1;
+            this.specificationsTabData.push(resultTotalArrParse);
           }
+          
         } else {
           for (let i = 0; i < this.specificationOne.length; i++) {
             var resultTabData = {
@@ -760,7 +812,7 @@ export default {
           }
 
           this.specificationsTabData = [];
-
+debugger
           for (var i in resultArryOne) {
             this.specificationsTabData.push(resultArryOne[i]);
           }
@@ -772,9 +824,9 @@ export default {
     },
 
     makeInput() {
-      debugger
       if(this.inputValArry && this.inputValArry.length) {
         var creatLength = this.specificationsTabData.length - this.inputValArry.length;
+
         for(let i=0;i<creatLength;i++) {
           let inputValItem = {
           originalPrice: "",
@@ -1083,9 +1135,11 @@ export default {
 
       this.form.stockList = [];
       let inputValFlag = true;
+      let inputValDiscountFlag = true;
+
       let specificationsOneProp = this.specificationsTabHead[0].prop;
       let specificationsTwoProp = this.specificationsTabHead[1].prop;
-
+debugger
       if (this.specificationOne.length) {
         for (let i = 0; i < this.specificationsTabData.length; i++) {
           this.form.stockList.push({
@@ -1106,20 +1160,20 @@ export default {
             });
           }
 
-          this.form.stockList[i].originalPrice = this.inputValArry[
-            i
-          ].originalPrice;
-          this.form.stockList[i].stock = this.inputValArry[i].stock;
-          this.form.stockList[i].specCode = this.inputValArry[i].specCode;
-          this.form.stockList[i].primeCost = this.inputValArry[i].primeCost;
+          let currentInputIndex = this.specificationsTabData[i].sort-1;
+          this.form.stockList[i].originalPrice = this.inputValArry[currentInputIndex].originalPrice;
+          this.form.stockList[i].stock = this.inputValArry[currentInputIndex].stock;
+          this.form.stockList[i].specCode = this.inputValArry[currentInputIndex].specCode;
+          this.form.stockList[i].primeCost = this.inputValArry[currentInputIndex].primeCost;
           this.form.stockList[i].sort = i + 1;
 
-          if (
-            !this.inputValArry[i].originalPrice ||
-            !this.inputValArry[i].stock
-          ) {
+          if (!this.inputValArry[currentInputIndex].originalPrice || !this.inputValArry[currentInputIndex].stock) {
             // 价格 库存必填项
             inputValFlag = false;
+          }
+
+          if(this.inputValArry[currentInputIndex].originalPrice <= this.form.maxDiscount) {
+            inputValDiscountFlag = false;
           }
         }
       }
@@ -1142,8 +1196,17 @@ export default {
             });
             return false;
           }
+
+          if(!inputValDiscountFlag) {
+            this.fullscreenLoading = false;
+            this.$message({
+              message: "规格商品价格不能小于等于最大优惠金额",
+              type: "warning"
+            });
+            return false;
+          }
           console.log(this.form);
-debugger
+
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
               this.$message({
