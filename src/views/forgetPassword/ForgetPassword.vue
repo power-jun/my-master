@@ -93,10 +93,10 @@ export default {
     };
   },
   mounted: function(){
-    var businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
-    if(businessUserInfo.loginName) {
-      this.$router.go(-1);
-    }
+    // var businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
+    // if(businessUserInfo.loginName) {
+    //   this.$router.go(-1);
+    // }
   },
   methods: {
     submitForm(formName) {
