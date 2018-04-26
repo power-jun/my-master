@@ -638,8 +638,13 @@ export default {
           return;
         }
       }
-      
-      this.inputValArry = this.difference(this.inputValArry, inputValArryTmp);
+
+      if(this.difference(this.inputValArry, inputValArryTmp)[0]) {
+        this.inputValArry = this.difference(this.inputValArry, inputValArryTmp)
+      } else {
+        this.inputValArry = []
+      }
+
       this.specificationChangePublic(value, "one");
       this.specificationOneCache = value;
     },
@@ -689,8 +694,14 @@ export default {
           return;
         }
       }
+    
+    
+      if(this.difference(this.inputValArry, inputValArryTmp)[0]) {
+        this.inputValArry = this.difference(this.inputValArry, inputValArryTmp)
+      } else {
+        this.inputValArry = []
+      }
 
-      this.inputValArry = this.difference(this.inputValArry, inputValArryTmp);
       this.specificationChangePublic(value, "two");
       this.specificationTwoCache = value;
     },
@@ -751,12 +762,7 @@ export default {
                 this.specificationsTabHead[1].prop !==
                 this.specListNameArryOne[0].prop
               ) {
-                this.specificationsTabHead.splice(
-                  1,
-                  0,
-                  this.specListNameArryTwo[0]
-                );
-                nameArryTwo = this.specListNameArryTwo;
+                this.specificationsTabHead.splice(1,0,this.specListNameArryTwo[0]);
               }
             }
           } else if (this.specificationsTabHead.length > 4 &&this.specificationsTabHead.length <= 6) {
@@ -764,6 +770,8 @@ export default {
               this.specificationsTabHead.splice(1, 1);
             }
           }
+
+          nameArryTwo = this.specListNameArryTwo;
         }
       }
 
@@ -841,6 +849,7 @@ export default {
     },
 
     makeInput() {
+
       if(this.inputValArry && this.inputValArry.length) {
         var creatLength = this.specificationsTabData.length - this.inputValArry.length;
 
@@ -856,6 +865,7 @@ export default {
         }
       } else {
         this.inputValArry = [];
+
         for (let i = 0; i < this.specificationsTabData.length; i++) {
           let inputValItem = {
           originalPrice: "",
@@ -876,6 +886,7 @@ export default {
       nameArryOne = [];
       nameArryTwo = [];
       this.inputValArry = [];
+
       this.specificationsTabHead = specificationsCacheTabHead;
 
       if (value) {
