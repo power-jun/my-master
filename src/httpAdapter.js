@@ -42,7 +42,7 @@ function initInterceptors() {
     console.log(`url=${res.request.responseURL}`, res);
     //对响应数据进行判断用户是否有效
     if (res.data.code == -1) { // session过期
-      res.config.source.cancel(`中止请求，原因：${res.data.message}`);
+      // res.config.source.cancel(`中止请求，原因：${res.data.message}`);
       localStorage.setItem("businessUserInfo", "");
       router.push('/login');
       return Promise.reject(res.data.message);

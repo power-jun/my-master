@@ -442,6 +442,7 @@ export default {
 
                       for (let i = 0; i < stockList.length; i++) {
                         let bodyLineObj = {};
+                        
                         bodyLineObj.originalPrice = stockList[i].originalPrice;
                         bodyLineObj.sort = stockList[i].sort;
                         bodyLineObj.specCode = stockList[i].specCode;
@@ -711,7 +712,7 @@ export default {
   
         this.specificationArry = resultSelectArry; // 赋值缓存用户使用过的规格值
       }
-debugger
+
       // 添加表格Header
       if (this.specificationsTabHead.length <= 6) {
         if (type == "one") {
@@ -793,8 +794,7 @@ debugger
       }
 
       // 组织第一个规格名数据
-      let totalTabLine =
-        this.specificationOne.length * this.specificationTwo.length; //table的总行数
+      let totalTabLine = this.specificationOne.length * this.specificationTwo.length; //table的总行数
       let resultTotalArr = [];
 
       if (this.specificationOne.length) {
@@ -828,8 +828,10 @@ debugger
           }
 
           this.specificationsTabData = [];
-          for (var i in resultArryOne) {
-            this.specificationsTabData.push(resultArryOne[i]);
+          for (var i = 0; i < resultArryOne.length; i++) {
+             var resultArryOneParse = resultArryOne[i];
+             resultArryOneParse.sort = i+1;
+             this.specificationsTabData.push(resultArryOneParse);
           }
         }
       }
@@ -1154,7 +1156,7 @@ debugger
 
       let specificationsOneProp = this.specificationsTabHead[0].prop;
       let specificationsTwoProp = this.specificationsTabHead[1].prop;
-debugger
+
       if (this.specificationOne.length) {
         for (let i = 0; i < this.specificationsTabData.length; i++) {
           this.form.stockList.push({
@@ -1200,6 +1202,7 @@ debugger
           });
           return;
       }
+
       this.fullscreenLoading = true;
       this.$refs[formName].validate(valid => {
         if (valid) {
