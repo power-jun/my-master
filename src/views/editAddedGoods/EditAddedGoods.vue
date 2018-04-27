@@ -59,7 +59,7 @@
             <el-option v-for="(items, index) in productTypeList" :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商品分组:">
+        <el-form-item label="商品分组:" class="shop-classification">
           <div v-show="specListOneFlag">
             <el-select :disabled="typeAttrFlag" clearable v-model="specListSelectVOne" @change="specListSelectNOne" placeholder="请选择规格名">
               <el-option v-for="(items, index) in productTypeAttr" :label="items.name" :value="items.id" :key="index"></el-option>
@@ -410,6 +410,7 @@ export default {
                     
                      let stockList = this.form.stockList;
                      let saleAttrList = this.form.saleAttrList;
+                     console.log(saleAttrList)
 
                     if (stockList && stockList.length) {
                       this.specificationTabFlag = true;
@@ -887,7 +888,7 @@ export default {
       nameArryTwo = [];
       this.inputValArry = [];
 
-      this.specificationsTabHead = specificationsCacheTabHead;
+      this.specificationsTabHead = JSON.parse(JSON.stringify(specificationsCacheTabHead));
 
       if (value) {
         for (var i in item) {
@@ -921,7 +922,7 @@ export default {
         this.specListNameArryOne = [];
         this.specListSelectVOne = '';
       }
-
+debugger
       this.clearAll();
     },
 
@@ -1214,6 +1215,7 @@ export default {
           return;
       }
 
+
       this.fullscreenLoading = true;
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -1234,7 +1236,8 @@ export default {
             });
             return false;
           }
-          console.log(this.form);
+
+          console.log(this.form, 1111);
 
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
@@ -1444,5 +1447,10 @@ export default {
 .el-icon-delete,
 .el-icon-zoom-in {
   color: #fff;
+}
+
+.shop-classification .el-form-item__label:before {
+  content: '';
+  display: none;
 }
 </style>
