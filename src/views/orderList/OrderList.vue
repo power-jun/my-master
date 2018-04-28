@@ -190,7 +190,7 @@
     </el-dialog>
 
     <el-dialog :title="refundForm.statusName" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
-      <el-form :model="shopForm"  label-width="100px">
+      <el-form :model="shopForm"  label-width="120px">
         <el-form-item label="订单编号:">
           <el-input v-model="refundForm.orderNo" auto-complete="off" disabled></el-input>
         </el-form-item>
@@ -209,15 +209,17 @@
         <el-form-item label="退款图片:" class="refund-img">
           <img :src="'http://dev.pt800.com/' + refundForm.pic" alt="">
         </el-form-item>
-        <el-form-item label="收件人姓名:">
+        <div v-if="refundStatus != 6">
+        <el-form-item label="退货收件人姓名:">
           <el-input v-model="refundForm.consignee" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="收件人手机:">
+        <el-form-item label="退货收件人手机:">
           <el-input v-model="refundForm.mobile" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="收件人地址:">
+        <el-form-item label="退货收件人地址:">
           <el-input v-model="refundForm.address" auto-complete="off"></el-input>
         </el-form-item>
+        </div>
         <el-form-item label="退款备注:">
           <el-input v-model="refundForm.shopRemark" auto-complete="off"></el-input>
         </el-form-item>
@@ -248,6 +250,7 @@ export default {
       expressArry: [],
       payTime: '',
       total: 0,
+      refundStatus: 6,
       formSearch: {
         shopId: '',
         orderNo: '',
@@ -482,7 +485,7 @@ export default {
       this.refundForm.orderNo = row.orderNo;
       this.refundForm.amt = row.refundInfo.refundAmt;
       this.refundForm.deliveryStatusName = row.refundInfo.deliveryStatusName;
-      this.refundForm.reason = row.refundInfo.reason;
+      this.refundForm.reason = row.refundInfo.reasonName || row.refundInfo.reason;
       this.refundForm.pic = row.refundInfo.picUrl && row.refundInfo.picUrl.split(',')[0];
       this.refundForm.remarks = row.refundInfo.remrks;
 
@@ -512,7 +515,7 @@ export default {
           param.status = 13;
         }
       } else if(this.refundStatus == 6) {
-        ///退款
+        // 退款
         url = '/vendor/orderRefund';
         if(flag) {
           param.status = 17;
@@ -521,10 +524,10 @@ export default {
         }
       }
 
-      if(this.refundStatus == 10) {
+      if(this.refundStatus == 10 && flag) {
         if(!this.refundForm.consignee) {
            this.$message({
-           message: '请填写收件人',
+           message: '请填写退货收件人',
            type: "warning"
           });
           return;
@@ -532,7 +535,7 @@ export default {
 
         if(!this.refundForm.mobile) {
            this.$message({
-           message: '请填写收件人电话',
+           message: '请填写退货收件人电话',
            type: "warning"
           });
           return;
@@ -540,7 +543,7 @@ export default {
         
         if(!this.refundForm.address) {
            this.$message({
-           message: '请填写收件人地址',
+           message: '请填写退货收件人地址',
            type: "warning"
           });
           return;
@@ -549,7 +552,7 @@ export default {
 
       if((param.status == 12 || param.status == 13) && !this.refundForm.shopRemark) {
         this.$message({
-           message: '请填写驳回说明',
+           message: '请填写备注',
            type: "warning"
         });
         return;

@@ -922,7 +922,7 @@ export default {
         this.specListNameArryOne = [];
         this.specListSelectVOne = '';
       }
-debugger
+
       this.clearAll();
     },
 
@@ -1020,7 +1020,7 @@ debugger
           return;
       }
 
-      if(!this.form.stock) {
+      if(!this.form.stock && this.form.stock !== 0) {
         this.$message({
             message: "请填写库存量",
             type: "warning"
@@ -1028,7 +1028,7 @@ debugger
         return;
       }
 
-      if(!this.form.primeCost) {
+      if(!this.form.maxDiscount && this.form.maxDiscount !== 0) {
         this.$message({
             message: "请填写单账号限购数量",
             type: "warning"
@@ -1036,15 +1036,38 @@ debugger
           return;
       }
 
+      if(!this.form.primeCost) {
+        if(this.form.primeCost === 0) {
+          this.$message({
+            message: "成本价不能为0",
+            type: "warning"
+          });
+        } else{
+          this.$message({
+            message: "请填写成本价",
+            type: "warning"
+          });
+        }
+        return;
+      }
+
       if(!this.form.originalPrice) {
-        this.$message({
+        if(this.form.originalPrice === 0) {
+          this.$message({
+            message: "原价不能为0",
+            type: "warning"
+          });
+        } else {
+          this.$message({ 
             message: "请填写原价",
             type: "warning"
           });
-          return;
+        }
+
+        return;
       }
 
-      if(!this.form.maxDiscount) {
+      if(!this.form.maxDiscount && this.form.maxDiscount !== 0) {
         this.$message({
             message: "请填写最大优惠金额",
             type: "warning"
@@ -1196,8 +1219,12 @@ debugger
           this.form.stockList[i].primeCost = this.inputValArry[currentInputIndex].primeCost;
           this.form.stockList[i].sort = i + 1;
 
-          if (!this.inputValArry[currentInputIndex].originalPrice || !this.inputValArry[currentInputIndex].stock) {
+          if (!this.inputValArry[currentInputIndex].originalPrice) {
             // 价格 库存必填项
+            inputValFlag = false;
+          }
+
+          if(!this.inputValArry[currentInputIndex].stock && this.inputValArry[currentInputIndex].stock !== 0) {
             inputValFlag = false;
           }
 
