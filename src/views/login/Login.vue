@@ -112,10 +112,8 @@ export default {
                   utils.delCookie("accountInfo");
                 }
 
-                localStorage.setItem(
-                  "businessUserInfo",
-                  JSON.stringify(data.data.data)
-                );
+                localStorage.setItem("businessUserInfo", JSON.stringify(data.data.data));
+                
                 let datas = data.data.data;
                 let shopId = datas.shopId;
                 let status = datas.shop && datas.shop.status;

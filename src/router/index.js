@@ -117,7 +117,6 @@ const routers = new VueRouter({
 routers.beforeEach((to, from, next) => {
   let redirectUrl = '';
   var businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
-
   if (businessUserInfo.shopId && businessUserInfo.shop.status == 1) { // 已经成为商户
     next();
   } else {

@@ -449,6 +449,7 @@ export default {
                         bodyLineObj.specCode = stockList[i].specCode;
                         bodyLineObj.stock = stockList[i].stock;
                         bodyLineObj.primeCost = stockList[i].primeCost;
+                        bodyLineObj.id = stockList[i].id;
 
                         let inputValItem = {
                           originalPrice: stockList[i].originalPrice,
@@ -1219,6 +1220,10 @@ export default {
           this.form.stockList[i].primeCost = this.inputValArry[currentInputIndex].primeCost;
           this.form.stockList[i].sort = i + 1;
 
+          if(this.specificationsTabData[i].id) {
+            this.form.stockList[i].id = this.specificationsTabData[i].id
+          }
+
           if (!this.inputValArry[currentInputIndex].originalPrice) {
             // 价格 库存必填项
             inputValFlag = false;
@@ -1265,11 +1270,11 @@ export default {
           }
 
           console.log(this.form, 1111);
-
+debugger
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
               this.$message({
-                message: "新建成功",
+                message: data.data.msg,
                 type: "success"
               });
               this.$router.push("/CommodityManage");
