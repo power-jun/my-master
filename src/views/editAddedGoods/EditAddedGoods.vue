@@ -3,6 +3,7 @@
     <el-row v-show="!loadingFlag" class="apply-shop-form">
       <el-form ref="form" :model="form" status-icon label-width="20%">
         <h3>商品录入</h3>
+        <p v-if="remarks" class="remarks"> 被下架的原因：{{remarks}}</p>
         <el-form-item label="商品名称:" prop="name" placeholder="不超过20个字" :rules="[{ required: true, message: '请输入商品名称'}]">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -206,6 +207,7 @@ export default {
         baoyouAmt: "",
         postage: ""
       },
+      remarks: '',
       cardFileList: [],
       limitProduct: {
         startPlaceholder: "起始时间",
@@ -327,6 +329,7 @@ export default {
         .then(data => {
           if (data.data.code == 1) {
             this.form = data.data.data;
+            this.remarks = data.data.data.remarks;
 
             let picUrlList = this.form.picUrl.split(",");
             for (let i in picUrlList) {
@@ -1375,6 +1378,12 @@ debugger
   height: 100%;
   background: #fff;
   margin-bottom: 150px;
+  .remarks {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+    color: #f60;
+  }
   h3 {
     text-align: center;
     margin-bottom: 20px;
