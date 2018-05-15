@@ -60,7 +60,7 @@ export default {
   methods: {
     loadAccountInfo: function() {
       let accountInfo = utils.getCookie("accountInfo");
-      
+
       //如果cookie里没有账号信息
       if (Boolean(accountInfo) == false) {
         console.log("cookie中没有检测到账号信息！");

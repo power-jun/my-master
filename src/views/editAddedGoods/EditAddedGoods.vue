@@ -426,15 +426,31 @@ export default {
                       } else if (specList.length == 2) {
                         let oneUnshift = {};
                         let twoUnshift = {};
-                        for (let i = 0; i < saleAttrList.length; i++) {
-                          if (saleAttrList[i].sort == 1) {
-                            twoUnshift.prop = saleAttrList[i].id;
-                            twoUnshift.name = saleAttrList[i].name;
-                          } else if (saleAttrList[i].sort == 2) {
-                            oneUnshift.prop = saleAttrList[i].id;
-                            oneUnshift.name = saleAttrList[i].name;
+                        // for (let i = 0; i < saleAttrList.length; i++) {
+                        //   if (saleAttrList[i].sort == 1) {
+                        //     twoUnshift.prop = saleAttrList[i].id;
+                        //     twoUnshift.name = saleAttrList[i].name;
+                        //   } else if (saleAttrList[i].sort == 2) {
+                        //     oneUnshift.prop = saleAttrList[i].id;
+                        //     oneUnshift.name = saleAttrList[i].name;
+                        //   }
+                        // }
+
+                        for(let i=0;i<specList.length;i++) {
+                          let currentItem = saleAttrList.filter(function(v,n){
+                            return v.id === specList[i].attrId
+                          });
+
+                          console.log(currentItem);  
+                          if(specList[i].sort == 1) {
+                            twoUnshift.prop = specList[i].attrId;
+                            twoUnshift.name = currentItem[0].name;
+                          } else if(specList[i].sort == 2) {
+                            oneUnshift.prop = specList[i].attrId;
+                            oneUnshift.name = currentItem[0].name;
                           }
                         }
+
                         this.specificationsTabHead.unshift(oneUnshift);
                         this.specificationsTabHead.unshift(twoUnshift);
                       }
@@ -605,14 +621,13 @@ export default {
       }
     },
 
-    specificationChangeOne(value) {
+    specificationChangeOne(value,a) {
       if (value.length) {
         this.specificationTabFlag = true;
       } else {
         this.specificationTabFlag = false;
         this.specListBtnTwoFlag = false;
       }
-
 
       let currentDiffVal = '';
       let stockList = this.form.stockList;
@@ -1071,6 +1086,14 @@ export default {
         return;
       }
 
+      if(+this.form.primeCost > +this.form.originalPrice) {
+        this.$message({
+            message: "成本价不能大于原价",
+            type: "warning"
+          });
+          return;
+      }
+
       if(!this.form.maxDiscount && this.form.maxDiscount !== 0) {
         this.$message({
             message: "请填写最大优惠金额",
@@ -1079,7 +1102,7 @@ export default {
           return;
       }
 
-      if(this.form.maxDiscount > this.form.originalPrice) {
+      if(+this.form.maxDiscount > +this.form.originalPrice) {
         this.$message({
             message: "最大优惠金额大于原价",
             type: "warning"
@@ -1236,7 +1259,7 @@ export default {
             inputValFlag = false;
           }
 
-          if(this.inputValArry[currentInputIndex].originalPrice <= this.form.maxDiscount) {
+          if(+this.inputValArry[currentInputIndex].originalPrice <= +this.form.maxDiscount) {
             inputValDiscountFlag = false;
           }
         }
@@ -1249,7 +1272,6 @@ export default {
           });
           return;
       }
-
 
       this.fullscreenLoading = true;
       this.$refs[formName].validate(valid => {
@@ -1273,7 +1295,7 @@ export default {
           }
 
           console.log(this.form, 1111);
-debugger
+
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
               this.$message({

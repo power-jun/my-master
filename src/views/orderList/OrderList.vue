@@ -488,6 +488,9 @@ export default {
       this.refundForm.reason = row.refundInfo.reasonName || row.refundInfo.reason;
       this.refundForm.pic = row.refundInfo.picUrl && row.refundInfo.picUrl.split(',')[0];
       this.refundForm.remarks = row.refundInfo.remrks;
+      this.refundForm.consignee = row.refundInfo.consignee || '';
+      this.refundForm.mobile = row.refundInfo.mobile || '';
+      this.refundForm.address = row.refundInfo.address || '';
 
       if(row.status == 10) {
         this.refundForm.statusName = '退款退货审核';
