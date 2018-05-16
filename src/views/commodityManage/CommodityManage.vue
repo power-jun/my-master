@@ -50,6 +50,7 @@
            <span v-else-if="scope.row.status == 1">已审核，上架</span>
            <span v-else-if="scope.row.status == 2">已下架</span>
            <span v-else-if="scope.row.status == 3">审核未通过</span>
+           <span v-else-if="scope.row.status == 4">平台下架</span>
           </template>
       </el-table-column>
       <el-table-column
