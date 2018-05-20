@@ -28,6 +28,13 @@
         <el-form-item label="原价:" prop="originalPrice" :rules="[{ required: true, message: '请输入原价'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.originalPrice"></el-input>
         </el-form-item>
+        <el-form-item label="优惠方式:" :rules="[{ required: true, message: '请选择优惠方式'}]">
+          <el-radio-group v-model="form.discountType" @change="discountTypeChange">
+            <el-radio label="0" >不参与</el-radio>
+            <el-radio label="1">平台通用优惠</el-radio>
+            <el-radio label="2">店铺专属优惠</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="最大优惠金额:" prop="maxDiscount" :rules="[{ required: true, message: '请输入最大优惠金额'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.maxDiscount"></el-input>
         </el-form-item>
@@ -196,6 +203,7 @@ export default {
         productDesc: "",
         picUrl: "",
         limitNum: "",
+        discountType: 0,
         primeCost: "",
         originalPrice: "",
         maxDiscount: "",
@@ -491,6 +499,10 @@ export default {
                         this.inputValArry[stockList[i].sort-1] = inputValItem;
                       }
                     }
+
+                    setTimeout(() => {
+                      document.getElementsByClassName('bg-purple-light')[0].scrollTo(0,0);
+                    }, 100)
                   }
                 });
             }
@@ -575,6 +587,10 @@ export default {
       } else {
         this.limitTimerFlag = false;
       }
+    },
+
+    discountTypeChange(value) {
+      
     },
 
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
