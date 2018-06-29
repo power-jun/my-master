@@ -1102,13 +1102,13 @@ export default {
         return;
       }
 
-      if(+this.form.primeCost > +this.form.originalPrice) {
-        this.$message({
-            message: "成本价不能大于原价",
-            type: "warning"
-          });
-          return;
-      }
+      // if(+this.form.primeCost > +this.form.originalPrice) {
+      //   this.$message({
+      //       message: "成本价不能大于原价",
+      //       type: "warning"
+      //     });
+      //     return;
+      // }
 
       if(!this.form.maxDiscount && this.form.maxDiscount !== 0) {
         this.$message({
