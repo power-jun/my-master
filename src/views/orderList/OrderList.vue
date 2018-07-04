@@ -225,11 +225,11 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="refundConfirm(true)">确认退货/退款</el-button>
+        <el-button type="primary" @click="refundConfirm(true)">同意退货/退款</el-button>
         <el-button @click="refundConfirm(false)">驳回退货/退款申请</el-button>
       </div>
     </el-dialog>
-    
+
     <Loading v-show="loadingFlag"></Loading>
   </div>
 </template>
