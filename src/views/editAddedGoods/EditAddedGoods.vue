@@ -337,7 +337,11 @@ export default {
         .then(data => {
           if (data.data.code == 1) {
             this.form = data.data.data;
-            this.remarks = data.data.data.remarks;
+            if(data.data.data.status == 4) {
+              this.remarks = data.data.data.remarks;
+            } else {
+              this.remarks = '';
+            }
 
             let picUrlList = this.form.picUrl.split(",");
             for (let i in picUrlList) {
@@ -365,9 +369,9 @@ export default {
             if (this.form.isBaoyou == 0) {
               this.postagePrice.baoyouAmt =
                 this.form.baoyouAmt && this.form.baoyouAmt;
-              this.postagePrice.postage = this.form.postage;
-              this.postagePrice.amtChecked = true;
-              this.postageFlag = true;
+                this.postagePrice.postage = this.form.postage;
+                this.postagePrice.amtChecked = true;
+                this.postageFlag = true;
             } else {
               this.postageFlag = false;
             }
@@ -1309,7 +1313,7 @@ export default {
             });
             return false;
           }
-
+debugger
           console.log(this.form, 1111);
 
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
@@ -1369,7 +1373,11 @@ export default {
     successFun(response, file, fileList) {
       let imgArr = [];
       for (let i = 0; i < fileList.length; i++) {
-        imgArr.push(fileList[i].response.data && fileList[i].response.data.url);
+        if(fileList[i].response) {
+          imgArr.push(fileList[i].response.data.url);
+        } else if(fileList[i].url){
+          imgArr.push(fileList[i].url);
+        }
       }
 
       this.form.picUrl = imgArr.join(",");
