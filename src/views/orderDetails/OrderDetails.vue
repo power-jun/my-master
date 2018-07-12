@@ -23,7 +23,7 @@
         label="规格" align="center">
       </el-table-column>
        <el-table-column
-        prop="primeCost"
+        prop="specNo"
         label="规格编码" align="center">
       </el-table-column>
       <el-table-column
