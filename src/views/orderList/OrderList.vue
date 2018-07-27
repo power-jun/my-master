@@ -63,10 +63,10 @@
           width="260" align="center">
           <template slot-scope="scope">
             <el-button size="mini"  @click="handleDetail(scope.$index, scope.row)">详情</el-button>
-            <el-button size="mini" v-if="scope.row.status == 1" type="primary" @click="handleShip(scope.$index, scope.row)">发货</el-button>
-            <el-button size="mini" v-else-if="(scope.row.status == 6 || scope.row.status == 10)" type="primary" @click="handleRefund(scope.$index, scope.row)">退款审核</el-button>
-            <el-button size="mini" v-else-if="(scope.row.status == 16)" type="primary" @click="confirmRefund(scope.$index, scope.row)">确认退款</el-button>
-            <el-button size="mini" v-else-if="(scope.row.status == 11)" type="primary" @click="handLookRefundInfo(scope.$index, scope.row)">查看退款信息</el-button>
+            <el-button size="mini" v-if="scope.row.status == 1" type="primary" @click="handleDetail(scope.$index, scope.row)">发货</el-button>
+            <el-button size="mini" v-else-if="(scope.row.status == 6 || scope.row.status == 10)" type="primary" @click="handleDetail(scope.$index, scope.row)">退款审核</el-button>
+            <el-button size="mini" v-else-if="(scope.row.status == 16)" type="primary" @click="handleDetail(scope.$index, scope.row)">确认退款</el-button>
+            <el-button size="mini" v-else-if="(scope.row.status == 11)" type="primary" @click="handleDetail(scope.$index, scope.row)">查看退款信息</el-button>
           </template>
         </el-table-column>
       </el-table>
