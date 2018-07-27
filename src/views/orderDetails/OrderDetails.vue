@@ -119,7 +119,7 @@
       </el-row>
     </div>
 
-    <div class="order-address" v-if="userInfo.status == 8 || userInfo.status == 12 || userInfo.status == 13 || userInfo.status == 14 || userInfo.status == 17 || userInfo.status == 18 || userInfo.status == 19 || userInfo.status == 10 || userInfo.status == 6 || userInfo.status == 16 || userInfo.status == 11">
+    <!-- <div class="order-address" v-if="userInfo.status == 8 || userInfo.status == 12 || userInfo.status == 13 || userInfo.status == 14 || userInfo.status == 17 || userInfo.status == 18 || userInfo.status == 19 || userInfo.status == 10 || userInfo.status == 6 || userInfo.status == 16 || userInfo.status == 11">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>申请退款记录</span><span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
@@ -146,10 +146,10 @@
           </p>
         </el-col>
       </el-row>
-    </div>
+    </div> -->
 
-    <div class="order-address" v-if="userInfo.status == 8 || userInfo.status == 12 || userInfo.status == 13 || userInfo.status == 14 || userInfo.status == 17 || userInfo.status == 18 || userInfo.status == 19 || userInfo.status == 10 || userInfo.status == 6 || userInfo.status == 16 || userInfo.status == 11">
-      <div v-if="userInfo.refundList" v-for="(item,index) in userInfo.refundList" :index="index" :key="index">
+    <div v-if="userInfo.refundList && userInfo.refundList.length">
+      <div v-if="userInfo.refundList" v-for="(item,index) in userInfo.refundList" :index="index" :key="index" class="order-address">
         <el-row class="order-detail detail-header">
         <el-col :span="6"><span>申请退款记录</span><span class="titme">{{item.addTime}}</span></el-col>
       </el-row>
@@ -179,7 +179,7 @@
       </div>
     </div>
 
-     <div class="order-address" v-if="userInfo.status == 10">
+     <div class="order-address" v-if="userInfo.refundInfo && userInfo.refundInfo.needAudited == 1">
       <el-form label-width="120px" :model="refundReviewInfo">
         <el-row class="order-detail detail-header">
           <el-col :span="6"><span style="color: #f60">退款审核</span></el-col>
@@ -203,7 +203,7 @@
       </el-form>
     </div>
 
-    <div class="order-address" v-if="userInfo.status == 10">
+    <div class="order-address" v-if="userInfo.status == 10 || userInfo.status == 6">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>退款审核</span><span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
@@ -224,15 +224,15 @@
       </el-row>
     </div>
 
-     <div class="order-address" v-if="userInfo.status == 16 || userInfo.refundInfo.expressCompanyName">
+     <div class="order-address" v-if="userInfo.status == 16">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">快递公司：{{userInfo.refundInfo.expressCompanyName}}</el-col>
+        <el-col :span="20">快递公司：{{userInfo.refundInfo.deliveryName}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">快递单号：{{userInfo.refundInfo.expressNo}}</el-col>
+        <el-col :span="20">快递单号：{{userInfo.refundInfo.deliveryNo}}</el-col>
       </el-row>
     </div>
 
@@ -245,7 +245,7 @@
           <el-col :span="20"><span style="color: #f00">请核对订单信息，点击"确认退款"后，货款将原路退回。如须客户退回货物，请确认已收到回件并检查无误。</span></el-col>
         </el-row>
         <el-row class="order-detail">
-          <el-col :span="20">退款金额：{{userInfo.refundInfo.refundAmt}}</el-col>
+          <el-col :span="20">退款金额：{{userInfo.refundInfo.refundAmt}} 元</el-col>
         </el-row>
         <el-form-item label="审核意见:" class="input-form">
             <el-input v-model="shopOpinion" auto-complete="off"></el-input>
@@ -259,28 +259,28 @@
 
     <div class="order-address" v-if="userInfo.status == 6">
       <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>退款确认</span><span class="titme">{{userInfo.addTime}}</span></el-col>
+        <el-col :span="6"><span>退款确认</span><span class="titme">{{lookRefundInfo.addTime}}</span></el-col>
       </el-row> 
       <el-row class="order-detail">
-        <el-col :span="20">退款金额：{{userInfo.refundInfo.refundAmt}}</el-col>
+        <el-col :span="20">退款金额：{{userInfo.refundInfo.refundAmt}} 元</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款意见：{{userInfo.refundInfo.refundAmt}}</el-col>
+        <el-col :span="20">退款意见：{{lookRefundInfo.remrks || ''}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">审核状态：{{userInfo.refundInfo.refundAmt}}</el-col>
+        <el-col :span="20">审核状态：{{lookRefundInfo.returnStatusIdName || ''}}</el-col>
       </el-row>
     </div>
 
     <div class="order-address" v-if="userInfo.status == 6">  
       <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>退款情况</span><span class="titme">{{userInfo.addTime}}</span></el-col>
+        <el-col :span="6"><span>退款情况</span><span class="titme">{{lookRefundInfo.addTime}}</span></el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款金额：{{userInfo.refundInfo.refundAmt}}</el-col>
+        <el-col :span="20">退款金额：{{lookRefundInfo.refundAmt}} 元</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款状态：{{userInfo.refundInfo.refundAmt}}</el-col>
+        <el-col :span="20">退款状态：{{lookRefundInfo.returnStatusIdName || ''}}</el-col>
       </el-row>
     </div>
   </div>
@@ -303,6 +303,7 @@ export default {
         // 快递信息
         trackingNumber: ""
       },
+      lookRefundInfo: {}, //退款信息
       refundReviewInfo: {
         //退款审核信息
         address: "",
@@ -356,7 +357,6 @@ export default {
           if (data.data.code === 1) {
             var datas = data.data.data;
             this.userInfo = datas;
-            debugger
             if(this.userInfo.refundInfo) {
               this.userInfo.refundInfo.picUrlArry = this.userInfo.refundInfo.picUrl && this.userInfo.refundInfo.picUrl.split(',');
             }
@@ -364,7 +364,7 @@ export default {
             if(this.userInfo.refundList) {
               let refundListArry = this.userInfo.refundList;
               refundListArry.forEach((item) => {
-                item.picUrl = item.picUrl.picUrl.split(',');
+                item.picUrl = item.picUrl.split(',');
               });
 
               this.userInfo.refundList = refundListArry;
@@ -374,6 +374,26 @@ export default {
               datas.cityName +
               datas.districtName +
               datas.address;
+
+                this.handLookRefundInfo();
+              if(datas.status == 6) {
+              }
+          }
+        });
+    },
+
+        //查看退款信息
+    handLookRefundInfo() {
+      this.$axios
+        .get("/vendor/orderReturnInfo", {params: { orderNo: this.$route.query.orderNo}})
+        .then(data => {
+          if (data.data.code == 1) {
+            this.lookRefundInfo = data.data.data;
+          } else {
+            this.$message({
+              message: data.data.msg,
+              type: "warning"
+            });
           }
         });
     },
@@ -579,6 +599,11 @@ export default {
 }
 
 .input-form {
+  .el-form-item__label {
+    width: auto!important;
+    font-size: 18px;
+    color: #333;
+  }
   .el-input {
     width: 40%;
   }
