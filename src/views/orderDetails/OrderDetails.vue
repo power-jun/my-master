@@ -149,8 +149,7 @@
       </el-row>
     </div> -->
 
-    <div v-if="userInfo.refundList && userInfo.refundList.length && userInfo.refundInfo.type
- == 2">
+    <div v-if="userInfo.refundList && userInfo.refundList.length && userInfo.refundInfo.type == 2">
       <div v-for="(item,index) in userInfo.refundList" :index="index" :key="index" >
 
       <div class="order-address" v-if="!item.reviewType">
@@ -182,7 +181,6 @@
       </el-row>
       </div>
 
-
       <div class="order-address" v-if="index == (userInfo.refundList.length-1) && userInfo.refundInfo && userInfo.refundInfo.needAudited == 1">
         <el-form label-width="120px" :model="refundReviewInfo">
           <el-row class="order-detail detail-header">
@@ -207,7 +205,6 @@
         </el-form>
       </div>
       
-
         <div class="order-address" v-if="item.reviewType">
           <el-row class="order-detail detail-header">
             <el-col :span="6"><span>退款审核</span><span class="titme">{{item.addTime}}</span></el-col>
@@ -241,6 +238,13 @@
       <el-row class="order-detail">
         <el-col :span="20">快递单号：{{userInfo.refundInfo.deliveryNo}}</el-col>
       </el-row>
+      <el-row class="order-detail">
+         <el-col :span="20"  class="input-form">审核意见:  <el-input v-model="goodsOpinion" auto-complete="off"></el-input></el-col>
+      </el-row>
+      <el-row class="order-detail" style="padding-bottom: 40px">
+        <el-button type="primary" class="agree-refund" @click="goodsConfirm(11)">确认收货并退款</el-button>
+        <el-button @click="goodsConfirm(13)">驳回退货退款</el-button>
+      </el-row>
     </div>
   
   <div v-if="userInfo.refundInfo.type == 1 && userInfo.status == 6">
@@ -257,7 +261,7 @@
         </el-row>
         <el-form-item label="审核意见:" class="input-form">
             <el-input v-model="shopOpinion" auto-complete="off"></el-input>
-          </el-form-item>
+        </el-form-item>
         <el-row>
           <el-button type="primary" class="agree-refund" @click="refundConfirm(true)">同意退款</el-button>
           <el-button @click="refundConfirm(false)">驳回退款申请</el-button>
@@ -307,7 +311,8 @@ export default {
       remarkSystem: "",
       expressArry: [], //物流公司
       express: "",
-      shopOpinion: '', //退款审核意见
+      shopOpinion: "", //退款审核意见
+      goodsOpinion: "", //寄回件 确认收货审核意见
       expressInfo: {
         // 快递信息
         trackingNumber: ""
@@ -366,32 +371,33 @@ export default {
           if (data.data.code === 1) {
             let datas = data.data.data;
             this.userInfo = datas;
-            if(this.userInfo.refundInfo) {
-              this.userInfo.refundInfo.picUrlArry = this.userInfo.refundInfo.picUrl && this.userInfo.refundInfo.picUrl.split(',');
+            if (this.userInfo.refundInfo) {
+              this.userInfo.refundInfo.picUrlArry =
+                this.userInfo.refundInfo.picUrl &&
+                this.userInfo.refundInfo.picUrl.split(",");
             }
 
             let refundList = [];
-            if(datas.userRefundList) {
-              datas.userRefundList.forEach( (item, index) => {
+            if (datas.userRefundList) {
+              datas.userRefundList.forEach((item, index) => {
                 refundList.push(item);
-                if(datas.vendorRefundList[index]) {
+                if (datas.vendorRefundList[index]) {
                   datas.vendorRefundList[index].reviewType = true;
                   refundList.push(datas.vendorRefundList[index]);
                 }
-              })
+              });
             }
 
-            if(refundList.length) {
-              refundList.forEach((item) => {
-                if(item.picUrl) {
-                  item.picUrl = item.picUrl.split(',');
+            if (refundList.length) {
+              refundList.forEach(item => {
+                if (item.picUrl) {
+                  item.picUrl = item.picUrl.split(",");
                 }
               });
 
               this.userInfo.refundList = refundList;
-              debugger
-            };
-
+              debugger;
+            }
 
             this.userInfo.address =
               datas.provinceName +
@@ -402,7 +408,7 @@ export default {
         });
     },
 
-        //查看退款信息
+    //查看退款信息
     // handLookRefundInfo() {
     //   this.$axios
     //     .get("/vendor/orderReturnInfo", {params: { orderNo: this.$route.query.orderNo}})
@@ -494,19 +500,45 @@ export default {
       });
     },
 
+    goodsConfirm(type) {
+      if (type == 13 && !this.goodsOpinion) {
+        this.$message({
+          message: "请输入备注",
+          type: "warning"
+        });
+        return;
+      }
+
+      var param = {};
+      param.orderNo = this.userInfo.orderNo;
+      param.status = type;
+      param.remarks = this.goodsOpinion;
+
+      this.$axios.post("/vendor/orderReturnConfirm", param).then(data => {
+        if (data.data.code == 1) {
+          this.requestData(); //刷新数据
+        } else {
+          this.$message({
+            message: data.data.msg,
+            type: "warning"
+          });
+        }
+      });
+    },
+
     refundConfirm(flag) {
       // 退款确认
       let param = {};
-      if(flag) {
+      if (flag) {
         param.status = 17;
       } else {
         param.status = 12;
       }
 
-      if((param.status == 12) && !this.shopOpinion) {
+      if (param.status == 12 && !this.shopOpinion) {
         this.$message({
-           message: '请填写审核意见',
-           type: "warning"
+          message: "请填写审核意见",
+          type: "warning"
         });
         return;
       }
@@ -514,24 +546,22 @@ export default {
       param.orderNo = this.userInfo.orderNo;
       param.remarks = this.shopOpinion;
 
-      this.$axios
-        .post('/vendor/orderRefund', param)
-        .then(data => {
-          if (data.data.code == 1) {
-            this.$message({
-              message: data.data.msg,
-              type: "success"
-            });
-            setTimeout(() => {
-              this.requestData();
-            }, 1000);
-          } else {
-            this.$message({
-              message: data.data.msg,
-              type: "warning"
-            });
-          }
-        });
+      this.$axios.post("/vendor/orderRefund", param).then(data => {
+        if (data.data.code == 1) {
+          this.$message({
+            message: data.data.msg,
+            type: "success"
+          });
+          setTimeout(() => {
+            this.requestData();
+          }, 1000);
+        } else {
+          this.$message({
+            message: data.data.msg,
+            type: "warning"
+          });
+        }
+      });
     },
 
     refundReview(flag) {
@@ -562,10 +592,10 @@ export default {
         return;
       }
 
-      if(!flag && !this.refundReviewInfo.opinion) {
+      if (!flag && !this.refundReviewInfo.opinion) {
         this.$message({
-           message: '请填写审核意见',
-           type: "warning"
+          message: "请填写审核意见",
+          type: "warning"
         });
         return;
       }
@@ -573,37 +603,35 @@ export default {
       param = {
         address: this.refundReviewInfo.adress,
         consignee: this.refundReviewInfo.consignee,
-        mobile :this.refundReviewInfo.phone,
-        remarks : this.refundReviewInfo.opinion,
+        mobile: this.refundReviewInfo.phone,
+        remarks: this.refundReviewInfo.opinion,
         orderNo: this.userInfo.orderNo
-      }
+      };
 
-     if(flag) {
-          // 同意
+      if (flag) {
+        // 同意
         param.status = 14;
-       } else {
-          // 驳回
+      } else {
+        // 驳回
         param.status = 13;
       }
-      
-      this.$axios
-        .post('/vendor/orderReturn', param)
-        .then(data => {
-          if (data.data.code == 1) {
-            this.$message({
-              message: data.data.msg,
-              type: "success"
-            });
-            setTimeout(() => {
-              this.requestData();
-            }, 1000);
-          } else {
-            this.$message({
-              message: data.data.msg,
-              type: "warning"
-            });
-          }
-        });
+
+      this.$axios.post("/vendor/orderReturn", param).then(data => {
+        if (data.data.code == 1) {
+          this.$message({
+            message: data.data.msg,
+            type: "success"
+          });
+          setTimeout(() => {
+            this.requestData();
+          }, 1000);
+        } else {
+          this.$message({
+            message: data.data.msg,
+            type: "warning"
+          });
+        }
+      });
     }
   }
 };
@@ -620,7 +648,7 @@ export default {
 
 .input-form {
   .el-form-item__label {
-    width: auto!important;
+    width: auto !important;
     font-size: 18px;
     color: #333;
   }
