@@ -1,5 +1,5 @@
 <template>
- <div>
+ <div style="padding-bottom: 100px">
    <div v-show="!loadingFlag">
     <el-row class="order-detail">
       <el-col :span="20">订单编号： {{userInfo.orderNo}}</el-col>
@@ -89,7 +89,7 @@
       </el-row>
     </div>
 
-    <div class="order-address" v-if="userInfo.status === 1">
+    <div class="order-address" v-if="userInfo.status == 1">
       <el-form label-width="120px" :model="expressInfo">
         <el-row class="order-detail detail-header">
           <el-col :span="6"><span style="color: #f60">商家发货</span></el-col>
@@ -108,7 +108,7 @@
       </el-form>
     </div>
 
-    <div class="order-address" v-else>
+    <div class="order-address" v-else-if="userInfo.deliveryInfo && userInfo.deliveryInfo.expressCompanyName && userInfo.deliveryInfo.expressNo">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>商家发货</span><span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
@@ -166,7 +166,7 @@
         <el-col :span="20">退款原因：{{item.reasonName}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款金额：{{item.refundAmt}}</el-col>
+        <el-col :span="20">退款金额：{{item.refundAmt || ''}}元</el-col>
       </el-row>
       <el-row class="order-detail">
         <el-col :span="20">退款说明：{{item.remrks}}</el-col>
@@ -226,6 +226,9 @@
           </el-row>
         </div>
     </div>
+     <el-row class="order-detail" style="padding-bottom: 40px" v-if="userInfo.status == 19 || userInfo.status == 22">
+      <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
+    </el-row>
   </div>
 
     <div class="order-address" v-if="userInfo.status == 16">
@@ -247,8 +250,8 @@
       </el-row>
     </div>
   
-  <div v-if="userInfo.refundInfo.type == 1 && userInfo.status == 6">
-    <div class="order-address">
+  <div v-if="userInfo.refundInfo && userInfo.refundInfo.type == 1">
+    <div class="order-address" v-if="userInfo.refundInfo.status == 6">
       <el-form label-width="120px">
         <el-row class="order-detail detail-header">
           <el-col :span="6"><span style="color: #f60">退款确认</span></el-col>
@@ -269,7 +272,7 @@
       </el-form>
     </div>
 
-    <div class="order-address" v-if="userInfo.status == 6" v-for="(item,index) in userInfo.vendorRefundList" :index="index" :key="index">
+    <div class="order-address" v-if="userInfo.vendorRefundList && userInfo.vendorRefundList.length" v-for="(item,index) in userInfo.vendorRefundList" :index="index" :key="index">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>退款确认</span><span class="titme">{{item.addTime}}</span></el-col>
       </el-row> 
@@ -280,12 +283,15 @@
         <el-col :span="20">退款意见：{{item.remrks || ''}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">审核状态：{{item.returnStatusIdName || ''}}</el-col>
+        <el-col :span="20">审核状态：{{item.statusName || ''}}</el-col>
       </el-row>
     </div>
+     <el-row class="order-detail" style="padding-bottom: 40px" v-if="userInfo.status == 19 || userInfo.status == 22">
+      <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
+    </el-row>
   </div>
 
-    <div class="order-address" v-if="userInfo.refundInfo.refundPaid">
+    <div class="order-address" v-if="userInfo.refundInfo && userInfo.refundInfo.refundPaid">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>退款情况</span><span class="titme">{{userInfo.refundInfo.addTime}}</span></el-col>
       </el-row>
@@ -456,6 +462,23 @@ export default {
 
     companySel(val) {
       this.express = val;
+    },
+
+    refundAgain() {
+      let param = {
+        orderNo: this.userInfo.orderNo
+      };
+
+      this.$axios.post("/vendor/orderRefundAgain", param).then(data => {
+        if (data.data.code == 1) {
+          this.requestData(); //刷新数据
+        } else {
+          this.$message({
+            message: data.data.msg,
+            type: "warning"
+          });
+        }
+      });
     },
 
     shipSubmit() {
