@@ -226,7 +226,7 @@
           </el-row>
         </div>
     </div>
-     <el-row class="order-detail" style="padding-bottom: 40px" v-if="userInfo.status == 19 || userInfo.status == 22">
+     <el-row class="order-detail" style="padding: 20px 0" v-if="userInfo.status == 19 || userInfo.status == 22">
       <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
     </el-row>
   </div>
@@ -465,11 +465,7 @@ export default {
     },
 
     refundAgain() {
-      let param = {
-        orderNo: this.userInfo.orderNo
-      };
-
-      this.$axios.post("/vendor/orderRefundAgain", param).then(data => {
+      this.$axios.get("/vendor/orderRefundAgain", {params: { orderNo: this.userInfo.orderNo }}).then(data => {
         if (data.data.code == 1) {
           this.requestData(); //刷新数据
         } else {
