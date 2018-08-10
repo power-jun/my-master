@@ -40,7 +40,7 @@
         <el-col :span="6"><span>买家下单</span> <span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="6">配送方式：无无无</el-col>
+        <el-col :span="6">配送方式：{{userInfo.deliveryTpe}}</el-col>
       </el-row>
        <el-row class="order-detail">
         <el-col :span="6">订单总价： {{userInfo.amountPayable}}</el-col>
