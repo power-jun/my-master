@@ -58,7 +58,7 @@
         <el-col :span="20">收货人手机：{{userInfo.mobile}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">收货人地址：{{userInfo.address}}</el-col>
+        <el-col :span="20">收货人地址：{{userInfo.address}}(邮政编码:{{userInfo.postCode}})</el-col>
       </el-row>
       <el-row class="order-detail">
         <el-col :span="20">买家备注：{{userInfo.remarkCustomer}}</el-col>
@@ -383,7 +383,6 @@ export default {
                 this.userInfo.refundInfo.picUrl &&
                 this.userInfo.refundInfo.picUrl.split(",");
             }
-
             let refundList = [];
             if (datas.userRefundList) {
               datas.userRefundList.forEach((item, index) => {
@@ -403,7 +402,6 @@ export default {
               });
 
               this.userInfo.refundList = refundList;
-              debugger;
             }
 
             this.userInfo.address =

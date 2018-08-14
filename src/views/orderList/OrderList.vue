@@ -75,7 +75,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :page-sizes="[10, 30, 50, 100]"
-          :page-size="30"
+          :page-size="10"
           layout="total,sizes, prev, pager, next, jumper"
           :total="total">
         </el-pagination>
@@ -255,8 +255,8 @@ export default {
         shopId: '',
         orderNo: '',
         status: '',
-        pageSize: '',
-        pageNo: ''
+        pageSize: 10,
+        pageNo: 1
       },
       confirmForm:  {
         orderNo: "",
