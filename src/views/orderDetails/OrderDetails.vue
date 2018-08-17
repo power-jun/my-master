@@ -11,7 +11,10 @@
       <el-col :span="20">用户昵称：{{userInfo.memberName}}</el-col>
     </el-row>
         <el-row class="order-detail">
-      <el-col :span="20">订单状态：<span style="color: #f00">{{userInfo.statusName}}</span></el-col>
+      <el-col :span="20">订单状态：
+        <span style="color: #f00" v-if="userInfo.status == 15 || userInfo.status == 10 || userInfo.status == 20">交易关闭</span>
+        <span style="color: #f00" v-else>{{userInfo.statusName}}</span>
+      </el-col>
     </el-row>
     <el-table :data="userInfo.orderDetailList" border style="text-align: center">
       <el-table-column
@@ -35,6 +38,7 @@
         label="数量" align="center">
       </el-table-column>
     </el-table>
+
     <div class="order-address">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>买家下单</span> <span class="titme">{{userInfo.addTime}}</span></el-col>
@@ -63,9 +67,9 @@
       <el-row class="order-detail">
         <el-col :span="20">买家备注：{{userInfo.remarkCustomer}}</el-col>
       </el-row>
-      </div>
+    </div>
 
-     <div class="order-address" v-if="userInfo.status === 15 || userInfo.status === 10 || userInfo.status === 20">
+     <div class="order-address" v-if="userInfo.status == 15 || userInfo.status == 10 || userInfo.status == 20">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>交易关闭</span> <span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
@@ -120,119 +124,91 @@
       </el-row>
     </div>
 
-    <!-- <div class="order-address" v-if="userInfo.status == 8 || userInfo.status == 12 || userInfo.status == 13 || userInfo.status == 14 || userInfo.status == 17 || userInfo.status == 18 || userInfo.status == 19 || userInfo.status == 10 || userInfo.status == 6 || userInfo.status == 16 || userInfo.status == 11">
-      <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>申请退款记录</span><span class="titme">{{userInfo.addTime}}</span></el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">服务类型：{{userInfo.refundInfo.typeName}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">商品状态：{{userInfo.refundInfo.deliveryStatusName}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">退款原因：{{userInfo.refundInfo.reasonName}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">退款金额：{{userInfo.refundInfo.refundAmt}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">退款说明：{{userInfo.refundInfo.remrks}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">
-          <p style="float: left">退款图片：</p>
-          <p class="refun-img" v-for="(item,index) in userInfo.refundInfo.picUrlArry" :index="index" :key="index" >
-            <img :src="'http://dev.pt800.com/' + item" alt="">
-          </p>
-        </el-col>
-      </el-row>
-    </div> -->
-
+  
     <div v-if="userInfo.refundList && userInfo.refundList.length && userInfo.refundInfo.type == 2">
       <div v-for="(item,index) in userInfo.refundList" :index="index" :key="index" >
 
-      <div class="order-address" v-if="!item.reviewType">
-        <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>申请退款记录</span><span class="titme">{{item.addTime}}</span></el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">服务类型：{{item.typeName}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">商品状态：{{item.deliveryStatusName}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">退款原因：{{item.reasonName}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">退款金额：{{item.refundAmt || ''}}元</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">退款说明：{{item.remrks}}</el-col>
-      </el-row>
-      <el-row class="order-detail">
-        <el-col :span="20">
-          <p style="float: left">退款图片：</p>
-          <p class="refun-img" v-for="(item,index) in item.picUrl" :index="index" :key="index" >
-            <img :src="'http://dev.pt800.com/' + item" alt="">
-          </p>
-        </el-col>
-      </el-row>
-      </div>
-
-      <div class="order-address" v-if="index == (userInfo.refundList.length-1) && userInfo.refundInfo && userInfo.refundInfo.needAudited == 1">
-        <el-form label-width="120px" :model="refundReviewInfo">
+        <div class="order-address" v-if="!item.reviewType">
           <el-row class="order-detail detail-header">
-            <el-col :span="6"><span style="color: #f60">退款审核</span></el-col>
-          </el-row>
-          <el-form-item label="回寄地址:" class="input-form">
-            <el-input v-model="refundReviewInfo.adress" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="收件人:" class="input-form">
-            <el-input v-model="refundReviewInfo.consignee" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="联系电话:" class="input-form">
-            <el-input v-model="refundReviewInfo.phone" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="审核意见:" class="input-form">
-            <el-input v-model="refundReviewInfo.opinion" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-row>
-            <el-button type="primary" class="agree-refund" @click="refundReview(true)">同意退货/退款</el-button>
-            <el-button @click="refundReview(false)">驳回退货/退款申请</el-button> 
-          </el-row>
-        </el-form>
-      </div>
-      
-        <div class="order-address" v-if="item.reviewType">
-          <el-row class="order-detail detail-header">
-            <el-col :span="6"><span>退款审核</span><span class="titme">{{item.addTime}}</span></el-col>
+          <el-col :span="6"><span>申请退款记录</span><span class="titme">{{item.addTime}}</span></el-col>
           </el-row>
           <el-row class="order-detail">
-            <el-col :span="20">回寄地址：{{item.address}}</el-col>
+            <el-col :span="20">服务类型：{{item.typeName}}</el-col>
           </el-row>
           <el-row class="order-detail">
-            <el-col :span="20">收件人：{{item.consignee}}</el-col>
+            <el-col :span="20">商品状态：{{item.deliveryStatusName}}</el-col>
           </el-row>
           <el-row class="order-detail">
-            <el-col :span="20">联系电话：{{item.mobile}}</el-col>
+            <el-col :span="20">退款原因：{{item.reasonName}}</el-col>
           </el-row>
           <el-row class="order-detail">
-            <el-col :span="20">备注：{{item.remrks}}</el-col>
+            <el-col :span="20">退款金额：{{item.refundAmt || ''}}元</el-col>
           </el-row>
           <el-row class="order-detail">
-            <el-col :span="20">审核状态：<span class="check-status">{{item.statusName}}</span></el-col>
+            <el-col :span="20">退款说明：{{item.remrks}}</el-col>
+          </el-row>
+          <el-row class="order-detail">
+            <el-col :span="20">
+              <p style="float: left">退款图片：</p>
+              <p class="refun-img" v-for="(item,index) in item.picUrl" :index="index" :key="index" >
+                <img :src="'http://dev.pt800.com/' + item" alt="">
+              </p>
+            </el-col>
           </el-row>
         </div>
-    </div>
+
+        <div class="order-address" v-if="index == (userInfo.refundList.length-1) && userInfo.refundInfo && userInfo.refundInfo.needAudited == 1">
+          <el-form label-width="120px" :model="refundReviewInfo">
+            <el-row class="order-detail detail-header">
+              <el-col :span="6"><span style="color: #f60">退款审核</span></el-col>
+            </el-row>
+            <el-form-item label="回寄地址:" class="input-form">
+              <el-input v-model="refundReviewInfo.adress" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="收件人:" class="input-form">
+              <el-input v-model="refundReviewInfo.consignee" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="联系电话:" class="input-form">
+              <el-input v-model="refundReviewInfo.phone" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="审核意见:" class="input-form">
+              <el-input v-model="refundReviewInfo.opinion" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-row>
+              <el-button type="primary" class="agree-refund" @click="refundReview(true)">同意退货/退款</el-button>
+              <el-button @click="refundReview(false)">驳回退货/退款申请</el-button> 
+            </el-row>
+          </el-form>
+        </div>
+        
+          <div class="order-address" v-if="item.reviewType">
+            <el-row class="order-detail detail-header">
+              <el-col :span="6"><span>退款审核</span><span class="titme">{{item.addTime}}</span></el-col>
+            </el-row>
+            <el-row class="order-detail">
+              <el-col :span="20">回寄地址：{{item.address}}</el-col>
+            </el-row>
+            <el-row class="order-detail">
+              <el-col :span="20">收件人：{{item.consignee}}</el-col>
+            </el-row>
+            <el-row class="order-detail">
+              <el-col :span="20">联系电话：{{item.mobile}}</el-col>
+            </el-row>
+            <el-row class="order-detail">
+              <el-col :span="20">备注：{{item.remrks}}</el-col>
+            </el-row>
+            <el-row class="order-detail">
+              <el-col :span="20">审核状态：<span class="check-status">{{item.statusName}}</span></el-col>
+            </el-row>
+          </div>
+      </div>
      <el-row class="order-detail" style="padding: 20px 0" v-if="userInfo.status == 19 || userInfo.status == 22">
       <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
     </el-row>
   </div>
 
-    <div class="order-address">
-      <div v-if="userInfo.deliveryInfo && userInfo.deliveryInfo.expressNo">
+    <div class="order-address" v-if="(userInfo.refundInfo && userInfo.refundInfo.expressNo) || userInfo.status == 16">
+      <div v-if="userInfo.refundInfo && userInfo.refundInfo.expressNo">
         <el-row class="order-detail detail-header">
         <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.addTime}}</span></el-col>
         </el-row>
@@ -267,6 +243,7 @@
         <el-col :span="20">审核状态：<span class="check-status">{{item.statusName || ''}}</span></el-col>
       </el-row>
     </div>
+    
     <div class="order-address" v-if="userInfo.refundInfo.status == 6">
       <el-form label-width="120px">
         <el-row class="order-detail detail-header">
@@ -287,6 +264,7 @@
         </el-row>
       </el-form>
     </div>
+    
      <el-row class="order-detail" style="padding-bottom: 40px" v-if="userInfo.status == 19 || userInfo.status == 22">
       <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
     </el-row>
@@ -393,7 +371,7 @@ export default {
                 }
               });
             }
-
+debugger
             if (refundList.length) {
               refundList.forEach(item => {
                 if (item.picUrl) {
@@ -510,8 +488,7 @@ export default {
             message: "发货成功",
             type: "success"
           });
-
-          this.dialogVisibleShop = false;
+          debugger;
           this.requestData(); //刷新数据
         } else {
           this.$message({

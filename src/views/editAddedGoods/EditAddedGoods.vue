@@ -215,7 +215,7 @@ export default {
         baoyouAmt: "",
         postage: ""
       },
-      remarks: '',
+      remarks: "",
       cardFileList: [],
       limitProduct: {
         startPlaceholder: "起始时间",
@@ -337,26 +337,36 @@ export default {
         .then(data => {
           if (data.data.code == 1) {
             this.form = data.data.data;
-            if(data.data.data.status == 4) {
+            if (data.data.data.status == 4) {
               this.remarks = data.data.data.remarks;
             } else {
-              this.remarks = '';
+              this.remarks = "";
             }
 
             let picUrlList = this.form.picUrl.split(",");
             for (let i in picUrlList) {
               // 商品图片
-              this.cardFileList.push({
-                url: "http://dev.pt800.com" + picUrlList[i]
-              });
+              if (picUrlList[i].indexOf("http://dev.pt800.com") >= 0) {
+                this.cardFileList.push({
+                  url: picUrlList[i]
+                });
+              } else {
+                this.cardFileList.push({
+                  url: "http://dev.pt800.com" + picUrlList[i]
+                });
+              }
             }
 
             // 是否限时抢购
             if (this.form.limitBuy == 1) {
-              this.limitProduct.limitdate[0] = new Date(this.form.limitBuyStartTime);
+              this.limitProduct.limitdate[0] = new Date(
+                this.form.limitBuyStartTime
+              );
               this.limitProduct.startPlaceholder = this.form.limitBuyStartTime;
 
-              this.limitProduct.limitdate[1] = new Date(this.form.limitBuyEndTime);
+              this.limitProduct.limitdate[1] = new Date(
+                this.form.limitBuyEndTime
+              );
               this.limitProduct.endPlaceholder = this.form.limitBuyEndTime;
 
               this.limitProduct.limitPrice = this.form.limitPrice;
@@ -369,9 +379,9 @@ export default {
             if (this.form.isBaoyou == 0) {
               this.postagePrice.baoyouAmt =
                 this.form.baoyouAmt && this.form.baoyouAmt;
-                this.postagePrice.postage = this.form.postage;
-                this.postagePrice.amtChecked = true;
-                this.postageFlag = true;
+              this.postagePrice.postage = this.form.postage;
+              this.postagePrice.amtChecked = true;
+              this.postageFlag = true;
             } else {
               this.postageFlag = false;
             }
@@ -393,10 +403,14 @@ export default {
                       if (specList.length == 1) {
                         this.specificationOneFlag = false;
                         this.specListBtnTwoFlag = false;
-                        this.specificationOneCache = this.specificationOne = specList[0].attrValue.split(",");
+                        this.specificationOneCache = this.specificationOne = specList[0].attrValue.split(
+                          ","
+                        );
                         this.specListSelectVOne = specList[0].attrId;
                         nameArryOne = [{ prop: specList[0].attrId }];
-                        this.specListNameArryOne = [{ prop: specList[0].attrId, name: specList[0].name }];
+                        this.specListNameArryOne = [
+                          { prop: specList[0].attrId, name: specList[0].name }
+                        ];
                       } else if (specList.length == 2) {
                         // 显示第二级 并且赋值
                         this.specificationTwoFlag = false;
@@ -406,26 +420,37 @@ export default {
 
                         for (let i = 0; i < specList.length; i++) {
                           if (specList[i].sort == 1) {
-                            this.specificationOneCache = this.specificationOne = specList[i].attrValue.split(",");
+                            this.specificationOneCache = this.specificationOne = specList[
+                              i
+                            ].attrValue.split(",");
                             this.specListSelectVOne = specList[i].attrId;
                             nameArryOne = [{ prop: specList[i].attrId }];
-                            this.specListNameArryOne = [{ prop: specList[i].attrId, name: specList[i].name }];
+                            this.specListNameArryOne = [
+                              {
+                                prop: specList[i].attrId,
+                                name: specList[i].name
+                              }
+                            ];
                           } else if (specList[i].sort == 2) {
-                            this.specificationTwoCache = this.specificationTwo = specList[i].attrValue.split(
-                              ","
-                            );
+                            this.specificationTwoCache = this.specificationTwo = specList[
+                              i
+                            ].attrValue.split(",");
                             this.specListSelectVTwo = specList[i].attrId;
                             nameArryTwo = [{ prop: specList[i].attrId }];
-                            this.specListNameArryTwo = [{ prop: specList[i].attrId, name: specList[i].name }];
+                            this.specListNameArryTwo = [
+                              {
+                                prop: specList[i].attrId,
+                                name: specList[i].name
+                              }
+                            ];
                           }
                         }
                       }
                     }
 
-                    
-                     let stockList = this.form.stockList;
-                     let saleAttrList = this.form.saleAttrList;
-                     console.log(saleAttrList)
+                    let stockList = this.form.stockList;
+                    let saleAttrList = this.form.saleAttrList;
+                    console.log(saleAttrList);
 
                     if (stockList && stockList.length) {
                       this.specificationTabFlag = true;
@@ -448,16 +473,16 @@ export default {
                         //   }
                         // }
 
-                        for(let i=0;i<specList.length;i++) {
-                          let currentItem = saleAttrList.filter(function(v,n){
-                            return v.id === specList[i].attrId
+                        for (let i = 0; i < specList.length; i++) {
+                          let currentItem = saleAttrList.filter(function(v, n) {
+                            return v.id === specList[i].attrId;
                           });
 
-                          console.log(currentItem);  
-                          if(specList[i].sort == 1) {
+                          console.log(currentItem);
+                          if (specList[i].sort == 1) {
                             twoUnshift.prop = specList[i].attrId;
                             twoUnshift.name = currentItem[0].name;
-                          } else if(specList[i].sort == 2) {
+                          } else if (specList[i].sort == 2) {
                             oneUnshift.prop = specList[i].attrId;
                             oneUnshift.name = currentItem[0].name;
                           }
@@ -474,7 +499,7 @@ export default {
 
                       for (let i = 0; i < stockList.length; i++) {
                         let bodyLineObj = {};
-                        
+
                         bodyLineObj.originalPrice = stockList[i].originalPrice;
                         bodyLineObj.sort = stockList[i].sort;
                         bodyLineObj.specCode = stockList[i].specCode;
@@ -500,13 +525,15 @@ export default {
 
                         this.specificationsTabData.push(bodyLineObj);
                         // this.inputValArry.push(inputValItem);
-                        this.inputValArry[stockList[i].sort-1] = inputValItem;
+                        this.inputValArry[stockList[i].sort - 1] = inputValItem;
                       }
                     }
 
                     setTimeout(() => {
-                      document.getElementsByClassName('bg-purple-light')[0].scrollTo(0,0);
-                    }, 100)
+                      document
+                        .getElementsByClassName("bg-purple-light")[0]
+                        .scrollTo(0, 0);
+                    }, 100);
                   }
                 });
             }
@@ -593,9 +620,7 @@ export default {
       }
     },
 
-    discountTypeChange(value) {
-      
-    },
+    discountTypeChange(value) {},
 
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex == 0) {
@@ -629,7 +654,8 @@ export default {
                 this.specListOneFlag = false;
               } else {
                 this.specListOneFlag = true;
-                this.specificationsTabHead.length > 4 && (this.specificationsTabHead = specificationsCacheTabHead);
+                this.specificationsTabHead.length > 4 &&
+                  (this.specificationsTabHead = specificationsCacheTabHead);
                 this.typeAttrFlag = false;
               }
             }
@@ -641,7 +667,7 @@ export default {
       }
     },
 
-    specificationChangeOne(value,a) {
+    specificationChangeOne(value, a) {
       if (value.length) {
         this.specificationTabFlag = true;
       } else {
@@ -649,97 +675,114 @@ export default {
         this.specListBtnTwoFlag = false;
       }
 
-      let currentDiffVal = '';
+      let currentDiffVal = "";
       let stockList = this.form.stockList;
       let inputValArryTmp = [];
 
-      currentDiffVal = this.valDiff(this.specificationOneCache, this.specificationOne)[0];
+      currentDiffVal = this.valDiff(
+        this.specificationOneCache,
+        this.specificationOne
+      )[0];
 
-      if(currentDiffVal) {
-        if(!currentDiffVal.trim()) {
+      if (currentDiffVal) {
+        if (!currentDiffVal.trim()) {
           return;
         }
 
-        for(let i=0;i<stockList.length;i++){
-        let currentFilter = stockList[i].attrList.filter(function(item) {
-          return item.attrValue == currentDiffVal;
-        });
+        for (let i = 0; i < stockList.length; i++) {
+          let currentFilter = stockList[i].attrList.filter(function(item) {
+            return item.attrValue == currentDiffVal;
+          });
 
-        if(currentFilter.length) {
-            if(i >= this.inputValArry.length) {
-              inputValArryTmp.push(this.inputValArry.slice(this.inputValArry.length-1, this.inputValArry.length)[0]);
+          if (currentFilter.length) {
+            if (i >= this.inputValArry.length) {
+              inputValArryTmp.push(
+                this.inputValArry.slice(
+                  this.inputValArry.length - 1,
+                  this.inputValArry.length
+                )[0]
+              );
             } else {
-              inputValArryTmp.push(this.inputValArry.slice(i, i+1)[0]);
+              inputValArryTmp.push(this.inputValArry.slice(i, i + 1)[0]);
             }
           }
         }
       } else {
-        if(this.specificationOne[0] && !this.specificationOne[0].trim()) {
+        if (this.specificationOne[0] && !this.specificationOne[0].trim()) {
           return;
         }
       }
 
-      if(this.difference(this.inputValArry, inputValArryTmp)[0]) {
-        this.inputValArry = this.difference(this.inputValArry, inputValArryTmp)
+      if (this.difference(this.inputValArry, inputValArryTmp)[0]) {
+        this.inputValArry = this.difference(this.inputValArry, inputValArryTmp);
       } else {
-        this.inputValArry = []
+        this.inputValArry = [];
       }
 
       this.specificationChangePublic(value, "one");
       this.specificationOneCache = value;
     },
 
-    difference(a,b) {
-       return a.concat(b).filter(function(v) {
-              return a.indexOf(v) === -1 || b.indexOf(v) === -1
-          })
+    difference(a, b) {
+      return a.concat(b).filter(function(v) {
+        return a.indexOf(v) === -1 || b.indexOf(v) === -1;
+      });
     },
 
     valDiff(val1, val2) {
-      if(val1) {
-        return val1.filter(function(item) {return val2.indexOf(item) < 0;});
+      if (val1) {
+        return val1.filter(function(item) {
+          return val2.indexOf(item) < 0;
+        });
       } else {
         return false;
       }
-     },
+    },
 
     specificationChangeTwo(value) {
       // this.inputValArry = [];
-      let currentDiffVal = '';
+      let currentDiffVal = "";
       let stockList = this.form.stockList;
       let inputValArryTmp = [];
 
-      currentDiffVal = this.valDiff(this.specificationTwoCache, this.specificationTwo)[0];
+      currentDiffVal = this.valDiff(
+        this.specificationTwoCache,
+        this.specificationTwo
+      )[0];
 
-      if(currentDiffVal) {
-        if(!currentDiffVal.trim()) {
+      if (currentDiffVal) {
+        if (!currentDiffVal.trim()) {
           return;
         }
 
-        for(let i=0;i<stockList.length;i++){
-        let currentFilter = stockList[i].attrList.filter(function(item) {
-          return item.attrValue == currentDiffVal;
-        });
+        for (let i = 0; i < stockList.length; i++) {
+          let currentFilter = stockList[i].attrList.filter(function(item) {
+            return item.attrValue == currentDiffVal;
+          });
 
-        if(currentFilter.length) {
-            if(i >= this.inputValArry.length) {
-              inputValArryTmp.push(this.inputValArry.slice(this.inputValArry.length-1, this.inputValArry.length)[0]);
+          if (currentFilter.length) {
+            if (i >= this.inputValArry.length) {
+              inputValArryTmp.push(
+                this.inputValArry.slice(
+                  this.inputValArry.length - 1,
+                  this.inputValArry.length
+                )[0]
+              );
             } else {
-              inputValArryTmp.push(this.inputValArry.slice(i, i+1)[0]);
+              inputValArryTmp.push(this.inputValArry.slice(i, i + 1)[0]);
             }
           }
         }
       } else {
-        if(this.specificationTwo[0] && !this.specificationTwo[0].trim()) {
+        if (this.specificationTwo[0] && !this.specificationTwo[0].trim()) {
           return;
         }
       }
-    
-    
-      if(this.difference(this.inputValArry, inputValArryTmp)[0]) {
-        this.inputValArry = this.difference(this.inputValArry, inputValArryTmp)
+
+      if (this.difference(this.inputValArry, inputValArryTmp)[0]) {
+        this.inputValArry = this.difference(this.inputValArry, inputValArryTmp);
       } else {
-        this.inputValArry = []
+        this.inputValArry = [];
       }
 
       this.specificationChangePublic(value, "two");
@@ -747,7 +790,7 @@ export default {
     },
 
     specificationChangePublic(value, type) {
-      if(value) {
+      if (value) {
         let resultSelectArry = [];
         for (var i in value) {
           if (selectArry.length) {
@@ -760,7 +803,7 @@ export default {
             resultSelectArry.push({ value: value[i], label: value[i] });
           }
         }
-  
+
         this.specificationArry = resultSelectArry; // 赋值缓存用户使用过的规格值
       }
 
@@ -782,7 +825,10 @@ export default {
 
             // this.specListBtnTwoFlag = false;
           } else {
-            if (this.specificationsTabHead.length > 4 && this.specificationsTabHead.length <= 6) {
+            if (
+              this.specificationsTabHead.length > 4 &&
+              this.specificationsTabHead.length <= 6
+            ) {
               this.specificationsTabData = [];
               this.specificationTabFlag = false;
               this.specListNameArryTwo = [];
@@ -802,11 +848,18 @@ export default {
                 this.specificationsTabHead[1].prop !==
                 this.specListNameArryOne[0].prop
               ) {
-                this.specificationsTabHead.splice(1,0,this.specListNameArryTwo[0]);
+                this.specificationsTabHead.splice(
+                  1,
+                  0,
+                  this.specListNameArryTwo[0]
+                );
               }
             }
-          } else if (this.specificationsTabHead.length > 4 &&this.specificationsTabHead.length <= 6) {
-            if(this.specificationsTabHead[1].prop != 'originalPrice' ) {
+          } else if (
+            this.specificationsTabHead.length > 4 &&
+            this.specificationsTabHead.length <= 6
+          ) {
+            if (this.specificationsTabHead[1].prop != "originalPrice") {
               this.specificationsTabHead.splice(1, 1);
             }
           }
@@ -842,7 +895,8 @@ export default {
       }
 
       // 组织第一个规格名数据
-      let totalTabLine = this.specificationOne.length * this.specificationTwo.length; //table的总行数
+      let totalTabLine =
+        this.specificationOne.length * this.specificationTwo.length; //table的总行数
       let resultTotalArr = [];
 
       if (this.specificationOne.length) {
@@ -858,10 +912,9 @@ export default {
 
           for (var i = 0; i < resultTotalArr.length; i++) {
             var resultTotalArrParse = JSON.parse(resultTotalArr[i]);
-            resultTotalArrParse.sort = i+1;
+            resultTotalArrParse.sort = i + 1;
             this.specificationsTabData.push(resultTotalArrParse);
           }
-          
         } else {
           for (let i = 0; i < this.specificationOne.length; i++) {
             var resultTabData = {
@@ -877,9 +930,9 @@ export default {
 
           this.specificationsTabData = [];
           for (var i = 0; i < resultArryOne.length; i++) {
-             var resultArryOneParse = resultArryOne[i];
-             resultArryOneParse.sort = i+1;
-             this.specificationsTabData.push(resultArryOneParse);
+            var resultArryOneParse = resultArryOne[i];
+            resultArryOneParse.sort = i + 1;
+            this.specificationsTabData.push(resultArryOneParse);
           }
         }
       }
@@ -889,17 +942,17 @@ export default {
     },
 
     makeInput() {
+      if (this.inputValArry && this.inputValArry.length) {
+        var creatLength =
+          this.specificationsTabData.length - this.inputValArry.length;
 
-      if(this.inputValArry && this.inputValArry.length) {
-        var creatLength = this.specificationsTabData.length - this.inputValArry.length;
-
-        for(let i=0;i<creatLength;i++) {
+        for (let i = 0; i < creatLength; i++) {
           let inputValItem = {
-          originalPrice: "",
-          stock: "",
-          specCode: "",
-          primeCost: ""
-        };
+            originalPrice: "",
+            stock: "",
+            specCode: "",
+            primeCost: ""
+          };
 
           this.inputValArry.push(inputValItem);
         }
@@ -908,11 +961,11 @@ export default {
 
         for (let i = 0; i < this.specificationsTabData.length; i++) {
           let inputValItem = {
-          originalPrice: "",
-          stock: "",
-          specCode: "",
-          primeCost: ""
-        };
+            originalPrice: "",
+            stock: "",
+            specCode: "",
+            primeCost: ""
+          };
           this.inputValArry.push(inputValItem);
         }
       }
@@ -927,7 +980,9 @@ export default {
       nameArryTwo = [];
       this.inputValArry = [];
 
-      this.specificationsTabHead = JSON.parse(JSON.stringify(specificationsCacheTabHead));
+      this.specificationsTabHead = JSON.parse(
+        JSON.stringify(specificationsCacheTabHead)
+      );
 
       if (value) {
         for (var i in item) {
@@ -959,7 +1014,7 @@ export default {
       } else {
         this.specificationOneFlag = true;
         this.specListNameArryOne = [];
-        this.specListSelectVOne = '';
+        this.specListSelectVOne = "";
       }
 
       this.clearAll();
@@ -967,12 +1022,12 @@ export default {
 
     clearAll(type) {
       if (type == "all") {
-        this.specListSelectVOne = '';
+        this.specListSelectVOne = "";
       }
 
       this.specificationOne = [];
       this.specificationTwo = [];
-      this.specListSelectVTwo = '';
+      this.specListSelectVTwo = "";
       this.specListNameArryTwo = [];
       this.specListBtnTwoFlag = false;
       this.specListTwoFlag = false;
@@ -984,10 +1039,10 @@ export default {
       let obj = {};
       let item = this.productTypeAttr;
       let breakFlag = true;
-      
-      if(value) {
+
+      if (value) {
         for (var i in item) {
-        if (item[i].id == value) {
+          if (item[i].id == value) {
             obj.name = item[i].name;
           }
         }
@@ -1004,8 +1059,8 @@ export default {
         }
 
         if (!breakFlag) {
-          this.specListSelectVTwo = '';
-          this.specListNameArryTwo = '';
+          this.specListSelectVTwo = "";
+          this.specListNameArryTwo = "";
           this.specificationTwo = [];
           this.specificationTwoFlag = true;
         } else {
@@ -1015,8 +1070,8 @@ export default {
           this.specificationTwoFlag = false;
         }
       } else {
-        this.specListSelectVTwo = '';
-        this.specListNameArryTwo = '';
+        this.specListSelectVTwo = "";
+        this.specListNameArryTwo = "";
         this.specificationTwo = [];
         this.specificationTwoFlag = true;
       }
@@ -1043,45 +1098,45 @@ export default {
         this.form.saleAttrList = [];
       }
 
-      if(!this.form.name) {
+      if (!this.form.name) {
         this.$message({
-            message: "请填写商品名",
-            type: "warning"
-          });
-          return false;
+          message: "请填写商品名",
+          type: "warning"
+        });
+        return false;
       }
 
-      if(!this.form.picUrl) {
+      if (!this.form.picUrl) {
         this.$message({
-            message: "请上传商品图片",
-            type: "warning"
-          });
-          return;
-      }
-
-      if(!this.form.stock && this.form.stock !== 0) {
-        this.$message({
-            message: "请填写库存量",
-            type: "warning"
-          });
+          message: "请上传商品图片",
+          type: "warning"
+        });
         return;
       }
 
-      if(!this.form.maxDiscount && this.form.maxDiscount !== 0) {
+      if (!this.form.stock && this.form.stock !== 0) {
         this.$message({
-            message: "请填写单账号限购数量",
-            type: "warning"
-          });
-          return;
+          message: "请填写库存量",
+          type: "warning"
+        });
+        return;
       }
 
-      if(!this.form.primeCost) {
-        if(this.form.primeCost === 0) {
+      if (!this.form.maxDiscount && this.form.maxDiscount !== 0) {
+        this.$message({
+          message: "请填写单账号限购数量",
+          type: "warning"
+        });
+        return;
+      }
+
+      if (!this.form.primeCost) {
+        if (this.form.primeCost === 0) {
           this.$message({
             message: "成本价不能为0",
             type: "warning"
           });
-        } else{
+        } else {
           this.$message({
             message: "请填写成本价",
             type: "warning"
@@ -1090,14 +1145,14 @@ export default {
         return;
       }
 
-      if(!this.form.originalPrice) {
-        if(this.form.originalPrice === 0) {
+      if (!this.form.originalPrice) {
+        if (this.form.originalPrice === 0) {
           this.$message({
             message: "原价不能为0",
             type: "warning"
           });
         } else {
-          this.$message({ 
+          this.$message({
             message: "请填写原价",
             type: "warning"
           });
@@ -1114,20 +1169,20 @@ export default {
       //     return;
       // }
 
-      if(!this.form.maxDiscount && this.form.maxDiscount !== 0) {
+      if (!this.form.maxDiscount && this.form.maxDiscount !== 0) {
         this.$message({
-            message: "请填写最大优惠金额",
-            type: "warning"
-          });
-          return;
+          message: "请填写最大优惠金额",
+          type: "warning"
+        });
+        return;
       }
 
-      if(+this.form.maxDiscount > +this.form.originalPrice) {
+      if (+this.form.maxDiscount > +this.form.originalPrice) {
         this.$message({
-            message: "最大优惠金额大于原价",
-            type: "warning"
-          });
-          return;
+          message: "最大优惠金额大于原价",
+          type: "warning"
+        });
+        return;
       }
 
       if (this.form.limitBuy == 1) {
@@ -1259,15 +1314,23 @@ export default {
             });
           }
 
-          let currentInputIndex = this.specificationsTabData[i].sort-1;
-          this.form.stockList[i].originalPrice = this.inputValArry[currentInputIndex].originalPrice;
-          this.form.stockList[i].stock = this.inputValArry[currentInputIndex].stock;
-          this.form.stockList[i].specCode = this.inputValArry[currentInputIndex].specCode;
-          this.form.stockList[i].primeCost = this.inputValArry[currentInputIndex].primeCost;
+          let currentInputIndex = this.specificationsTabData[i].sort - 1;
+          this.form.stockList[i].originalPrice = this.inputValArry[
+            currentInputIndex
+          ].originalPrice;
+          this.form.stockList[i].stock = this.inputValArry[
+            currentInputIndex
+          ].stock;
+          this.form.stockList[i].specCode = this.inputValArry[
+            currentInputIndex
+          ].specCode;
+          this.form.stockList[i].primeCost = this.inputValArry[
+            currentInputIndex
+          ].primeCost;
           this.form.stockList[i].sort = i + 1;
 
-          if(this.specificationsTabData[i].id) {
-            this.form.stockList[i].id = this.specificationsTabData[i].id
+          if (this.specificationsTabData[i].id) {
+            this.form.stockList[i].id = this.specificationsTabData[i].id;
           }
 
           if (!this.inputValArry[currentInputIndex].originalPrice) {
@@ -1275,22 +1338,28 @@ export default {
             inputValFlag = false;
           }
 
-          if(!this.inputValArry[currentInputIndex].stock && this.inputValArry[currentInputIndex].stock !== 0) {
+          if (
+            !this.inputValArry[currentInputIndex].stock &&
+            this.inputValArry[currentInputIndex].stock !== 0
+          ) {
             inputValFlag = false;
           }
 
-          if(+this.inputValArry[currentInputIndex].originalPrice <= +this.form.maxDiscount) {
+          if (
+            +this.inputValArry[currentInputIndex].originalPrice <=
+            +this.form.maxDiscount
+          ) {
             inputValDiscountFlag = false;
           }
         }
       }
 
-      if(!this.form.productDesc) {
+      if (!this.form.productDesc) {
         this.$message({
-            message: "请填写商品描述",
-            type: "warning"
-          });
-          return;
+          message: "请填写商品描述",
+          type: "warning"
+        });
+        return;
       }
 
       this.fullscreenLoading = true;
@@ -1305,7 +1374,7 @@ export default {
             return false;
           }
 
-          if(!inputValDiscountFlag) {
+          if (!inputValDiscountFlag) {
             this.fullscreenLoading = false;
             this.$message({
               message: "规格商品价格不能小于等于最大优惠金额",
@@ -1313,7 +1382,7 @@ export default {
             });
             return false;
           }
-debugger
+          debugger;
           console.log(this.form, 1111);
 
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
@@ -1373,13 +1442,13 @@ debugger
     successFun(response, file, fileList) {
       let imgArr = [];
       for (let i = 0; i < fileList.length; i++) {
-        if(fileList[i].response) {
+        if (fileList[i].response) {
           imgArr.push(fileList[i].response.data.url);
-        } else if(fileList[i].url){
+        } else if (fileList[i].url) {
           imgArr.push(fileList[i].url);
         }
       }
-
+      debugger;
       this.form.picUrl = imgArr.join(",");
     },
 
@@ -1537,7 +1606,7 @@ debugger
 }
 
 .shop-classification .el-form-item__label:before {
-  content: '';
+  content: "";
   display: none;
 }
 </style>
