@@ -229,9 +229,9 @@
     </div>
   
   <div v-if="userInfo.refundInfo && userInfo.refundInfo.type == 1">
-    <div class="order-address" v-if="userInfo.vendorRefundList && userInfo.vendorRefundList.length" v-for="(item,index) in userInfo.vendorRefundList" :index="index" :key="index">
+    <div class="order-address" v-if="userInfo.refundList && userInfo.refundList.length" v-for="(item,index) in userInfo.refundList" :index="index" :key="index">
       <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>退款确认</span><span class="titme">{{item.addTime}}</span></el-col>
+        <el-col :span="6"><span>申请退款</span><span class="titme">{{item.addTime}}</span></el-col>
       </el-row> 
       <el-row class="order-detail">
         <el-col :span="20">退款金额：{{item.refundAmt}} 元</el-col>
