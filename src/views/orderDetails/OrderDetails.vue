@@ -13,7 +13,13 @@
         <el-row class="order-detail">
       <el-col :span="20">订单状态：
         <span style="color: #f00" v-if="userInfo.status == 15 || userInfo.status == 10 || userInfo.status == 20">交易关闭</span>
-        <span style="color: #f00" v-else>{{userInfo.statusName}}</span>
+        <span style="color: #f00" v-else>
+          {{userInfo.statusName}} 
+          <span style="color: #f00" v-if="userInfo.remarkSystem">
+            ({{userInfo.remarkSystem}})
+          </span>
+
+        </span>
       </el-col>
     </el-row>
     <el-table :data="userInfo.orderDetailList" border style="text-align: center">
@@ -31,7 +37,7 @@
       </el-table-column>
       <el-table-column
         prop="originalPrice"
-        label="单价" align="center">
+        label="单价(元)" align="center">
       </el-table-column>
       <el-table-column
         prop="quantity"
@@ -44,7 +50,7 @@
         <el-col :span="6"><span>买家下单</span> <span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="6">配送方式：{{userInfo.deliveryTpe}}</el-col>
+        <el-col :span="6">配送方式：{{userInfo.deliveryType}}</el-col>
       </el-row>
        <el-row class="order-detail">
         <el-col :span="6">订单总价： {{userInfo.amountPayable}}</el-col>
@@ -207,10 +213,10 @@
     </el-row>
   </div>
 
-    <div class="order-address" v-if="(userInfo.refundInfo && userInfo.refundInfo.expressNo) || userInfo.status == 16">
-      <div v-if="userInfo.refundInfo && userInfo.refundInfo.expressNo">
+    <div class="order-address" v-if="(userInfo.refundInfo && userInfo.refundInfo.deliveryNo) || userInfo.status == 16">
+      <div v-if="userInfo.refundInfo && userInfo.refundInfo.deliveryNo">
         <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.addTime}}</span></el-col>
+        <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.refundInfo.addTime}}</span></el-col>
         </el-row>
         <el-row class="order-detail">
           <el-col :span="20">快递公司：{{userInfo.refundInfo.deliveryName}}</el-col>
@@ -232,10 +238,30 @@
     <div class="order-address" v-if="userInfo.refundList && userInfo.refundList.length" v-for="(item,index) in userInfo.refundList" :index="index" :key="index">
       <el-row class="order-detail detail-header">
         <el-col :span="6"><span>申请退款</span><span class="titme">{{item.addTime}}</span></el-col>
-      </el-row> 
-      <el-row class="order-detail">
-        <el-col :span="20">退款金额：{{item.refundAmt}} 元</el-col>
       </el-row>
+      <el-row class="order-detail">
+            <el-col :span="20">服务类型：{{item.typeName}}</el-col>
+          </el-row>
+          <el-row class="order-detail">
+            <el-col :span="20">商品状态：{{item.deliveryStatusName}}</el-col>
+          </el-row>
+          <el-row class="order-detail">
+            <el-col :span="20">退款原因：{{item.reasonName}}</el-col>
+          </el-row>
+          <el-row class="order-detail">
+            <el-col :span="20">退款金额：{{item.refundAmt || ''}}元</el-col>
+          </el-row>
+          <el-row class="order-detail">
+            <el-col :span="20">退款说明：{{item.remrks}}</el-col>
+          </el-row>
+          <el-row class="order-detail">
+            <el-col :span="20">
+              <p style="float: left">退款图片：</p>
+              <p class="refun-img" v-for="(item,index) in item.picUrl" :index="index" :key="index" >
+                <img :src="'http://dev.pt800.com/' + item" alt="">
+              </p>
+            </el-col>
+          </el-row>
       <el-row class="order-detail">
         <el-col :span="20">退款意见：{{item.remrks || ''}}</el-col>
       </el-row>
@@ -265,7 +291,7 @@
       </el-form>
     </div>
     
-     <el-row class="order-detail" style="padding-bottom: 40px" v-if="userInfo.status == 19 || userInfo.status == 22">
+     <el-row class="order-detail" style="padding-bottom: 40px;margin-top:10px" v-if="userInfo.status == 19 || userInfo.status == 22">
       <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
     </el-row>
   </div>
@@ -371,7 +397,7 @@ export default {
                 }
               });
             }
-debugger
+            debugger;
             if (refundList.length) {
               refundList.forEach(item => {
                 if (item.picUrl) {

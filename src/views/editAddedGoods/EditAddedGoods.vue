@@ -668,6 +668,18 @@ export default {
     },
 
     specificationChangeOne(value, a) {
+       var flag = true;
+      var valueArry = [];
+      value.forEach(function(item) {
+        if(!item.replace(/\s/g, '')) {
+          flag = false;
+        } else {
+          valueArry.push(item);
+        }
+      });
+      
+      this.specificationOne = valueArry;
+
       if (value.length) {
         this.specificationTabFlag = true;
       } else {
@@ -719,8 +731,8 @@ export default {
         this.inputValArry = [];
       }
 
-      this.specificationChangePublic(value, "one");
-      this.specificationOneCache = value;
+      this.specificationChangePublic(valueArry, "one");
+      this.specificationOneCache = valueArry;
     },
 
     difference(a, b) {
@@ -741,6 +753,18 @@ export default {
 
     specificationChangeTwo(value) {
       // this.inputValArry = [];
+      var flag = true;
+      var valueArry = [];
+      value.forEach(function(item) {
+        if(!item.replace(/\s/g, '')) {
+          flag = false;
+        } else {
+          valueArry.push(item);
+        }
+      });
+    
+     this.specificationTwo = valueArry;
+
       let currentDiffVal = "";
       let stockList = this.form.stockList;
       let inputValArryTmp = [];
@@ -784,9 +808,9 @@ export default {
       } else {
         this.inputValArry = [];
       }
-
-      this.specificationChangePublic(value, "two");
-      this.specificationTwoCache = value;
+      
+      this.specificationChangePublic(valueArry, "two");
+      this.specificationTwoCache = valueArry;
     },
 
     specificationChangePublic(value, type) {

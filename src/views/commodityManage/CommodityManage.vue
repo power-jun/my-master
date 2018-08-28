@@ -277,10 +277,23 @@ export default {
         .get("/vendor/productList", { params: searchParam })
         .then(data => {
           if (data.data.code === 1) {
-            this.tableData3 = data.data.data || [];
-            for (let i = 0; i < this.tableData3.length; i++) {
+            let datas = data.data.data || [];
+
+            for (let i = 0; i < datas.length; i++) {
+              var picUrls = datas[i].picUrl.split(',');
+              for(var j=0;j<datas[i].picUrl.split(',').length;j++) {
+                var picIndex = picUrls[j].indexOf('http://dev.pt800.com');
+                if(picIndex >=0) {
+                  picUrls[j] = picUrls[j].replace('http://dev.pt800.com', '');
+                }
+              }
+
+              datas[i].picUrl = picUrls.join(',');
               this.dialogVisible.push({ dialog: false });
             }
+
+            this.tableData3 = datas || [];
+
             this.tabLoadingFlag = false;
             this.total = data.data.total;
           } else {
