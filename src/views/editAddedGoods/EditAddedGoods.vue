@@ -337,6 +337,7 @@ export default {
         .then(data => {
           if (data.data.code == 1) {
             this.form = data.data.data;
+            
             if (data.data.data.status == 4) {
               this.remarks = data.data.data.remarks;
             } else {
@@ -1479,21 +1480,27 @@ export default {
     errorFun(file, fileList) {},
 
     handleRemove(file, fileList) {
-      let picUrlArry = this.form.picUrl.split(",");
-      for (let i = 0; i < picUrlArry.length; i++) {
-        if (picUrlArry[i] == file.response.data.url) {
-          delete picUrlArry[i];
-        }
+      let picUrlArry = [];
+      for(var i=0;i<fileList.length;i++) {
+        picUrlArry.push(fileList[i].url);
       }
 
-      let picUrlStr = picUrlArry.join(",");
-      if (picUrlStr.substring(picUrlStr.length - 1) == ",") {
-        this.form.picUrl = picUrlStr.substring(0, picUrlStr.length - 1);
-      } else if (picUrlStr.substring(0, 1) == ",") {
-        this.form.picUrl = picUrlStr.substring(1, picUrlStr.length);
-      } else {
-        this.form.picUrl = picUrlStr;
-      }
+      this.form.picUrl = picUrlArry.join(',');
+      // let picUrlArry = this.form.picUrl.split(",");
+      // for (let i = 0; i < picUrlArry.length; i++) {
+      //   if (picUrlArry[i] == file.response.data.url) {
+      //     delete picUrlArry[i];
+      //   }
+      // }
+
+      // let picUrlStr = picUrlArry.join(",");
+      // if (picUrlStr.substring(picUrlStr.length - 1) == ",") {
+      //   this.form.picUrl = picUrlStr.substring(0, picUrlStr.length - 1);
+      // } else if (picUrlStr.substring(0, 1) == ",") {
+      //   this.form.picUrl = picUrlStr.substring(1, picUrlStr.length);
+      // } else {
+      //   this.form.picUrl = picUrlStr;
+      // }
     },
 
     getUEContent() {

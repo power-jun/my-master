@@ -45,6 +45,7 @@ export default {
         this.name = data.name;
         this.shopId = data.shopId;
         this.url = data.url;
+        debugger
         this.shopTypeName = data.shopTypeName;
         this.statusName = data.statusName;
         this.linkman = data.linkman;

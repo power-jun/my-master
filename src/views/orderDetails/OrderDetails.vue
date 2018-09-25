@@ -157,7 +157,7 @@
             <el-col :span="20">
               <p style="float: left">退款图片：</p>
               <p class="refun-img" v-for="(item,index) in item.picUrl" :index="index" :key="index" >
-                <img :src="'http://dev.pt800.com/' + item" alt="">
+                <img :src="'http://dev.pt800.com/' + item" alt="" @click="lookImg">
               </p>
             </el-col>
           </el-row>
@@ -215,6 +215,9 @@
 
     <div class="order-address" v-if="(userInfo.refundInfo && userInfo.refundInfo.deliveryNo) || userInfo.status == 16">
       <div v-if="userInfo.refundInfo && userInfo.refundInfo.deliveryNo">
+         <el-row class="order-detail" v-if="userInfo.status == 16">
+          <el-col :span="20"><span style="color: #f00">请核对订单信息，点击"确认退款"后，货款将原路退回。如须客户退回货物，请确认已收到回件并检查无误。</span></el-col>
+        </el-row>
         <el-row class="order-detail detail-header">
         <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.refundInfo.addTime}}</span></el-col>
         </el-row>
@@ -258,7 +261,7 @@
             <el-col :span="20">
               <p style="float: left">退款图片：</p>
               <p class="refun-img" v-for="(item,index) in item.picUrl" :index="index" :key="index" >
-                <img :src="'http://dev.pt800.com/' + item" alt="">
+                <img :src="'http://dev.pt800.com/' + item" alt="" @click="lookImg">
               </p>
             </el-col>
           </el-row>
@@ -309,6 +312,10 @@
     </div>
   </div>
   <Loading v-show="loadingFlag"></Loading>
+
+   <el-dialog :visible.sync="dialogImg">
+      <img width="100%" :src="{dialogImgSrc}" alt="">
+   </el-dialog>
  </div>
 </template>
 
@@ -320,6 +327,8 @@ export default {
     return {
       loadingFlag: true,
       remarkSystem: "",
+      dialogImg: false,
+      dialogImgSrc: '',
       expressArry: [], //物流公司
       express: "",
       shopOpinion: "", //退款审核意见
@@ -373,6 +382,11 @@ export default {
   },
 
   methods: {
+    lookImg(e) {
+      debugger
+      this.dialogImg = true;
+    },
+
     requestData() {
       this.$axios
         .get("/vendor/orderDetail", {
@@ -397,7 +411,7 @@ export default {
                 }
               });
             }
-            debugger;
+
             if (refundList.length) {
               refundList.forEach(item => {
                 if (item.picUrl) {
