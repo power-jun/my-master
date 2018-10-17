@@ -185,7 +185,7 @@
             </el-row>
           </el-form>
         </div>
-        
+
           <div class="order-address" v-if="item.reviewType">
             <el-row class="order-detail detail-header">
               <el-col :span="6"><span>退款审核</span><span class="titme">{{item.addTime}}</span></el-col>
@@ -207,7 +207,8 @@
             </el-row>
           </div>
       </div>
-     <el-row class="order-detail" style="padding: 20px 0" v-if="userInfo.status == 19 || userInfo.status == 22">
+
+     <el-row class="order-detail" style="padding: 20px 0" v-if="(userInfo.status == 22) && userInfo.refundList && userInfo.refundList.length">
       <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
     </el-row>
   </div>
@@ -243,10 +244,12 @@
   
   <div v-if="userInfo.refundInfo && userInfo.refundInfo.type == 1">
     <div class="order-address" v-if="userInfo.refundList && userInfo.refundList.length" v-for="(item,index) in userInfo.refundList" :index="index" :key="index">
-      <el-row class="order-detail detail-header">
-        <el-col :span="6"><span>申请退款</span><span class="titme">{{item.addTime}}</span></el-col>
-      </el-row>
-      <el-row class="order-detail">
+      
+      <div v-if="!item.reviewType">
+          <el-row class="order-detail detail-header">
+            <el-col :span="6"><span>申请退款</span><span class="titme">{{item.addTime}}</span></el-col>
+          </el-row>
+          <el-row class="order-detail">
             <el-col :span="20">服务类型：{{item.typeName}}</el-col>
           </el-row>
           <el-row class="order-detail">
@@ -269,12 +272,19 @@
               </p>
             </el-col>
           </el-row>
-          <!-- <el-row class="order-detail">
+      </div>
+      
+      <div v-if="item.reviewType">
+         <el-row class="order-detail detail-header">
+            <el-col :span="6"><span>退款审核</span><span class="titme">{{item.addTime}}</span></el-col>
+          </el-row>
+          <el-row class="order-detail">
             <el-col :span="20">退款意见：{{item.remrks || ''}}</el-col>
           </el-row>
           <el-row class="order-detail">
             <el-col :span="20">审核状态：<span class="check-status">{{item.statusName || ''}}</span></el-col>
-          </el-row> -->
+          </el-row>
+          </div>
     </div>
     
     <div class="order-address" v-if="userInfo.refundInfo.status == 6">
@@ -298,7 +308,7 @@
       </el-form>
     </div>
     
-     <el-row class="order-detail" style="padding-bottom: 40px;margin-top:10px" v-if="(userInfo.status == 19 || userInfo.status == 22) && userInfo.refundList && userInfo.refundList.length">
+     <el-row class="order-detail" style="padding-bottom: 40px;margin-top:10px" v-if="(userInfo.status == 22) && userInfo.refundList && userInfo.refundList.length">
       <el-button type="primary" class="agree-refund" @click="refundAgain()">再次退款</el-button>
     </el-row>
   </div>
@@ -332,7 +342,7 @@ export default {
       loadingFlag: true,
       remarkSystem: "",
       dialogImg: false,
-      dialogImgSrc: '',
+      dialogImgSrc: "",
       expressArry: [], //物流公司
       express: "",
       shopOpinion: "", //退款审核意见
@@ -405,6 +415,9 @@ export default {
                 this.userInfo.refundInfo.picUrl &&
                 this.userInfo.refundInfo.picUrl.split(",");
             }
+
+            // userRefundList 申请退款  vendorRefundList 退款审核
+
             let refundList = [];
             if (datas.userRefundList) {
               datas.userRefundList.forEach((item, index) => {
@@ -415,7 +428,7 @@ export default {
                 }
               });
             }
-
+            debugger;
             if (refundList.length) {
               refundList.forEach(item => {
                 if (item.picUrl) {
@@ -425,7 +438,7 @@ export default {
 
               this.userInfo.refundList = refundList;
             }
-console.log(this.userInfo)
+            console.log(this.userInfo);
 
             this.userInfo.address =
               datas.provinceName +
@@ -769,10 +782,8 @@ console.log(this.userInfo)
   color: #f60;
 }
 
-
 .dialog-img img {
   display: inline-block;
   width: 100%;
-  height: 600px
 }
 </style>

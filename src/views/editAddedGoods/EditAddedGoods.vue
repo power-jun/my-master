@@ -404,7 +404,7 @@ export default {
                       if (specList.length == 1) {
                         this.specificationOneFlag = false;
                         this.specListBtnTwoFlag = false;
-                        this.specificationOneCache = this.specificationOne = specList[0].attrValue.split(
+                        this.specificationOneCache = this.specificationOne = specList[0].attrValue && specList[0].attrValue.split(
                           ","
                         );
                         this.specListSelectVOne = specList[0].attrId;
@@ -421,9 +421,7 @@ export default {
 
                         for (let i = 0; i < specList.length; i++) {
                           if (specList[i].sort == 1) {
-                            this.specificationOneCache = this.specificationOne = specList[
-                              i
-                            ].attrValue.split(",");
+                            this.specificationOneCache = this.specificationOne = specList[i].attrValue && specList[i].attrValue.split(",");
                             this.specListSelectVOne = specList[i].attrId;
                             nameArryOne = [{ prop: specList[i].attrId }];
                             this.specListNameArryOne = [
@@ -433,9 +431,7 @@ export default {
                               }
                             ];
                           } else if (specList[i].sort == 2) {
-                            this.specificationTwoCache = this.specificationTwo = specList[
-                              i
-                            ].attrValue.split(",");
+                            this.specificationTwoCache = this.specificationTwo = specList[i].attrValue && specList[i].attrValue.split(",");
                             this.specListSelectVTwo = specList[i].attrId;
                             nameArryTwo = [{ prop: specList[i].attrId }];
                             this.specListNameArryTwo = [
@@ -1407,9 +1403,9 @@ export default {
             });
             return false;
           }
-          debugger;
-          console.log(this.form, 1111);
 
+          console.log(this.form, 1111);
+debugger
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
               this.$message({
