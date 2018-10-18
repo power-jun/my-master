@@ -49,7 +49,8 @@
         <el-col :span="6"><span>买家下单</span> <span class="titme">{{userInfo.addTime}}</span></el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="6">配送方式：{{userInfo.deliveryTpe}}</el-col>
+        <el-col :span="6" v-if="userInfo.deliveryTpe == '包邮'">配送方式：{{userInfo.deliveryTpe}}</el-col>
+        <el-col :span="6" v-else>配送方式：{{userInfo.deliveryTpe}}  {{userInfo.postage}}元</el-col>
       </el-row>
        <el-row class="order-detail">
         <el-col :span="6">订单总价： {{userInfo.productTotalPrice}}</el-col>
