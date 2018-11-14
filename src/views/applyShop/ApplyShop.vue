@@ -13,8 +13,8 @@
         <el-form-item prop="linkmanMobile" label="联系人手机号:" :rules="[{ required: true, message: '请输入手机号'}, { pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '手机号格式不正确'}]">
           <el-input v-model="form.linkmanMobile"></el-input>
         </el-form-item>
-         <el-form-item prop="linkmanEmail" label="电子邮箱:" :rules="[{ required: true, message: '请输入电子邮箱', trigger: 'blur' },{ type: 'email', message: '请输入正确的电子邮箱'}]">
-          <el-input v-model="form.linkmanEmail"></el-input> 
+        <el-form-item prop="linkmanEmail" label="电子邮箱:" :rules="[{ required: true, message: '请输入电子邮箱', trigger: 'blur' },{ type: 'email', message: '请输入正确的电子邮箱'}]">
+          <el-input v-model="form.linkmanEmail"></el-input>
         </el-form-item>
         <p class="form-line-title">公司信息</p>
         <el-form-item prop="companyName" label="公司名称:" :rules="[{ required: true, message: '请输入公司名称'}, { pattern: '^[\u4e00-\u9fa5A-Za-z]{2,20}$', message: '请输入正确格式公司名称'}]">
@@ -46,7 +46,7 @@
         </el-form-item>
         <el-form-item label="" prop="legalCreditPic2" :rules="[{ required: true, message: '请上传身份证反面'}]">
           <el-row>
-             <el-col :span="20">
+            <el-col :span="20">
               <el-upload action="api/upload" list-type="picture-card" :file-list="legalList2" :on-error="errorFun" :before-upload="card2BeforeUpload" :on-success="card2SuccessFun" :on-remove="card2HandleRemove">
                 <i class="el-icon-plus"></i>
               </el-upload>
@@ -79,22 +79,22 @@
         <el-form-item prop="avgPrice" label="预计评价客单价:" :rules="[{ required: true, message: '请输入预计评价客单价'}]">
           <el-input v-model="form.avgPrice"></el-input>元
         </el-form-item>
-         <el-form-item label="常用快递公司:"  prop="express" :rules="[{ required: true, message: '请选择常用快递公司'}]">
-          <el-select placeholder="请选择快递公司" v-model="form.express"  @change="expressSelect">
-            <el-option v-for="(items, index) in expressArry"  :label="items.name" :value="items.code" :key="index"></el-option>
+        <el-form-item label="常用快递公司:" prop="express" :rules="[{ required: true, message: '请选择常用快递公司'}]">
+          <el-select placeholder="请选择快递公司" v-model="form.express" @change="expressSelect">
+            <el-option v-for="(items, index) in expressArry" :label="items.name" :value="items.code" :key="index"></el-option>
           </el-select>
         </el-form-item>
         <p class="form-line-title">店铺信息</p>
         <el-form-item label="店铺头像:" prop="shopLogoUrl" :rules="[{ required: true, message: '请上传店铺头像'}]">
           <el-upload action="api/upload" list-type="picture-card" :file-list="shopLogoList" :on-error="errorFun" :before-upload="logBeforeUpload" :on-success="logSuccessFun" :on-remove="logHandleRemove">
-              <i class="el-icon-plus"></i>
+            <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-         <el-form-item label="店铺类目"  prop="shopCategoryId" :rules="[{ required: true, message: '请选择店铺类目'}]">
+        <el-form-item label="店铺类目" prop="shopCategoryId" :rules="[{ required: true, message: '请选择店铺类目'}]">
           <el-select placeholder="请选择店铺类目" v-model="form.shopCategoryId" @change="categorySelect">
-            <el-option v-for="(items, index) in shopCategoryArry"  :label="items.name" :value="items.id" :key="index"></el-option>
+            <el-option v-for="(items, index) in shopCategoryArry" :label="items.name" :value="items.id" :key="index"></el-option>
           </el-select>
-         </el-form-item>
+        </el-form-item>
         <el-form-item label="店铺类型" prop="shopType">
           <el-radio-group v-model="form.shopTypeName" @change="shopTypeSelect">
             <el-radio v-for="(items, index) in shopTypeArry" :label="items.name" :value="items.name" :key="index"></el-radio>
@@ -103,39 +103,39 @@
         <el-form-item prop="shopName" label="店铺名称:" :rules="[{ required: true, message: '请输入店铺名称'}]">
           <el-input v-model="form.shopName"></el-input>
         </el-form-item>
-        <el-form-item label="店铺描述:" prop="shopDesc"  :rules="[{ required: true, message: '请输入店铺描述'}]">
+        <el-form-item label="店铺描述:" prop="shopDesc" :rules="[{ required: true, message: '请输入店铺描述'}]">
           <el-input type="textarea" v-model="form.shopDesc" placeholder="至少输入50字，最多200字"></el-input>
         </el-form-item>
         <el-form-item label="所在城市" class="link-select">
           <el-row>
             <el-col :span="7">
-          <el-form-item label=""  prop="province" :rules="[{ required: true, message: '请选择省'}]">
-              <el-select placeholder="请选择省" v-model="form.province" @change="provinceSelect">
-            <el-option v-for="(items, index) in provinceArry"  :label="items.name" :value="items.id" :key="index"></el-option>
-          </el-select>
-          </el-form-item>
-          </el-col>
-           <el-col :span="7">
-          <el-form-item label=""  prop="city" :rules="[{ required: true, message: '请选择城市'}]">
-              <el-select placeholder="请选择城市" v-model="form.city" :disabled="downtownFlag" @change="citySelect">
-            <el-option v-for="(items, index) in downtownArry"  :label="items.name" :value="items.id" :key="index"></el-option>
-          </el-select>
-          </el-form-item>
-          </el-col>
-          <el-col :span="7">
-          <el-form-item label=""  prop="district" :rules="[{ required: true, message: '请选择区域'}]">
-               <el-select placeholder="请选择区域" v-model="form.district" :disabled="areaFlag">
-            <el-option v-for="(items, index) in areaArry"  :label="items.name" :value="items.id" :key="index"></el-option>
-          </el-select>
-          </el-form-item>
-          </el-col>
+              <el-form-item label="" prop="province" :rules="[{ required: true, message: '请选择省'}]">
+                <el-select placeholder="请选择省" v-model="form.province" @change="provinceSelect">
+                  <el-option v-for="(items, index) in provinceArry" :label="items.name" :value="items.id" :key="index"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
+              <el-form-item label="" prop="city" :rules="[{ required: true, message: '请选择城市'}]">
+                <el-select placeholder="请选择城市" v-model="form.city" :disabled="downtownFlag" @change="citySelect">
+                  <el-option v-for="(items, index) in downtownArry" :label="items.name" :value="items.id" :key="index"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
+              <el-form-item label="" prop="district" :rules="[{ required: true, message: '请选择区域'}]">
+                <el-select placeholder="请选择区域" v-model="form.district" :disabled="areaFlag">
+                  <el-option v-for="(items, index) in areaArry" :label="items.name" :value="items.id" :key="index"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form-item>
         <el-form-item>
           <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="onSubmit('form')" class="submit-btn">提交申请</el-button>
         </el-form-item>
       </el-form>
-       <el-row v-else class="under-review">
+      <el-row v-else class="under-review">
         <p v-if="status == 0">已提交审核,请耐心等待.....</p>
         <p v-if="status == 2">店铺已关闭</p>
         <p v-if="status == 1">
@@ -190,7 +190,7 @@ export default {
       legalList2: [],
       applyShopFlag: false,
       applyShopStatus: '',
-      shopCategoryArry:[],
+      shopCategoryArry: [],
       expressArry: [],
       companyTypeArry: [],
       shopTypeArry: [],
@@ -216,44 +216,44 @@ export default {
     // this.getShopDetails();
   },
 
-  mounted: function() {
+  mounted: function () {
     this.loadingFlag = false;
     this.bodyHeight = window.screen.height;
 
-    this.$axios.get('/vendor/shopStatus', {params: {shopId: baseInfo.shop.id}}).then((res) => {
-          baseInfo.shop.status = res.data.data.status;
-          localStorage.setItem('businessUserInfo', JSON.stringify(baseInfo));
-          if(baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
-          if(baseInfo.shop.status == 3) {
-            this.$message({
-                message: '店铺审核不通过，请重新申请！审核意见：'+ baseInfo.shop.remarks +'',
-                type: "warning"
-            });
+    this.$axios.get('/vendor/shopStatus', { params: { shopId: baseInfo.shop.id } }).then((res) => {
+      baseInfo.shop.status = res.data.data.status;
+      localStorage.setItem('businessUserInfo', JSON.stringify(baseInfo));
+      if (baseInfo.shopId && baseInfo.shop && baseInfo.shop.status) {
+        if (baseInfo.shop.status == 3) {
+          this.$message({
+            message: '店铺审核不通过，请重新申请！审核意见：' + baseInfo.shop.remarks + '',
+            type: "warning"
+          });
 
-            this.getShopDetails();
-            this.applyShopFlag = true;
-          } else {  
-            this.applyShopFlag = false;
-          }
-
-          this.status = baseInfo.shop.status;
-        } else {
+          this.getShopDetails();
           this.applyShopFlag = true;
+        } else {
+          this.applyShopFlag = false;
         }
+
+        this.status = baseInfo.shop.status;
+      } else {
+        this.applyShopFlag = true;
+      }
     });
 
     this.initData();
   },
 
   methods: {
-    modify: function() {
+    modify: function () {
       this.applyShopFlag = true;
       this.getShopDetails();
     },
 
-    getShopDetails: function() {
-      this.$axios.get('/vendor/shopDetail',{ params: { shopId: baseInfo.shopId } }).then( data => {
-        if(data.data.code == 1) {
+    getShopDetails: function () {
+      this.$axios.get('/vendor/shopDetail', { params: { shopId: baseInfo.shopId } }).then(data => {
+        if (data.data.code == 1) {
           this.shopDetailsData = data.data.data;
           let datas = data.data.data;
           this.form = datas;
@@ -283,35 +283,35 @@ export default {
       });
     },
 
-  initData: function() {
-    this.$axios.get('/vendor/shopCategoryList', { params: { type: "company_type" } }).then( data => {
-      if(data.data.code == 1) {
-        this.shopCategoryArry = data.data.data;
-      }
-    });
-
-    this.$axios
-      .get("/getDictList", { params: { type: "company_type" } })
-      .then(data => {
-        if (data.data.code === 1) {
-          this.companyTypeArry = data.data.data;
+    initData: function () {
+      this.$axios.get('/vendor/shopCategoryList', { params: { type: "company_type" } }).then(data => {
+        if (data.data.code == 1) {
+          this.shopCategoryArry = data.data.data;
         }
-
-        this.$axios
-          .get("/getDictList", { params: { type: "shop_type" } })
-          .then(data => {
-            if (data.data.code == 1) {
-              this.shopTypeArry = data.data.data;
-              this.$axios
-                .get("/getDictList", { params: { type: "express_company" } })
-                .then(data => {
-                  if (data.data.code == 1) {
-                    this.expressArry = data.data.data;
-                  }
-                });
-            }
-          });
       });
+
+      this.$axios
+        .get("/getDictList", { params: { type: "company_type" } })
+        .then(data => {
+          if (data.data.code === 1) {
+            this.companyTypeArry = data.data.data;
+          }
+
+          this.$axios
+            .get("/getDictList", { params: { type: "shop_type" } })
+            .then(data => {
+              if (data.data.code == 1) {
+                this.shopTypeArry = data.data.data;
+                this.$axios
+                  .get("/getDictList", { params: { type: "express_company" } })
+                  .then(data => {
+                    if (data.data.code == 1) {
+                      this.expressArry = data.data.data;
+                    }
+                  });
+              }
+            });
+        });
 
       this.$axios.get("/getRegionList", { params: { pid: "" } }).then(data => {
         if (data.data.code === 1) {
@@ -320,11 +320,11 @@ export default {
       });
     },
 
-    companySelect(val){
+    companySelect(val) {
       this.form.companyType = val;
     },
 
-    expressSelect(val){
+    expressSelect(val) {
       this.form.express = val;
     },
 
@@ -333,7 +333,7 @@ export default {
     },
 
     shopTypeSelect(val) {
-     let selectItems = this.shopTypeArry.filter(function(item){
+      let selectItems = this.shopTypeArry.filter(function (item) {
         return item.name == val
       });
 
@@ -343,19 +343,19 @@ export default {
 
     onSubmit(formName) {
       this.fullscreenLoading = true;
-      let reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
-      if(reg.test(this.form.city)) {
+      let reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+      if (reg.test(this.form.city)) {
         this.form.city = this.cacheCityId;
       }
 
-      if(reg.test(this.form.district)) {
+      if (reg.test(this.form.district)) {
         this.form.district = this.cacheDistrictId;
       }
 
       this.$refs[formName].validate(valid => {
         var params = this.form;
-        
-        if(this.shopDetailsData) {
+
+        if (this.shopDetailsData) {
           params.shopId = baseInfo.shopId;
         }
 
@@ -367,10 +367,10 @@ export default {
                 type: "success"
               });
               this.applyShopFlag = false;
-              if(data.data.data.status){
+              if (data.data.data.status) {
                 this.status = data.data.data.status;
                 baseInfo.shop.status = data.data.data.status;
-                
+
                 localStorage.setItem('businessUserInfo', JSON.stringify(baseInfo));
               }
               // this.$router.push("/businessInformation");
@@ -405,7 +405,7 @@ export default {
 
     provinceSelect(val) {
       this.getLinkCity(val, "city");
-      this.downtownArry =  [];
+      this.downtownArry = [];
       this.areaArry = [];
       this.form.district = '';
       this.form.city = '';
@@ -437,7 +437,7 @@ export default {
       if (!imgSizeFlag) {
         this.$message.error("上传图片大小不能超过 2MB!");
       }
-      
+
       if (this.form.shopLogoUrl) {
         this.$message.error("最多只能上传一张图");
         imgNumbFlag = false;
@@ -494,7 +494,7 @@ export default {
       this.form.picUrl = file.response.data.url;
     },
 
-    errorFun(file, fileList) {},
+    errorFun(file, fileList) { },
 
     cardHandleRemove(file, fileList) {
       this.form.legalCred = "";
@@ -516,7 +516,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../assets/css/mixin";
+@import '../../assets/css/mixin';
 .editor-form {
   width: 100%;
   height: 100%;
@@ -579,7 +579,7 @@ export default {
 }
 
 .el-form-item__label:before {
-  content: "*";
+  content: '*';
   color: #f56c6c;
   margin-right: 4px;
 }

@@ -5,14 +5,16 @@
         <span>登录</span>
       </el-row>
       <el-form-item prop="mobile" :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' },{ pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入格式正确的手机号', trigger: 'blur' }]">
-        <el-input v-model="loginForm.mobile"  placeholder="请输入手机号"></el-input>
+        <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
       </el-form-item>
       <el-form-item prop="password" :rules="[{ required: true, message: '请输入密码', trigger: 'blur'}, { pattern:/^[A-Za-z0-9]{6,20}$/, message: '6-20位字母数字组合', trigger: 'blur'}]">
-        <el-input v-model="loginForm.password" @keyup.enter.native="submitForm('loginForm')"  placeholder="密码" type="password"></el-input>
+        <el-input v-model="loginForm.password" @keyup.enter.native="submitForm('loginForm')" placeholder="密码" type="password"></el-input>
       </el-form-item>
-       <el-form-item prop="code" v-if="codeFlag" :inline="true" class="login-code-line" :rules="[{ required: codeFlag, message: '请输入验证码', trigger: 'blur' }]">
-         <el-col :span="18"><el-input @keyup.enter.native="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading" v-model="loginForm.code" placeholder="请输入验证码"></el-input></el-col>
-         <el-col :span="6" class="code-img"><img :src="codeImgSrc" @click="getCodeImg()" alt=""/></el-col>
+      <el-form-item prop="code" v-if="codeFlag" :inline="true" class="login-code-line" :rules="[{ required: codeFlag, message: '请输入验证码', trigger: 'blur' }]">
+        <el-col :span="18">
+          <el-input @keyup.enter.native="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading" v-model="loginForm.code" placeholder="请输入验证码"></el-input>
+        </el-col>
+        <el-col :span="6" class="code-img"><img :src="codeImgSrc" @click="getCodeImg()" alt="" /></el-col>
       </el-form-item>
       <el-form-item class="login-center login-btn">
         <el-button type="primary" @click="submitForm('loginForm')" v-loading.fullscreen.lock="fullscreenLoading">登录</el-button>
@@ -48,7 +50,7 @@ export default {
     };
   },
 
-  mounted: function() {
+  mounted: function () {
     this.getCodeImg();
     this.loadAccountInfo();
     // var businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
@@ -58,7 +60,7 @@ export default {
   },
 
   methods: {
-    loadAccountInfo: function() {
+    loadAccountInfo: function () {
       let accountInfo = utils.getCookie("accountInfo");
 
       //如果cookie里没有账号信息
@@ -83,7 +85,7 @@ export default {
       }
     },
 
-    rememberPassChange: function(e) {
+    rememberPassChange: function (e) {
       this.rememberPass = e;
     },
 
@@ -91,9 +93,9 @@ export default {
       let _this = this;
       this.fullscreenLoading = true;
       localStorage.setItem("businessUserInfo", "");
-
       this.$refs[formName].validate(valid => {
         if (valid) {
+          debugger;
           this.$axios
             .post("/vendor/login", {
               mobile: this.loginForm.mobile,
@@ -103,7 +105,7 @@ export default {
             .then(data => {
               if (data.data.code == 1) {
                 let rememberStatus = this.rememberPass;
-                 let accountInfo = this.loginForm.mobile + "&" + this.loginForm.password;
+                let accountInfo = this.loginForm.mobile + "&" + this.loginForm.password;
                 if (rememberStatus) {
                   console.log("勾选了记住密码，现在开始写入cookie");
                   utils.setCookie("accountInfo", accountInfo, 1440 * 3);
@@ -113,7 +115,7 @@ export default {
                 }
 
                 localStorage.setItem("businessUserInfo", JSON.stringify(data.data.data));
-                
+
                 let datas = data.data.data;
                 let shopId = datas.shopId;
                 let status = datas.shop && datas.shop.status;
@@ -166,7 +168,7 @@ export default {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: url("../../assets/images/login_bg_color.jpg");
+  background: url('../../assets/images/login_bg_color.jpg');
 }
 
 .form-box {
