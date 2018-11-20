@@ -1403,9 +1403,8 @@ export default {
             });
             return false;
           }
-
+debugger;
           console.log(this.form, 1111);
-debugger
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
               this.$message({

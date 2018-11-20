@@ -23,7 +23,7 @@
           <el-button @click="onSubmit" style="margin-left: 8px">导出</el-button>
         </el-form-item> -->
       </el-form>
-      <el-table :data="tableData3"  v-loading="tabLoadingFlag" border style="width: 100%;text-align: center">
+      <el-table :data="tableData3"  v-loading="tabLoadingFlag" border height="620" style="width: 100%;text-align: center">
         <el-table-column
           prop="memberName"
           label="用户昵称"
