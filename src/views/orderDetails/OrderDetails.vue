@@ -306,7 +306,7 @@
 
       <div class="order-address" v-if="userInfo.refundInfo && userInfo.refundInfo.refundPaid">
         <el-row class="order-detail detail-header">
-          <el-col :span="6"><span>退款情况</span><span class="titme">{{userInfo.refundInfo.addTime}}</span></el-col>
+          <el-col :span="6"><span>退款情况</span><span class="titme">{{userInfo.refundInfo.finishTime}}</span></el-col>
         </el-row>
         <el-row class="order-detail">
           <el-col :span="20">退款金额：{{userInfo.refundInfo.refundPaid}} 元</el-col>
