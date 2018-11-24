@@ -203,24 +203,24 @@
         </el-row>
       </div>
 
-      <div class="order-address" v-if="(userInfo.refundInfo && userInfo.refundInfo.deliveryNo) || userInfo.status == 16">
-        <div v-if="userInfo.refundInfo && userInfo.refundInfo.deliveryNo">
+      <div class="order-address" v-if="(userInfo.backExpressRefundInfo && userInfo.backExpressRefundInfo.deliveryNo) || userInfo.status == 16">
+        <div v-if="userInfo.backExpressRefundInfo && userInfo.backExpressRefundInfo.deliveryNo">
           <el-row class="order-detail detail-header">
-            <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.refundInfo.addTime}}</span></el-col>
+            <el-col :span="6"><span>已寄回件</span><span class="titme">{{userInfo.backExpressRefundInfo.addTime}}</span></el-col>
           </el-row>
           <el-row class="order-detail" v-if="userInfo.status == 16">
             <el-col :span="20"><span style="color: #f00">请核对订单信息，点击"确认退款"后，货款将原路退回。如须客户退回货物，请确认已收到回件并检查无误。</span></el-col>
           </el-row>
 
           <el-row class="order-detail" v-if="userInfo.status == 16">
-            <el-col :span="20">退款金额：{{userInfo.refundInfo.refundPayable}}</el-col>
+            <el-col :span="20">退款金额：{{userInfo.backExpressRefundInfo.refundPayable}}</el-col>
           </el-row>
 
           <el-row class="order-detail">
-            <el-col :span="20">快递公司：{{userInfo.refundInfo.deliveryName}}</el-col>
+            <el-col :span="20">快递公司：{{userInfo.backExpressRefundInfo.deliveryName}}</el-col>
           </el-row>
           <el-row class="order-detail">
-            <el-col :span="20">快递单号：{{userInfo.refundInfo.deliveryNo}}</el-col>
+            <el-col :span="20">快递单号：{{userInfo.backExpressRefundInfo.deliveryNo}}</el-col>
           </el-row>
           <el-row class="order-detail" v-if="userInfo.status == 16">
             <el-col :span="20" class="input-form">审核意见: <el-input v-model="goodsOpinion" auto-complete="off"></el-input>
