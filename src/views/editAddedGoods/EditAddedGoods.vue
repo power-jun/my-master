@@ -17,10 +17,10 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="库存量:" prop="stock" :rules="[{ required: true, message: '请输入库存量'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位整数'}]">
-          <el-input  v-model="form.stock"></el-input>
+          <el-input v-model="form.stock"></el-input>
         </el-form-item>
         <el-form-item label="单账号限购数量:" prop="limitNum" :rules="[{ required: true, message: '请输入单账号限购数量'}, { pattern: /^\d{1,20}$/, message: '只能输入1-20位整数'}]">
-          <el-input v-model="form.limitNum"></el-input> 
+          <el-input v-model="form.limitNum"></el-input>
         </el-form-item>
         <el-form-item label="成本:" prop="primeCost" :rules="[{ required: true, message: '请输入成本'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.primeCost"></el-input>
@@ -30,7 +30,7 @@
         </el-form-item>
         <el-form-item label="优惠方式:" :rules="[{ required: true, message: '请选择优惠方式'}]">
           <el-radio-group v-model="form.discountType" @change="discountTypeChange">
-            <el-radio label="0" >不参与</el-radio>
+            <el-radio label="0">不参与</el-radio>
             <el-radio label="1">平台通用优惠</el-radio>
             <el-radio label="2">店铺专属优惠</el-radio>
           </el-radio-group>
@@ -38,9 +38,9 @@
         <el-form-item label="最大优惠金额:" prop="maxDiscount" :rules="[{ required: true, message: '请输入最大优惠金额'}, { pattern: /^\d+(?:\.\d{1,2})?$/, message: '只能数字或者带有小数点后两位的数字'}]">
           <el-input v-model="form.maxDiscount"></el-input>
         </el-form-item>
-         <el-form-item label="是否限时购买:">
+        <el-form-item label="是否限时购买:">
           <el-radio-group v-model="form.limitBuy" @change="limitTimer">
-            <el-radio label="1" >是</el-radio>
+            <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -49,18 +49,21 @@
         </el-form-item>
         <el-form-item label="限时购买时间:" v-show="limitTimerFlag">
           <el-col :span="20">
-            <el-date-picker v-model="limitProduct.limitdate"  type="datetimerange" align="right" unlink-panels range-separator="至" :start-placeholder="limitProduct.startPlaceholder" :end-placeholder="limitProduct.endPlaceholder"></el-date-picker>
+            <el-date-picker v-model="limitProduct.limitdate" type="datetimerange" align="right" unlink-panels range-separator="至" :start-placeholder="limitProduct.startPlaceholder" :end-placeholder="limitProduct.endPlaceholder"></el-date-picker>
           </el-col>
         </el-form-item>
         <el-form-item label="邮费:" prop="isBaoyou">
-         <el-select v-model="form.isBaoyou" clearable placeholder="请选择邮费" @change="postageSelect">
-          <el-option label="包邮" value="1"></el-option>
-          <el-option label="不包邮" value="0"></el-option>
-         </el-select>
-         <el-row v-show="postageFlag" prop="postageRadio" class="el-form-item is-required">
-           <el-col class="el-form-item__label" :span="12" style="width: auto">快递费 <el-input v-model="postagePrice.postage" class="full-reduction"></el-input></el-col>
-           <el-col :span="8"><el-checkbox v-model="postagePrice.amtChecked">满<el-input :disabled="!postagePrice.amtChecked" v-model="postagePrice.baoyouAmt" class="full-reduction"></el-input>元免邮</el-checkbox></el-col>
-         </el-row>
+          <el-select v-model="form.isBaoyou" clearable placeholder="请选择邮费" @change="postageSelect">
+            <el-option label="包邮" value="1"></el-option>
+            <el-option label="不包邮" value="0"></el-option>
+          </el-select>
+          <el-row v-show="postageFlag" prop="postageRadio" class="el-form-item is-required">
+            <el-col class="el-form-item__label" :span="12" style="width: auto">快递费 <el-input v-model="postagePrice.postage" class="full-reduction"></el-input>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="postagePrice.amtChecked">满<el-input :disabled="!postagePrice.amtChecked" v-model="postagePrice.baoyouAmt" class="full-reduction"></el-input>元免邮</el-checkbox>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="商品分类:" prop="type" :rules="[{ required: true, message: '请选择商品分类'}]">
           <el-select @change="productChange" clearable v-model="form.type" placeholder="请选择商品分类">
@@ -74,21 +77,8 @@
             </el-select>
             <el-button type="primary" v-show="!specListBtnTwoFlag" @click="specListTwoShowFn">添加规格项目</el-button>
             <el-row class="specification-list">
-              <el-select
-                v-model="specificationOne"
-                filterable
-                allow-create
-                default-first-option
-                multiple
-                placeholder="请输入规格值并按回车确定"
-                size=40
-                :disabled="specificationOneFlag"
-                @change="specificationChangeOne">
-                <el-option
-                  v-for="(item, index) in specificationArry"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value">
+              <el-select v-model="specificationOne" filterable allow-create default-first-option multiple placeholder="请输入规格值并按回车确定" size=40 :disabled="specificationOneFlag" @change="specificationChangeOne">
+                <el-option v-for="(item, index) in specificationArry" :key="index" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-row>
@@ -98,56 +88,31 @@
               <el-option v-for="(item, index) in productTypeAttr" :label="item.name" :value="item.id" :key="index"></el-option>
             </el-select>
             <el-row class="specification-list">
-              <el-select
-                v-model="specificationTwo"
-                filterable
-                allow-create
-                multiple
-                default-first-option
-                placeholder="请选择规格值"
-                size=40
-                :disabled="specificationTwoFlag"
-                @change="specificationChangeTwo">
-                <el-option
-                  v-for="(item, index) in specificationArry"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value">
+              <el-select v-model="specificationTwo" filterable allow-create multiple default-first-option placeholder="请选择规格值" size=40 :disabled="specificationTwoFlag" @change="specificationChangeTwo">
+                <el-option v-for="(item, index) in specificationArry" :key="index" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-row>
           </div>
-          <el-table
-            v-show="specificationTabFlag"
-            :data="specificationsTabData"
-            :span-method="objectSpanMethod"
-            border
-            style="width: 100%;margin: 10px 0;">
-            <el-table-column 
-            v-for="(item, index) in specificationsTabHead" :key="index"
-             :prop="item.prop" :label="item.name" align="center">
+          <el-table v-show="specificationTabFlag" :data="specificationsTabData" :span-method="objectSpanMethod" border style="width: 100%;margin: 10px 0;">
+            <el-table-column v-for="(item, index) in specificationsTabHead" :key="index" :prop="item.prop" :label="item.name" align="center">
               <template slot-scope="scope">
-                <input v-if="item.prop == 'originalPrice'" type="number" v-model="inputValArry[scope.$index].originalPrice" class="specifications-input"/>
-                <input v-else-if="item.prop == 'stock'" type="number" v-model="inputValArry[scope.$index].stock" class="specifications-input"/>
-                <input v-else-if="item.prop == 'specCode'" v-model="inputValArry[scope.$index].specCode" class="specifications-input"/>
-                <input v-else-if="item.prop == 'primeCost'" type="number" v-model="inputValArry[scope.$index].primeCost" class="specifications-input"/>
+                <input v-if="item.prop == 'originalPrice'" type="number" v-model="inputValArry[scope.$index].originalPrice" class="specifications-input" />
+                <input v-else-if="item.prop == 'stock'" type="number" v-model="inputValArry[scope.$index].stock" class="specifications-input" />
+                <input v-else-if="item.prop == 'specCode'" v-model="inputValArry[scope.$index].specCode" class="specifications-input" />
+                <input v-else-if="item.prop == 'primeCost'" type="number" v-model="inputValArry[scope.$index].primeCost" class="specifications-input" />
                 <p v-else>{{scope.row[item.prop]}}</p>
               </template>
-             </el-table-column>
+            </el-table-column>
           </el-table>
         </el-form-item>
-        <el-form-item prop="productDesc" style="width: 800px;height: 700px" label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: '请输入商品描述'}]">
-           <div v-loading="imageLoading" element-loading-text="请稍等，图片上传中">
-            <quill-editor v-model="form.productDesc"
-                            ref="QuillEditor"
-                            :options="editorOption"
-                            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                            @change="onEditorChange($event)"
-                            @ready="onEditorReady($event)" style="width: 800px;height: 600px">
-              </quill-editor>
-              <el-upload action="api/upload" id="uploadFormMulti" v-show="false" class="upload-el-quill" list-type="picture-card" :before-upload="beforeQuillUpload" :on-error="errorFun" :on-success="successQuillFun">
-                <i class="el-icon-plus"></i>
-              </el-upload>
+        <el-form-item prop="productDesc" style="width: 800px;height: 600px" label="商品描述:" class="required goods-describe" :rules="[{ required: true, message: '请输入商品描述'}]">
+          <div v-loading="imageLoading" element-loading-text="请稍等，图片上传中">
+            <quill-editor v-model="form.productDesc" ref="QuillEditor" :options="editorOption" @blur="onEditorBlur($event)" @focus="onEditorFocus($event)" @change="onEditorChange($event)" @ready="onEditorReady($event)" style="width: 800px;height: 500px">
+            </quill-editor>
+            <el-upload action="api/upload" id="uploadFormMulti" v-show="false" class="upload-el-quill" list-type="picture-card" :before-upload="beforeQuillUpload" :on-error="errorFun" :on-success="successQuillFun">
+              <i class="el-icon-plus"></i>
+            </el-upload>
           </div>
         </el-form-item>
         <el-form-item>
@@ -293,7 +258,7 @@ export default {
             [{ align: [] }],
             ["clean"],
             ["link", "image"]
-          ]
+          ],
         }
       },
       dialogImageUrl: "",
@@ -337,7 +302,7 @@ export default {
         .then(data => {
           if (data.data.code == 1) {
             this.form = data.data.data;
-            
+
             if (data.data.data.status == 4) {
               this.remarks = data.data.data.remarks;
             } else {
@@ -471,7 +436,7 @@ export default {
                         // }
 
                         for (let i = 0; i < specList.length; i++) {
-                          let currentItem = saleAttrList.filter(function(v, n) {
+                          let currentItem = saleAttrList.filter(function (v, n) {
                             return v.id === specList[i].attrId;
                           });
 
@@ -544,7 +509,7 @@ export default {
     }
   },
 
-  mounted: function() {
+  mounted: function () {
     this.loadingFlag = false;
     this.$refs.QuillEditor.quill
       .getModule("toolbar")
@@ -617,7 +582,7 @@ export default {
       }
     },
 
-    discountTypeChange(value) {},
+    discountTypeChange(value) { },
 
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex == 0) {
@@ -665,16 +630,16 @@ export default {
     },
 
     specificationChangeOne(value, a) {
-       var flag = true;
+      var flag = true;
       var valueArry = [];
-      value.forEach(function(item) {
-        if(!item.replace(/\s/g, '')) {
+      value.forEach(function (item) {
+        if (!item.replace(/\s/g, '')) {
           flag = false;
         } else {
           valueArry.push(item);
         }
       });
-      
+
       this.specificationOne = valueArry;
 
       if (value.length) {
@@ -699,7 +664,7 @@ export default {
         }
 
         for (let i = 0; i < stockList.length; i++) {
-          let currentFilter = stockList[i].attrList.filter(function(item) {
+          let currentFilter = stockList[i].attrList.filter(function (item) {
             return item.attrValue == currentDiffVal;
           });
 
@@ -733,14 +698,14 @@ export default {
     },
 
     difference(a, b) {
-      return a.concat(b).filter(function(v) {
+      return a.concat(b).filter(function (v) {
         return a.indexOf(v) === -1 || b.indexOf(v) === -1;
       });
     },
 
     valDiff(val1, val2) {
       if (val1) {
-        return val1.filter(function(item) {
+        return val1.filter(function (item) {
           return val2.indexOf(item) < 0;
         });
       } else {
@@ -752,15 +717,15 @@ export default {
       // this.inputValArry = [];
       var flag = true;
       var valueArry = [];
-      value.forEach(function(item) {
-        if(!item.replace(/\s/g, '')) {
+      value.forEach(function (item) {
+        if (!item.replace(/\s/g, '')) {
           flag = false;
         } else {
           valueArry.push(item);
         }
       });
-    
-     this.specificationTwo = valueArry;
+
+      this.specificationTwo = valueArry;
 
       let currentDiffVal = "";
       let stockList = this.form.stockList;
@@ -777,7 +742,7 @@ export default {
         }
 
         for (let i = 0; i < stockList.length; i++) {
-          let currentFilter = stockList[i].attrList.filter(function(item) {
+          let currentFilter = stockList[i].attrList.filter(function (item) {
             return item.attrValue == currentDiffVal;
           });
 
@@ -805,7 +770,7 @@ export default {
       } else {
         this.inputValArry = [];
       }
-      
+
       this.specificationChangePublic(valueArry, "two");
       this.specificationTwoCache = valueArry;
     },
@@ -1403,7 +1368,7 @@ export default {
             });
             return false;
           }
-debugger;
+
           console.log(this.form, 1111);
           this.$axios.post("/vendor/addPorduct", this.form).then(data => {
             if (data.data.code == 1) {
@@ -1449,7 +1414,7 @@ debugger;
     handleExceed(files, fileList) {
       this.$message.warning(
         `当前限制选择 5 张图，本次选择了 ${
-          files.length
+        files.length
         } 张图，共选择了 ${files.length + fileList.length} 张图`
       );
     },
@@ -1468,15 +1433,14 @@ debugger;
           imgArr.push(fileList[i].url);
         }
       }
-      debugger;
       this.form.picUrl = imgArr.join(",");
     },
 
-    errorFun(file, fileList) {},
+    errorFun(file, fileList) { },
 
     handleRemove(file, fileList) {
       let picUrlArry = [];
-      for(var i=0;i<fileList.length;i++) {
+      for (var i = 0; i < fileList.length; i++) {
         picUrlArry.push(fileList[i].url);
       }
 
@@ -1505,15 +1469,15 @@ debugger;
       this.form.productDesc = html;
       this.productDescText = text;
     },
-    onEditorFocus() {},
-    onEditorReady() {},
-    onEditorBlur() {}
+    onEditorFocus() { },
+    onEditorReady() { },
+    onEditorBlur() { }
   }
 };
 </script>
 
 <style lang="scss">
-@import "../../assets/css/mixin";
+@import '../../assets/css/mixin';
 .editor-form {
   width: 100%;
   height: 100%;
@@ -1632,7 +1596,7 @@ debugger;
 }
 
 .shop-classification .el-form-item__label:before {
-  content: "";
+  content: '';
   display: none;
 }
 </style>

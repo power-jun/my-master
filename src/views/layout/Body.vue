@@ -15,23 +15,23 @@
               <el-submenu v-for="nav in navs" :index="nav.title" :key="nav.title" :class="nav.titleClass">
                 <template slot="title">{{nav.title}}</template>
                 <el-menu-item v-for="subnav in nav.subnavs" :index="subnav.router" :key="subnav.title">
-                <i class="icon-menu"></i>{{subnav.title}}
-              </el-menu-item>
-            </el-submenu>
-          </el-menu>
+                  <i class="icon-menu"></i>{{subnav.title}}
+                </el-menu-item>
+              </el-submenu>
+            </el-menu>
           </div>
         </div>
-    </el-col>
-    <el-col :span="20" class="content-right">
-      <Header :parent-data="bodyHeight" user-name="xjchen" v-on:childMsg = "getChildMsg">
-        <h3 slot="title" class="fl">{{name}}</h3>
-      </Header>
-      <div class="grid-content bg-purple-light" :style="{maxHeight: bodyHeight + 'px'}">
-        <transition name="router-fade" mode="out-in">
-    	  	<router-view></router-view>
-      	</transition>
-      </div>
-    </el-col>
+      </el-col>
+      <el-col :span="20" class="content-right">
+        <Header :parent-data="bodyHeight" user-name="xjchen" v-on:childMsg="getChildMsg">
+          <h3 slot="title" class="fl">{{name}}</h3>
+        </Header>
+        <div class="grid-content bg-purple-light" :style="{maxHeight: bodyHeight + 'px'}">
+          <transition name="router-fade" mode="out-in">
+            <router-view></router-view>
+          </transition>
+        </div>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -41,80 +41,80 @@ import Header from "./Header";
 let tabNavs = [];
 let businessUserInfo = {};
 
-  tabNavs = [
-    {
-      title: "开店申请",
-      titleClass: 'apply-shop',
-      subnavs: [
-        {
-          title: "商家入驻申请",
-          router: "/applyShop"
-        }
-      ]
-    },
-    {
-      title: "商品管理",
-      titleClass: 'no-apply-shop',
-      subnavs: [
-        {
-          title: "商品管理",
-          router: "/commodityManage"
-        }
-      ]
-    },
-    {
-      title: "订单管理",
-      titleClass: 'no-apply-shop',
-      subnavs: [
-        {
-          title: "订单列表",
-          router: "/OrderList"
-        }
-      ]
-    },
-    {
-      title: "营销管理",
-      titleClass: 'no-apply-shop',
-      subnavs: [
-        {
-          title: "首推产品设置",
-          router: "/devaluationProducts"
-        }
-      ]
-    },
-    {
-      title: "财务管理",
-      titleClass: 'no-apply-shop',
-      subnavs: [
-        {
-          title: "财务概览",
-          router: "/financialOverview"
-        },
-        {
-          title: "提现管理",
-          router: "/cashManagement"
-        }
-      ]
-    },
-    {
-      title: "销售统计",
-      titleClass: 'no-apply-shop',
-      subnavs: [
-        {
-          title: "销售额统计",
-          router: "/salesStatistics"
-        },
-        {
-          title: "订单统计",
-          router: "/orderStatistics"
-        },
-        {
-          title: "利润统计",
-          router: "/profitStatistics"
-        }
-      ]
-    }
-  ];
+tabNavs = [
+  {
+    title: "开店申请",
+    titleClass: 'apply-shop',
+    subnavs: [
+      {
+        title: "商家入驻申请",
+        router: "/applyShop"
+      }
+    ]
+  },
+  {
+    title: "商品管理",
+    titleClass: 'no-apply-shop',
+    subnavs: [
+      {
+        title: "商品管理",
+        router: "/commodityManage"
+      }
+    ]
+  },
+  {
+    title: "订单管理",
+    titleClass: 'no-apply-shop',
+    subnavs: [
+      {
+        title: "订单列表",
+        router: "/OrderList"
+      }
+    ]
+  },
+  {
+    title: "营销管理",
+    titleClass: 'no-apply-shop',
+    subnavs: [
+      {
+        title: "首推产品设置",
+        router: "/devaluationProducts"
+      }
+    ]
+  },
+  {
+    title: "财务管理",
+    titleClass: 'no-apply-shop',
+    subnavs: [
+      {
+        title: "财务概览",
+        router: "/financialOverview"
+      },
+      {
+        title: "提现管理",
+        router: "/cashManagement"
+      }
+    ]
+  },
+  {
+    title: "销售统计",
+    titleClass: 'no-apply-shop',
+    subnavs: [
+      {
+        title: "销售额统计",
+        router: "/salesStatistics"
+      },
+      {
+        title: "订单统计",
+        router: "/orderStatistics"
+      },
+      {
+        title: "利润统计",
+        router: "/profitStatistics"
+      }
+    ]
+  }
+];
 
 export default {
   data() {
@@ -135,13 +135,13 @@ export default {
     Header
   },
 
-  created: function() {
-    this.bodyHeight = window.screen.height - 200;
+  created: function () {
+    this.bodyHeight = window.innerHeight;
   },
 
   mounted() {
-   businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
-   this.getInfo();
+    businessUserInfo = (localStorage.getItem("businessUserInfo") && JSON.parse(localStorage.getItem("businessUserInfo"))) || {};
+    this.getInfo();
   },
 
   methods: {
@@ -170,7 +170,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../assets/css/mixin";
+@import '../../assets/css/mixin';
 // 路由动画
 .router-fade-enter-active,
 .router-fade-leave-active {
@@ -199,7 +199,7 @@ export default {
   .grid-content {
     overflow-y: auto;
     margin-left: 25px;
-    margin-right: 25px;
+    margin-right: 10px;
     margin-top: 20px;
   }
 }

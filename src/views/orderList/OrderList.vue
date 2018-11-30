@@ -1,6 +1,6 @@
 <template>
- <div>
-   <div v-show="!loadingFlag">
+  <div>
+    <div v-show="!loadingFlag">
       <el-form :inline="true" :model="formSearch" class="demo-form-inline">
         <el-form-item>
           <el-input v-model="formSearch.orderNo" placeholder="订单编号"></el-input>
@@ -17,52 +17,32 @@
           </el-col>
         </el-form-item>
         <el-form-item style="margin-left: -20px;">
-          <el-button  type="primary" @click="onSubmit('formSearch')">查询</el-button>
+          <el-button type="primary" @click="onSubmit('formSearch')">查询</el-button>
         </el-form-item>
         <!-- <el-form-item>
           <el-button @click="onSubmit" style="margin-left: 8px">导出</el-button>
         </el-form-item> -->
       </el-form>
-      <el-table :data="tableData3"  v-loading="tabLoadingFlag" border height="620" style="width: 100%;text-align: center">
-        <el-table-column
-          prop="memberName"
-          label="用户昵称"
-          width="180" align="center">
+      <el-table :data="tableData3" v-loading="tabLoadingFlag" border style="width: 100%;text-align: center;">
+        <el-table-column prop="memberName" label="用户昵称" width="100" align="center">
         </el-table-column>
-        <el-table-column
-          prop="orderNo"
-          label="订单编号"
-          width="180" align="center">
+        <el-table-column prop="orderNo" label="订单编号" width="120" align="center">
         </el-table-column>
-        <el-table-column
-          prop="productName"
-          label="商品名称" align="center">
+        <el-table-column prop="productName" label="商品名称" width="240" align="center">
         </el-table-column>
-        <el-table-column
-          prop="addTime"
-          label="下单时间" align="center">
+        <el-table-column prop="addTime" label="下单时间" align="center">
         </el-table-column>
-        <el-table-column
-          prop="statusName"
-          label="订单状态" align="center">
+        <el-table-column prop="statusName" label="订单状态" align="center">
         </el-table-column>
-        <el-table-column
-          prop="amountPayable"
-          label="订单金额" align="center">
+        <el-table-column prop="amountPayable" label="订单金额" width="60" align="center">
         </el-table-column>
-        <el-table-column
-          prop="payTypeName"
-          label="付款方式" align="center">
+        <el-table-column prop="payTypeName" label="付款方式" width="60" align="center">
         </el-table-column>
-        <el-table-column
-          prop="couponReducePrice"
-          label="红包使用情况" align="center">
+        <el-table-column prop="couponReducePrice" label="红包使用情况" align="center">
         </el-table-column>
-        <el-table-column
-          label="操作"
-          width="260" align="center">
+        <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
-            <el-button size="mini"  @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+            <el-button size="mini" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
             <el-button size="mini" v-if="scope.row.status == 1" type="primary" @click="handleDetail(scope.$index, scope.row)">发货</el-button>
             <el-button size="mini" v-else-if="(scope.row.status == 6 || scope.row.status == 10)" type="primary" @click="handleDetail(scope.$index, scope.row)">退款审核</el-button>
             <el-button size="mini" v-else-if="(scope.row.status == 16)" type="primary" @click="handleDetail(scope.$index, scope.row)">确认退款</el-button>
@@ -71,25 +51,19 @@
         </el-table-column>
       </el-table>
       <div class="pagination-cont">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[10, 30, 50, 100]"
-          :page-size="10"
-          layout="total,sizes, prev, pager, next, jumper"
-          :total="total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[10, 30, 50, 100]" :page-size="10" layout="total,sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </div>
     </div>
     <el-dialog title="发货" class="" width="30%" :center="true" :visible.sync="dialogVisibleShop">
-      <el-form :model="shopForm"  label-width="100px">
+      <el-form :model="shopForm" label-width="100px">
         <el-form-item label="订单编号:">
           <el-input v-model="shopForm.orderNo" auto-complete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="收货人姓名:">
           <el-input v-model="shopForm.memberName" auto-complete="off" disabled></el-input>
         </el-form-item>
-         <el-form-item label="收货人电话:">
+        <el-form-item label="收货人电话:">
           <el-input v-model="shopForm.phone" auto-complete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="收货人地址:">
@@ -114,17 +88,17 @@
     </el-dialog>
 
     <el-dialog title="确认退款" class="" width="30%" :center="true" :visible.sync="dialogVisibleConfirm">
-      <el-form :model="confirmForm"  label-width="100px">
+      <el-form :model="confirmForm" label-width="100px">
         <el-form-item label="订单编号:">
           <el-input v-model="confirmForm.orderNo" auto-complete="off" disabled></el-input>
         </el-form-item>
-         <el-form-item label="退货快递公司:">
+        <el-form-item label="退货快递公司:">
           <el-input v-model="confirmForm.deliveryName" auto-complete="off" disabled></el-input>
         </el-form-item>
-         <el-form-item label="退货快递单号:">
+        <el-form-item label="退货快递单号:">
           <el-input v-model="confirmForm.deliveryNo" auto-complete="off" disabled></el-input>
         </el-form-item>
-         <el-form-item label="退款备注:">
+        <el-form-item label="退款备注:">
           <el-input v-model="confirmForm.shopRemark" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -154,8 +128,8 @@
         <el-col :span="20">退单原因: {{lookRefundInfo.returnReasonIdName}}</el-col>
       </el-row>
       <el-row class="order-detail">
-        <el-col :span="20">退款图片: 
-          <p class="refun-img" v-for="(item,index) in lookRefundInfo.picUrl" :index="index" :key="index" >
+        <el-col :span="20">退款图片:
+          <p class="refun-img" v-for="(item,index) in lookRefundInfo.picUrl" :index="index" :key="index">
             <img :src="'http://dev.pt800.com/' + item" alt="">
           </p>
         </el-col>
@@ -190,14 +164,14 @@
     </el-dialog>
 
     <el-dialog :title="refundForm.statusName" class="" width="30%" :center="true" :visible.sync="dialogVisibleRefund">
-      <el-form :model="shopForm"  label-width="120px">
+      <el-form :model="shopForm" label-width="120px">
         <el-form-item label="订单编号:">
           <el-input v-model="refundForm.orderNo" auto-complete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="商品状态:">
           <el-input v-model="refundForm.deliveryStatusName" auto-complete="off" disabled></el-input>
         </el-form-item>
-         <el-form-item label="退款原因:">
+        <el-form-item label="退款原因:">
           <el-input v-model="refundForm.reason" auto-complete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="退款说明:">
@@ -210,15 +184,15 @@
           <img :src="'http://dev.pt800.com/' + refundForm.pic" alt="">
         </el-form-item>
         <div v-if="refundStatus != 6">
-        <el-form-item label="退货收件人姓名:">
-          <el-input v-model="refundForm.consignee" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="退货收件人手机:">
-          <el-input v-model="refundForm.mobile" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="退货收件人地址:">
-          <el-input v-model="refundForm.address" auto-complete="off"></el-input>
-        </el-form-item>
+          <el-form-item label="退货收件人姓名:">
+            <el-input v-model="refundForm.consignee" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="退货收件人手机:">
+            <el-input v-model="refundForm.mobile" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="退货收件人地址:">
+            <el-input v-model="refundForm.address" auto-complete="off"></el-input>
+          </el-form-item>
         </div>
         <el-form-item label="退款备注:">
           <el-input v-model="refundForm.shopRemark" auto-complete="off"></el-input>
@@ -258,7 +232,7 @@ export default {
         pageSize: 10,
         pageNo: 1
       },
-      confirmForm:  {
+      confirmForm: {
         orderNo: "",
         shopRemark: ''
       },
@@ -346,10 +320,10 @@ export default {
         }
       });
 
-      this.onSubmit();
+    this.onSubmit();
   },
 
-  mounted: function() {
+  mounted: function () {
     this.loadingFlag = false;
   },
 
@@ -373,7 +347,7 @@ export default {
     handLookRefundInfo(index, row) {
       this.dialogLookRefund = true;
       this.$axios
-        .get("/vendor/orderReturnInfo", {params: { orderNo: row.orderNo }})
+        .get("/vendor/orderReturnInfo", { params: { orderNo: row.orderNo } })
         .then(data => {
           if (data.data.code == 1) {
             this.lookRefundInfo = data.data.data;
@@ -396,12 +370,12 @@ export default {
     },
 
     refundConfirmTwo(type) {
-      if(type == 13 && !this.confirmForm.shopRemark) {
-         this.$message({
-              message: '请输入退款备注',
-              type: "warning"
-            });
-            return;
+      if (type == 13 && !this.confirmForm.shopRemark) {
+        this.$message({
+          message: '请输入退款备注',
+          type: "warning"
+        });
+        return;
       }
 
       var param = {};
@@ -441,20 +415,20 @@ export default {
     shopConfirm() {
       var param = {};
 
-      if(!this.shopForm.express) {
+      if (!this.shopForm.express) {
         this.$message({
-              message: '请选择快递公司',
-              type: "warning"
-            });
-            return;
+          message: '请选择快递公司',
+          type: "warning"
+        });
+        return;
       }
 
-      if(!this.shopForm.trackingNumber) {
-          this.$message({
-              message: '请输入快递单号',
-              type: "warning"
-            });
-            return;
+      if (!this.shopForm.trackingNumber) {
+        this.$message({
+          message: '请输入快递单号',
+          type: "warning"
+        });
+        return;
       }
 
       param.orderNo = this.shopForm.orderNo;
@@ -492,9 +466,9 @@ export default {
       this.refundForm.mobile = row.refundInfo.mobile || '';
       this.refundForm.address = row.refundInfo.address || '';
 
-      if(row.status == 10) {
+      if (row.status == 10) {
         this.refundForm.statusName = '退款退货审核';
-      } else if(row.status == 6) {
+      } else if (row.status == 6) {
         this.refundForm.statusName = '退款审核';
       }
 
@@ -508,55 +482,55 @@ export default {
       var param = {};
       param.orderNo = this.refundForm.orderNo;
       // 退货退款
-      if(this.refundStatus == 10) {
+      if (this.refundStatus == 10) {
         url = '/vendor/orderReturn';
-        if(flag) {
+        if (flag) {
           // 同意
           param.status = 14;
         } else {
           // 驳回
           param.status = 13;
         }
-      } else if(this.refundStatus == 6) {
+      } else if (this.refundStatus == 6) {
         // 退款
         url = '/vendor/orderRefund';
-        if(flag) {
+        if (flag) {
           param.status = 17;
         } else {
           param.status = 12;
         }
       }
 
-      if(this.refundStatus == 10 && flag) {
-        if(!this.refundForm.consignee) {
-           this.$message({
-           message: '请填写退货收件人',
-           type: "warning"
+      if (this.refundStatus == 10 && flag) {
+        if (!this.refundForm.consignee) {
+          this.$message({
+            message: '请填写退货收件人',
+            type: "warning"
           });
           return;
         }
 
-        if(!this.refundForm.mobile) {
-           this.$message({
-           message: '请填写退货收件人电话',
-           type: "warning"
+        if (!this.refundForm.mobile) {
+          this.$message({
+            message: '请填写退货收件人电话',
+            type: "warning"
           });
           return;
         }
-        
-        if(!this.refundForm.address) {
-           this.$message({
-           message: '请填写退货收件人地址',
-           type: "warning"
+
+        if (!this.refundForm.address) {
+          this.$message({
+            message: '请填写退货收件人地址',
+            type: "warning"
           });
           return;
         }
       }
 
-      if((param.status == 12 || param.status == 13) && !this.refundForm.shopRemark) {
+      if ((param.status == 12 || param.status == 13) && !this.refundForm.shopRemark) {
         this.$message({
-           message: '请填写备注',
-           type: "warning"
+          message: '请填写备注',
+          type: "warning"
         });
         return;
       }
@@ -605,7 +579,7 @@ export default {
       }
     },
 
-    onSubmit: function() {
+    onSubmit: function () {
       if (this.payTime.length) {
         let start = this.payTime[0];
         let end = this.payTime[1];
@@ -669,6 +643,7 @@ export default {
   width: 100%;
   height: 42px;
   padding: 5px 0;
+  margin-bottom: 100px;
 }
 
 .el-pagination {
@@ -697,7 +672,7 @@ export default {
   height: 80px;
   margin-right: 10px;
   vertical-align: middle;
-   img {
+  img {
     width: 100%;
     height: 100%;
   }

@@ -95,7 +95,6 @@ export default {
       localStorage.setItem("businessUserInfo", "");
       this.$refs[formName].validate(valid => {
         if (valid) {
-          debugger;
           this.$axios
             .post("/vendor/login", {
               mobile: this.loginForm.mobile,

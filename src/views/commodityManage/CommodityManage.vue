@@ -1,102 +1,76 @@
 <template>
- <div>
-   <div v-show="!loadingFlag">
-    <el-form :inline="true" :model="formSearch" class="demo-form-inline">
-      <el-form-item>
-        <el-input v-model="formSearch.name" placeholder="商品名称"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-select v-model="formSearch.status" placeholder="商品状态" clearable @change="statusSelect">
-          <el-option label="全部" value=""></el-option>
-          <el-option v-for="(item, index) in statusArry" :label="item.name" :value="item.code" :key="index"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item style="margin-right: 30px;">
-        <el-date-picker v-model="searchdate" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2"></el-date-picker>
-      </el-form-item>
-      <el-form-item class="search-btn">
-        <el-button type="primary" @click="onSubmit('formSearch')">查询</el-button>
-        <el-button  @click="clearAll">清空</el-button>
-      </el-form-item>
-      <el-form-item style="float: right">
-        <el-button type="success">
-          <router-link tag="a" :to="'/editAddedGoods'">新增商品</router-link>
-        </el-button>
-      </el-form-item>
-    </el-form>
-    <el-table :data="tableData3" v-loading="tabLoadingFlag" border height="620" style="width: 100%;text-align: center">
-      <el-table-column
-        prop="id"
-        label="ID"
-        width="200" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="商品名称" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="spec"
-        label="重量/规格" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="type"
-        label="商品分类" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        label="商品状态" align="center">
-        <template slot-scope="scope">
-           <span v-if="scope.row.status == 0">未审核</span>
-           <span v-else-if="scope.row.status == 1">已审核，上架</span>
-           <span v-else-if="scope.row.status == 2">已下架</span>
-           <span v-else-if="scope.row.status == 3">审核未通过</span>
-           <span v-else-if="scope.row.status == 4">平台下架</span>
+  <div>
+    <div v-show="!loadingFlag">
+      <el-form :inline="true" :model="formSearch" class="demo-form-inline">
+        <el-form-item>
+          <el-input v-model="formSearch.name" placeholder="商品名称"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="formSearch.status" placeholder="商品状态" clearable @change="statusSelect">
+            <el-option label="全部" value=""></el-option>
+            <el-option v-for="(item, index) in statusArry" :label="item.name" :value="item.code" :key="index"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="margin-right: 30px;">
+          <el-date-picker v-model="searchdate" type="daterange" align="right" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions2"></el-date-picker>
+        </el-form-item>
+        <el-form-item class="search-btn">
+          <el-button type="primary" @click="onSubmit('formSearch')">查询</el-button>
+          <el-button @click="clearAll">清空</el-button>
+        </el-form-item>
+        <el-form-item style="float: right">
+          <el-button type="success">
+            <router-link tag="a" :to="'/editAddedGoods'">新增商品</router-link>
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <el-table :data="tableData3" v-loading="tabLoadingFlag" border style="width: 100%;text-align: center">
+        <el-table-column prop="id" label="ID" width="200" align="center">
+        </el-table-column>
+        <el-table-column prop="name" label="商品名称" align="center">
+        </el-table-column>
+        <el-table-column prop="spec" label="重量/规格" align="center">
+        </el-table-column>
+        <el-table-column prop="type" label="商品分类" align="center">
+        </el-table-column>
+        <el-table-column prop="status" label="商品状态" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status == 0">未审核</span>
+            <span v-else-if="scope.row.status == 1">已审核，上架</span>
+            <span v-else-if="scope.row.status == 2">已下架</span>
+            <span v-else-if="scope.row.status == 3">审核未通过</span>
+            <span v-else-if="scope.row.status == 4">平台下架</span>
           </template>
-      </el-table-column>
-      <el-table-column
-        prop="createDate"
-        label="创建时间" align="center">
-      </el-table-column>
-      <!-- <el-table-column
+        </el-table-column>
+        <el-table-column prop="createDate" label="创建时间" align="center">
+        </el-table-column>
+        <!-- <el-table-column
         prop="place"
         label="产地" align="center">
       </el-table-column> -->
-      <el-table-column
-        prop="picUrl"
-        label="商品图片"
-        align="center"
-        width="180">
-        <template slot-scope="scope">
-          <img :src="'http://dev.pt800.com/' + scope.row.picUrl.split(',')[0]" alt="" @click="dilogBigImg(scope.$index)" style="width: 50px;height: 50px">
-          <el-dialog :visible.sync="dialogVisible[scope.$index].dialog">
-            <img width="100%" :src="'http://dev.pt800.com/' + scope.row.picUrl.split(',')[0]" alt="">
-          </el-dialog>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        align="left"
-        width="160">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-if="(scope.row.status == 1)">下架</el-button>
-          <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-else-if="(scope.row.status == 2)">上架</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="pagination-cont">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :page-sizes="[10, 30, 50, 100]"
-        :page-size="30"
-        layout="total,sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
+        <el-table-column prop="picUrl" label="商品图片" align="center" width="180">
+          <template slot-scope="scope">
+            <img :src="'http://dev.pt800.com/' + scope.row.picUrl.split(',')[0]" alt="" @click="dilogBigImg(scope.$index)" style="width: 50px;height: 50px">
+            <el-dialog :visible.sync="dialogVisible[scope.$index].dialog">
+              <img width="100%" :src="'http://dev.pt800.com/' + scope.row.picUrl.split(',')[0]" alt="">
+            </el-dialog>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="left" width="160">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-if="(scope.row.status == 1)">下架</el-button>
+            <el-button size="mini" @click="handleDropOff(scope.$index, scope.row)" v-else-if="(scope.row.status == 2)">上架</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination-cont">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[10, 30, 50, 100]" :page-size="30" layout="total,sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
+      </div>
     </div>
-   </div>
-  <Loading v-show="loadingFlag"></Loading>
- </div>
+    <Loading v-show="loadingFlag"></Loading>
+  </div>
 </template>
 
 <script>
@@ -176,7 +150,7 @@ export default {
       });
   },
 
-  mounted: function() {
+  mounted: function () {
     this.loadingFlag = false;
     this.onSubmit();
   },
@@ -281,9 +255,9 @@ export default {
 
             for (let i = 0; i < datas.length; i++) {
               var picUrls = datas[i].picUrl.split(',');
-              for(var j=0;j<datas[i].picUrl.split(',').length;j++) {
+              for (var j = 0; j < datas[i].picUrl.split(',').length; j++) {
                 var picIndex = picUrls[j].indexOf('http://dev.pt800.com');
-                if(picIndex >=0) {
+                if (picIndex >= 0) {
                   picUrls[j] = picUrls[j].replace('http://dev.pt800.com', '');
                 }
               }
@@ -341,6 +315,7 @@ export default {
   width: 100%;
   height: 42px;
   padding: 5px 0;
+  margin-bottom: 100px;
 }
 
 .el-pagination {

@@ -89,7 +89,7 @@
         </el-row>
       </div>
 
-      <div class="order-address" v-if="userInfo.status == 1">
+      <div class="order-address" v-if="userInfo.status == 1 || (userInfo.status == 12 && !userInfo.deliveryInfo)">
         <el-form label-width="120px" :model="expressInfo">
           <el-row class="order-detail detail-header">
             <el-col :span="6"><span style="color: #f60">商家发货</span></el-col>
@@ -419,7 +419,6 @@ export default {
                 }
               });
             }
-            debugger;
             if (refundList.length) {
               refundList.forEach(item => {
                 if (item.picUrl) {
@@ -537,7 +536,6 @@ export default {
             message: "发货成功",
             type: "success"
           });
-          debugger;
           this.requestData(); //刷新数据
         } else {
           this.$message({
